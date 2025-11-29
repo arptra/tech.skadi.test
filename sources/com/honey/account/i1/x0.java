@@ -1,0 +1,19 @@
+package com.honey.account.i1;
+
+import com.google.android.material.color.utilities.DynamicScheme;
+import com.google.android.material.color.utilities.MaterialDynamicColors;
+import java.util.function.Function;
+
+public final /* synthetic */ class x0 implements Function {
+
+    /* renamed from: a  reason: collision with root package name */
+    public final /* synthetic */ MaterialDynamicColors f9768a;
+
+    public /* synthetic */ x0(MaterialDynamicColors materialDynamicColors) {
+        this.f9768a = materialDynamicColors;
+    }
+
+    public final Object apply(Object obj) {
+        return this.f9768a.lambda$onErrorContainer$102((DynamicScheme) obj);
+    }
+}

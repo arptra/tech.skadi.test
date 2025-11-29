@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<litepal>
+    <dbname value="NotesStore"></dbname>   <!-- 数据库文件的名字 -->
+    <version value="11"></version>  <!-- 数据库的版本号 -->
+    <storage
+        value="internal" /><!--internal默认在/data/user/0/应用包名/，external配置数据库文件的位置：Android/data/包名/files/databases/-->
+
+    <list>
+        <mapping class="com.upuphone.ar.translation.phone.bean.NoteBean"></mapping>
+    </list>
+
+</litepal>

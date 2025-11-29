@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.upuphone.ar.navi.lite.view.ScrollLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:orientation="vertical" android:id="@+id/layout_scroll" android:padding="0dp" android:visibility="gone" android:layout_width="match_parent" android:layout_height="match_parent" app:exitOffset="0dp" app:isSupportExit="false">
+    <RelativeLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent">
+        <TextView android:id="@+id/empty_view" android:background="@color/transparent" android:layout_width="match_parent" android:layout_height="@dimen/size_dp_156"/>
+        <com.upuphone.ar.navi.lite.view.ContentRecyclerView android:id="@+id/search_result_recycler" android:background="@drawable/search_result_scroll_view_bg" android:padding="@dimen/size_dp_8" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_marginStart="@dimen/size_dp_10" android:layout_marginEnd="@dimen/size_dp_10"/>
+    </RelativeLayout>
+</com.upuphone.ar.navi.lite.view.ScrollLayout>

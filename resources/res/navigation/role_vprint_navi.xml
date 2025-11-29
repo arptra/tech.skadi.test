@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:id="@+id/roleVprintMain" app:startDestination="@+id/voiceprintSrInfoFragment">
+    <fragment android:label="VoiceprintSrInfoFragment" android:name="com.upuphone.xr.sapp.fragment.VoiceprintSrInfoFragment" android:id="@+id/voiceprintSrInfoFragment"/>
+    <fragment android:label="VoiceprintSrRecordFragment" android:name="com.upuphone.xr.sapp.fragment.VoiceprintSrRecordFragment" android:id="@+id/voiceprintSrRecordFragment"/>
+    <fragment android:label="WakeupRecordMainFragment" android:name="com.upuphone.xr.sapp.fragment.WakeupRecordMainFragment" android:id="@+id/wakeupRecordMainFragment"/>
+    <fragment android:label="WakeupRecordMainFragment" android:name="com.upuphone.xr.sapp.fragment.WakeupRecordingFragment" android:id="@+id/wakeupRecordingFragment"/>
+    <fragment android:label="WakeupRecordMainFragment" android:name="com.upuphone.xr.sapp.fragment.WakeupRecordFinishedFragment" android:id="@+id/wakeupRecordFinishedFragment"/>
+</navigation>

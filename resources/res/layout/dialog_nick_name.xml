@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:layout_width="match_parent" android:layout_height="wrap_content">
+    <TextView android:textSize="15sp" android:textColor="@color/ha_grey_text" android:id="@+id/tv_tip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/changed_tip"/>
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@+id/et_changed_nick_name_lay" android:background="@drawable/ha_et_bg_blue" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:layout_below="@+id/tv_tip" android:layout_alignParentStart="true" android:layout_alignParentEnd="true">
+        <EditText android:theme="@style/HaEditText" android:textSize="17sp" android:textColor="?attr/colorOnSurface" android:textColorHint="@color/ha_grey_text" android:ellipsize="end" android:id="@+id/et_changed_nick_name" android:background="@null" android:layout_width="0dp" android:layout_height="54dp" android:singleLine="true" android:maxLength="32" android:layout_weight="1" android:textAlignment="viewStart" android:paddingHorizontal="21dp"/>
+        <ImageView android:id="@+id/iv_clear" android:visibility="gone" android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ha_titlebar_ic_cancel_dark" android:layout_marginEnd="30dp"/>
+    </LinearLayout>
+    <TextView android:textColor="?attr/colorError" android:id="@+id/tv_nick_error" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:layout_below="@+id/et_changed_nick_name_lay" android:layout_marginStart="8dp" android:layout_marginEnd="8dp" android:layout_alignParentStart="true" android:layout_alignParentEnd="true"/>
+</RelativeLayout>

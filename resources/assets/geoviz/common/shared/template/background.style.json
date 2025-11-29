@@ -1,0 +1,1 @@
+{"styles": [{"layer": "background", "technique": "polygon", "attr": {"disable-shading": ["ref", "Land.PolygonShading.Disabled"], "opacity": 1, "enforce-ztest": true, "ambient": ["ref", "Polygon.Ambient.Factor"], "color": ["ref", "Land.Color"], "diffuse": ["ref", "Polygon.Diffuse.Factor"]}}]}

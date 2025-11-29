@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:shape="rectangle">
+    <gradient android:startColor="#ffffff" android:endColor="#f1f5f9" android:useLevel="true" android:angle="90" android:type="linear"/>
+    <corners android:radius="12dp"/>
+    <stroke android:width="0.5dp" android:color="#0a000000"/>
+    <item android:name="android:shadowColor">#14000000
+    </item>
+    <item android:name="android:shadowDx">0
+    </item>
+    <item android:name="android:shadowDy">2
+    </item>
+</shape>

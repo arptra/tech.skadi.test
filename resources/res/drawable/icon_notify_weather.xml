@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:height="38dp" android:width="38dp" android:viewportWidth="38" android:viewportHeight="38">
+    <path android:fillColor="@drawable/$icon_notify_weather__0" android:pathData="M8,0L30,0A8,8 0,0 1,38 8L38,30A8,8 0,0 1,30 38L8,38A8,8 0,0 1,0 30L0,8A8,8 0,0 1,8 0z"/>
+    <group>
+        <clip-path android:pathData="M8,0L30,0A8,8 0,0 1,38 8L38,30A8,8 0,0 1,30 38L8,38A8,8 0,0 1,0 30L0,8A8,8 0,0 1,8 0z"/>
+        <path android:fillColor="#ffffff" android:pathData="M25,28.567V28.572H15C9.477,28.572 5,24.094 5,18.572C5,13.049 9.477,8.571 15,8.571C18.577,8.571 21.716,10.45 23.483,13.274C24.051,13.141 24.642,13.071 25.25,13.071C29.53,13.071 33,16.541 33,20.822C33,25.102 29.53,28.572 25.25,28.572C25.166,28.572 25.083,28.57 25,28.567Z" android:fillType="1"/>
+    </group>
+</vector>

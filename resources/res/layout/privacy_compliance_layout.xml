@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:orientation="vertical" android:id="@+id/privacy_layout" android:background="@drawable/privacy_base_bg" android:visibility="visible" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_marginTop="123dp">
+    <LinearLayout android:background="@drawable/privacy_content_bg" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_margin="12dp" android:layout_weight="1">
+        <WebView android:id="@+id/webview" android:scrollbars="none" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_margin="12dp" android:layout_weight="1"/>
+    </LinearLayout>
+    <LinearLayout android:gravity="center_horizontal" android:orientation="vertical" android:id="@+id/privacy_btn_layout" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:layout_marginBottom="40dp">
+        <Button android:textSize="@dimen/text_size_sub" android:textColor="@color/white" android:gravity="center" android:id="@+id/agree_privacy" android:background="@drawable/privacy_btn_bg" android:layout_width="match_parent" android:layout_height="@dimen/size_dp_44" android:text="@string/agree_privacy" android:layout_marginStart="60dp" android:layout_marginEnd="60dp"/>
+        <Button android:textSize="@dimen/text_size_15" android:textColor="@color/theme_color_2" android:gravity="center" android:id="@+id/disagree_privacy" android:background="@android:color/transparent" android:layout_width="wrap_content" android:layout_height="@dimen/size_dp_44" android:layout_marginTop="20dp" android:text="@string/disagree_privacy"/>
+    </LinearLayout>
+</LinearLayout>

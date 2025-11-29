@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:height="16dp" android:width="16dp" android:viewportWidth="16" android:viewportHeight="16">
+    <path android:fillColor="@color/color_select_lang_hint" android:pathData="M7.999,2.667C10.932,2.667 13.332,5.067 13.332,8C13.332,10.934 10.932,13.333 7.999,13.333C5.065,13.333 2.665,10.934 2.665,8C2.665,5.067 5.065,2.667 7.999,2.667ZM7.999,1.334C4.332,1.334 1.332,4.333 1.332,8C1.332,11.667 4.332,14.667 7.999,14.667C11.665,14.667 14.665,11.667 14.665,8C14.665,4.267 11.665,1.334 7.999,1.334Z"/>
+    <path android:fillColor="@color/color_select_lang_hint" android:pathData="M7.998,6.755C8.55,6.755 8.998,6.307 8.998,5.755C8.998,5.203 8.55,4.755 7.998,4.755C7.446,4.755 6.998,5.203 6.998,5.755C6.998,6.307 7.446,6.755 7.998,6.755Z"/>
+    <path android:fillColor="@color/color_select_lang_hint" android:pathData="M7.667,7.333L8.334,7.333A0.333,0.333 0,0 1,8.667 7.667L8.667,11A0.333,0.333 0,0 1,8.334 11.333L7.667,11.333A0.333,0.333 0,0 1,7.334 11L7.334,7.667A0.333,0.333 0,0 1,7.667 7.333z"/>
+</vector>

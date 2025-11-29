@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:background="@color/theme_black_color" android:layout_width="match_parent" android:layout_height="match_parent">
+    <com.upuphone.ar.navi.lite.mapview.BaseMapView android:id="@+id/map" android:layout_width="match_parent" android:layout_height="match_parent"/>
+    <FrameLayout android:id="@+id/location_statusBarFrame" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_alignParentTop="true"/>
+    <FrameLayout android:id="@+id/anchor1" android:layout_width="match_parent" android:layout_height="@dimen/size_dp_52" android:layout_below="@+id/location_statusBarFrame">
+        <com.upuphone.ar.navi.lite.view.TitleView android:id="@+id/title_panel" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_marginStart="@dimen/size_dp_10" android:layout_marginEnd="@dimen/size_dp_10" app:title_name=""/>
+    </FrameLayout>
+    <ImageView android:id="@+id/my_location" android:background="@drawable/position_location_bg" android:layout_width="48dp" android:layout_height="48dp" android:layout_margin="10dp" android:src="@drawable/position_location" android:scaleType="centerInside" android:layout_centerVertical="true" android:layout_alignParentEnd="true"/>
+    <com.upuphone.ar.navi.lite.view.ScrollLayout android:orientation="vertical" android:id="@+id/layout_scroll" android:padding="0dp" android:visibility="visible" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_marginTop="@dimen/size_dp_2" android:layout_below="@+id/anchor1" app:exitOffset="0dp" app:isSupportExit="false">
+        <RelativeLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent">
+            <TextView android:id="@+id/empty_view" android:background="@drawable/search_result_scroll_bg" android:layout_width="match_parent" android:layout_height="match_parent"/>
+            <com.upuphone.ar.navi.lite.view.ContentRecyclerView android:id="@+id/search_result_recycler" android:background="@drawable/search_result_scroll_view_bg" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_marginStart="@dimen/size_dp_10" android:layout_marginEnd="@dimen/size_dp_10"/>
+        </RelativeLayout>
+    </com.upuphone.ar.navi.lite.view.ScrollLayout>
+    <TextView android:textSize="@dimen/text_size_sub" android:textColor="@color/text_blue" android:gravity="center" android:id="@+id/reload" android:background="@android:color/transparent" android:visibility="gone" android:layout_width="match_parent" android:layout_height="200dp" android:text="@string/poi_search_reload" android:layout_centerVertical="true" android:layout_marginStart="5dp" android:layout_marginEnd="5dp" app:layout_constraintBottom_toBottomOf="@+id/map"/>
+</RelativeLayout>

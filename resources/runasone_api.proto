@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+
+option java_multiple_files = true;
+option java_package = "com.upuphone.runasone";
+option java_outer_classname = "RunAsOneProto";
+option objc_class_prefix = "RAO";
+
+message StreamReq {
+  StreamType type = 1;
+  string category = 2;
+  string deviceId = 3;
+  string reqInfo = 4;
+  google.protobuf.Any abilityMsg = 5; // Deprecated，透传改用bypass
+  bytes bypass = 6;
+  string protocolVersion = 7;
+  uint64 reqId = 8;
+  string timeStamp = 9;
+  uint64 retransmissionLen = 10;
+  bool isRetransmission = 11;
+  uint64 deltaSysTime = 12;
+  QosLevel qos = 13;
+  string session = 14;
+  string dstId = 15;
+  string srcId = 16;
+  string ipAddress = 17;
+  uint32 tcpPort = 18;
+  uint32 udpPort = 19;
+}
+
+enum StreamType {
+  AUTH = 0;
+  CLOSE = 1;  // 保留
+  CMD = 3;    // Deprecated，透传改用BYPASS
+  BYPASS = 4;
+  HEARTBEAT = 5;
+  DEBUG = 6;
+  ACK = 7;
+  TEARDOWN = 8;
+  TEARDOWN_ACK = 9;
+  RETRANSMISSION = 10;
+  RETRANSMISSION_ACK = 11;
+  AUTH_SUCCESS = 12;
+  AUTH_REJECT = 13;
+  ACTION = 14;
+  BRIDGE = 15;
+}
+
+enum QosLevel {
+  QOS_0 = 0;
+  QOS_1 = 1;
+  QOS_2 = 2;
+  QOS_3 = 3;
+}

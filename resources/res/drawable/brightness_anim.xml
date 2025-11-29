@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:oneshot="true">
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00000"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00001"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00002"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00003"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00004"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00005"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00006"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00007"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00008"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00009"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00010"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00011"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00012"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00013"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00014"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00015"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00016"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00017"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00018"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00019"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00020"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00021"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00022"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00023"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00024"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00025"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00026"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00027"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00028"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/brightness_00029"/>
+</animation-list>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="broadcast_text_size">11sp</dimen>
+    <dimen name="message_mask_text_size">11sp</dimen>
+    <dimen name="navi_switch_size">11sp</dimen>
+    <dimen name="size_dp_126">126dp</dimen>
+    <dimen name="tts_timbre_item_offset">24dp</dimen>
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:layout_width="match_parent" android:layout_height="match_parent">
+    <LinearLayout android:gravity="center" android:orientation="vertical" android:id="@+id/loading_start" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content">
+        <ProgressBar android:layout_width="26dp" android:layout_height="26dp" android:indeterminateTint="?attr/colorPrimary"/>
+        <TextView android:textSize="14sp" android:textColor="?attr/colorOnSurfaceVariant" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/loading"/>
+    </LinearLayout>
+    <LinearLayout android:gravity="center" android:orientation="vertical" android:id="@+id/loading_error" android:visibility="gone" android:clickable="true" android:layout_width="wrap_content" android:layout_height="wrap_content">
+        <TextView android:textSize="14sp" android:textColor="?attr/colorOnSurfaceVariant" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/loadingFail"/>
+        <Button android:enabled="false" android:textSize="13sp" android:textColor="?attr/colorPrimary" android:background="@drawable/drawable_btn" android:clickable="false" android:layout_width="wrap_content" android:layout_height="34dp" android:layout_marginTop="24dp" android:text="@string/reloading" android:maxLines="1"/>
+    </LinearLayout>
+</FrameLayout>

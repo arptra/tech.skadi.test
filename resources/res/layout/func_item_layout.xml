@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:layout_width="match_parent" android:layout_height="wrap_content">
+    <RelativeLayout android:gravity="center_vertical" android:id="@+id/card_view" android:background="@drawable/common_single_item_bg_top" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingHorizontal="20dp" app:layout_constraintEnd_toEndOf="0" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toTopOf="0">
+        <ImageView android:id="@+id/card_icon" android:layout_width="48dp" android:layout_height="48dp" android:src="@drawable/app_space_guide" android:layout_centerVertical="true"/>
+        <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:layout_marginBottom="16dp" android:layout_centerVertical="true" android:layout_marginStart="16dp" android:layout_marginEnd="16dp" android:layout_toStartOf="@+id/tv_red_tips" android:layout_toEndOf="@+id/card_icon">
+            <TextView android:textSize="17sp" android:textColor="@color/title_text_color" android:id="@+id/card_title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ar_application_guide" android:lineHeight="24dp" android:textFontWeight="@integer/medium"/>
+            <TextView android:textSize="14sp" android:textColor="@color/subtitle_text_color" android:id="@+id/card_sub_title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ar_application_guide_intro" android:lineHeight="20dp"/>
+        </LinearLayout>
+        <TextView android:textSize="10sp" android:textColor="@color/white" android:id="@+id/tv_red_tips" android:background="@drawable/shape_glass_update_red" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerVertical="true" android:layout_toStartOf="@+id/card_right_icon" android:paddingHorizontal="5dp"/>
+        <ImageView android:id="@+id/card_right_icon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/icon_search" android:layout_centerVertical="true" android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

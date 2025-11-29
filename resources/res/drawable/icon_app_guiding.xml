@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:height="28dp" android:width="28dp" android:viewportWidth="28" android:viewportHeight="28">
+    <path android:fillColor="@drawable/$icon_app_guiding__0" android:pathData="M21.2,12.2C21.2,14.254 20.108,16.371 18.522,18.319C16.974,20.219 15.132,21.741 14,22.592C12.868,21.741 11.026,20.219 9.478,18.319C7.892,16.371 6.8,14.254 6.8,12.2C6.8,8.224 10.024,5 14,5C17.976,5 21.2,8.224 21.2,12.2ZM23,12.2C23,17.527 17.43,22.271 15.054,24.052C14.423,24.525 13.577,24.525 12.946,24.052C10.57,22.271 5,17.527 5,12.2C5,7.23 9.029,3.2 14,3.2C18.971,3.2 23,7.23 23,12.2ZM14,14C15.105,14 16,13.105 16,12C16,10.896 15.105,10 14,10C12.895,10 12,10.896 12,12C12,13.105 12.895,14 14,14Z" android:fillType="1"/>
+</vector>

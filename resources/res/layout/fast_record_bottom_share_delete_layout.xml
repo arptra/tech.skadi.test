@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:gravity="center" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="64dp" android:layout_marginStart="18dp" android:layout_marginEnd="18dp">
+    <LinearLayout android:gravity="center" android:orientation="vertical" android:id="@+id/ll_share" android:layout_width="0dp" android:layout_height="64dp" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintEnd_toStartOf="@+id/ll_del" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toTopOf="0">
+        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/ic_fast_record_share"/>
+        <TextView android:textSize="10sp" android:textColor="@color/fast_record_command_share_text_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/fast_record_share" android:lineHeight="14dp"/>
+    </LinearLayout>
+    <LinearLayout android:gravity="center" android:orientation="vertical" android:id="@+id/ll_del" android:layout_width="0dp" android:layout_height="64dp" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintEnd_toEndOf="0" app:layout_constraintStart_toEndOf="@+id/ll_share" app:layout_constraintTop_toTopOf="0">
+        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/ic_fast_record_del"/>
+        <TextView android:textSize="10sp" android:textColor="@color/fast_record_command_share_text_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/fast_record_del" android:lineHeight="14dp"/>
+    </LinearLayout>
+    <View android:id="@+id/v_un_enable" android:background="@color/fast_record_color_page" android:layout_width="0dp" android:layout_height="0dp" android:alpha="0.5" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintEnd_toEndOf="0" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toTopOf="0"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

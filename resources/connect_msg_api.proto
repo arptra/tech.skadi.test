@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+option java_package = "com.upuphone.xr.interconnect.entity";
+option java_multiple_files = true;
+// 互联基础消息定义
+message ConnectMsg {
+  // 数据
+  bytes data = 2;
+}

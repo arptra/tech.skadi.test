@@ -1,0 +1,190 @@
+{
+    "code": 0,
+    "msg": "success",
+    "Bloodoxygen": {
+      "userId": "123",
+      "type": "1",
+      "starttime": "2024.06.17 16:56:02",
+      "endtime": "2024.06.17 16:56:02",
+      "totalaverage": "88",
+      "totalmax": "99",
+      "totalmin": "72",
+      "BloodoxygenElement": [
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "95",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "93",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "92",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "96",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "95",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "98",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "97",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "90",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "80",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "89",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "81",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "70",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "96",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "94",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "93",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "96",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "97",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "97",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "94",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "93",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "92",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "91",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "98",
+          "averagedes": "正常"
+        },
+        {
+          "maxrate": "97",
+          "minrate": "0",
+          "date": "2024.06.17 16:56:02",
+          "average": "99",
+          "averagedes": "正常"
+        }
+      ],
+      "PocElement": [
+        {
+          "rate": "",
+          "title": "",
+          "key": ""
+        }
+      ]
+    }
+  }

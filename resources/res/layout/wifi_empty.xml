@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:layout_gravity="center" android:paddingTop="32dp" android:paddingBottom="12dp" android:layout_width="match_parent" android:layout_height="match_parent">
+    <TextView android:textSize="12sp" android:textColor="@color/subtitle_text_color" android:id="@+id/title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:text="@string/other_network" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toTopOf="0"/>
+    <LinearLayout android:gravity="center" android:background="@drawable/bg_wifi_empty" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:paddingVertical="56dp" app:layout_constraintEnd_toEndOf="0" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toBottomOf="@+id/title">
+        <TextView android:textSize="14sp" android:textColor="@color/subtitle_text_color" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/no_network_nearby_tips" android:textFontWeight="350"/>
+        <TextView android:textSize="14sp" android:textColor="@color/subtitle_text_color" android:id="@+id/research_tv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/refresh_discovery" android:textFontWeight="350"/>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

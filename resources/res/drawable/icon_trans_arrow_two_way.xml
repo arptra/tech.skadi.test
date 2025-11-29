@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:height="16dp" android:width="16dp" android:autoMirrored="true" android:viewportWidth="16" android:viewportHeight="16">
+    <group>
+        <clip-path android:pathData="M0,0h16v16h-16z"/>
+        <path android:fillColor="@color/color_trans_func_simul_arrow" android:pathData="M8.975,4.678C8.881,4.602 8.743,4.618 8.668,4.712L8.394,5.054C8.319,5.148 8.334,5.286 8.429,5.361L9.459,6.185C9.576,6.279 9.51,6.468 9.36,6.468H4.717C4.596,6.468 4.498,6.566 4.498,6.687V7.125C4.498,7.245 4.596,7.343 4.717,7.343H11.06C11.246,7.343 11.411,7.226 11.473,7.051C11.534,6.875 11.478,6.68 11.333,6.564L8.975,4.678ZM7.021,11.322C7.115,11.397 7.253,11.382 7.328,11.287L7.602,10.946C7.677,10.851 7.662,10.714 7.568,10.638L6.537,9.814C6.42,9.72 6.486,9.531 6.636,9.531H11.279C11.4,9.531 11.498,9.433 11.498,9.312V8.875C11.498,8.754 11.4,8.656 11.279,8.656H4.936C4.75,8.656 4.585,8.773 4.523,8.949C4.462,9.124 4.518,9.319 4.663,9.435L7.021,11.322Z" android:fillAlpha="0.8" android:fillType="1"/>
+    </group>
+</vector>

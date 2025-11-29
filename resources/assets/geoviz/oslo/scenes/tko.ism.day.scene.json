@@ -1,0 +1,1 @@
+{"inherit": ["../../common/ocm/tko.ism.scene.json"], "extends": ["../../common/ocm/ism.common.json", "../../miami/schemes/normal.day.definitions.json", "../schemes/normal.day.definitions.json", {"when": ["any", ["==", ["get", "source"], "ipc"], ["==", ["get", "network"], "JP"]], "value": "../schemes/tko.normal.day.definitions.json"}, "../schemes/ism.day.definitions.json"]}

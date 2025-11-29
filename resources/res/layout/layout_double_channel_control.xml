@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:orientation="vertical" android:tag="layout/layout_double_channel_control_0" android:background="@drawable/rect_radius12_8_f9fafb" android:paddingLeft="15dp" android:paddingRight="15dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:divider="#999999" android:showDividers="middle">
+    <TextView android:textSize="16sp" android:gravity="center" android:layout_width="match_parent" android:layout_height="50dp" android:text="通道状态"/>
+    <androidx.constraintlayout.widget.ConstraintLayout android:paddingTop="20dp" android:paddingBottom="20dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+        <TextView android:id="@+id/tvStarryChannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="BLE通道：不可用" app:layout_constraintLeft_toLeftOf="0" app:layout_constraintTop_toTopOf="0"/>
+        <TextView android:id="@+id/tvP2pChannelState" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="P2P通道：不可用" app:layout_constraintLeft_toLeftOf="@+id/tvStarryChannel" app:layout_constraintTop_toBottomOf="@+id/tvStarryChannel"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView android:textSize="16sp" android:gravity="center" android:layout_width="match_parent" android:layout_height="50dp" android:text="眼镜LauncherDebug"/>
+    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="15dp" android:layout_marginBottom="15dp">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Debug窗口" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintLeft_toLeftOf="0" app:layout_constraintTop_toTopOf="0"/>
+        <Button android:id="@+id/launcher_debug" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="请点击开启或关闭" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintRight_toRightOf="0" app:layout_constraintTop_toTopOf="0"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="15dp" android:layout_marginBottom="15dp">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Go Home" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintLeft_toLeftOf="0" app:layout_constraintTop_toTopOf="0"/>
+        <Button android:id="@+id/launcher_go_home" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="请点Go home" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintRight_toRightOf="0" app:layout_constraintTop_toTopOf="0"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="15dp" android:layout_marginBottom="15dp">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="日志关键字过滤" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintLeft_toLeftOf="0" app:layout_constraintTop_toTopOf="0"/>
+        <Button android:id="@+id/set_debug_filter" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="设置关键字" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintRight_toRightOf="0" app:layout_constraintTop_toTopOf="0"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="15dp" android:layout_marginBottom="15dp">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="左边测试栏目开关" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintLeft_toLeftOf="0" app:layout_constraintTop_toTopOf="0"/>
+        <Button android:id="@+id/debug_item" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="请点击开启或关闭" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintRight_toRightOf="0" app:layout_constraintTop_toTopOf="0"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="15dp" android:layout_marginBottom="15dp">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="同传翻译" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintLeft_toLeftOf="0" app:layout_constraintTop_toTopOf="0"/>
+        <Button android:id="@+id/bt_open_translation" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="打开同传翻译" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintRight_toRightOf="0" app:layout_constraintTop_toTopOf="0"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="15dp" android:layout_marginBottom="15dp">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="智慧提醒" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintLeft_toLeftOf="0" app:layout_constraintTop_toTopOf="0"/>
+        <Button android:id="@+id/bt_reminder" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="mock数据" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintRight_toRightOf="0" app:layout_constraintTop_toTopOf="0"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

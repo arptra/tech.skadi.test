@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:layout_width="match_parent" android:layout_height="wrap_content">
+    <com.upuphone.xr.sapp.view.CardItemView android:gravity="center_vertical" android:id="@+id/wifi_switch" android:background="@drawable/bg_card_item" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingHorizontal="20dp" app:card_sub_title="@string/auto_disconnect_note" app:card_title="@string/wireless_network" app:card_type="1" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toTopOf="0"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,152 @@
+syntax = "proto3";
+
+package Starry;
+
+message LinkProtocol {
+  bytes device_id = 1;
+  COMMAND cmd = 2;
+  bytes data = 3;
+}
+
+enum COMMAND {
+  INIT = 0;
+  ENSURE = 1;
+  UN_BONDED = 2;
+  CONNECT_GO = 3;
+  CONNECT_GC = 4;
+  DISCONNECT_P2P = 5;
+  DISCONNECT_P2P_ACTIVE = 6;
+
+  READ_SWITCH_KEY = 10;
+  WRITE_SWITCH_KEY = 11;
+  READ_SWITCH_INFO = 12;
+  WRITE_SWITCH_INFO = 13;
+  BOND_MSG_CHANGE = 14;
+
+  CANCEL_AUTH = 17;
+  AUTH_STATUE = 18;
+  AUTH_MESSAGE = 19;
+
+  CREATE_AP = 20;
+  CONNECT_AP = 21;
+  CONNECTED_AP = 22;
+  DISCONNECT_AP = 23;
+  DISCONNECTED_AP = 24;
+  CONNECT_AP_FAIL = 25;
+  SEVER_REQUEST_CLIENT_DISCONNECT_CONNECTION = 26;
+  DISCONNECT_BLE = 30;
+  PEERS_DISABLE_WIFI = 31;
+  IOS_CONNECT_BT = 32;
+  IOS_DISCONNECT_BT = 33;
+  BT_STATE_CHANGE = 34;
+  REQUEST_STATUS_BT = 35;
+  BLE_STATUS_CHANGE = 36;
+  SYNC_3RD_MAC = 40;
+  SYNC_GC_IP = 41;
+
+  PEERS_NAME_CHANGE = 50;
+
+  EXTERNAL_MESSAGE_NORMAL = 60;
+  EXTERNAL_MESSAGE_ENCRYPT = 61;
+
+  SPP_SERVER_UUID_SYNC = 70;
+  SPP_SERVER_REQUEST_CONNECT = 71;
+  SPP_SERVER_REQUEST_STATE_OPEN = 72;
+  SPP_SERVER_REQUEST_STATE_CLOSE = 73;
+
+  STARRY_NET_STACK = 80;
+}
+
+message ReadSwitchKey{
+  bytes key = 1;
+  bytes btMac = 2;
+}
+
+message WriteSwitchKey{
+  bytes key = 1;
+  bytes info = 2;
+}
+
+message ReadSwitchInfo{
+  bytes info = 1;
+}
+
+message WriteSwitchInfo{
+  int32 code = 1;
+  bytes info = 2;
+}
+
+message DeviceInfo{
+  string btMac = 1;
+  string companyId = 2;
+  string categoryId = 3;
+  string modelId = 4;
+  bytes name = 5;
+  int32 battery = 6;
+  BTSTATUS btStatus = 7;
+}
+
+message BTConnectStatus {
+  BTSTATUS btStatus = 1;
+}
+
+enum BTSTATUS {
+  DEFAULT = 0;
+  BOND = 1;
+  BONDING = 2;
+  NOBOND = 3;
+  CONNECTED_ACL = 4;
+  CONNECTED_HFP = 5;
+  CONNECTED_A2DP = 6;
+  DISCONNECTED = 7;
+  NO_CONNECTED_BT = 8;
+  EXIST_CONNECTED_BT = 9;
+  CONNECT_FAIL = 10;
+  BOND_CANCEL_OR_TIMEOUT = 11;
+}
+
+message BLEConnectStatus {
+  IosBleSTATUS btStatus = 1;
+}
+
+enum IosBleSTATUS{
+  BLE_BONDED = 0;
+  BLE_BONDING = 1;
+  BLE_NOBOND = 2;
+}
+
+
+message WifiGcInfo{
+  string mac = 1;
+  bool isConnected = 2;
+}
+
+message WifiGoInfo{
+  string mac = 1;
+  int32 port = 2;
+  int32 freq = 3;
+  string ssid = 4;
+  string psk = 5;
+
+  string gcMac = 6;
+  string address = 7;
+}
+
+message WifiApInfo{
+  string ssid = 1;
+  string psk = 2;
+  int32 port = 3;
+  string ip = 4;
+}
+
+message WifiStaInfo{
+  string ip = 1;
+  string mac = 2;
+}
+
+message IOSConnectBt{
+    string deviceName = 1;
+    bool isFirstConnect = 2;
+    int32 timeout = 3;
+    int32 cycleCount = 4;
+}

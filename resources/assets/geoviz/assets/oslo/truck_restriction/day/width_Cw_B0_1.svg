@@ -1,0 +1,14 @@
+<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="day / width_Cw_B0_1">
+<g id="TruckMaster">
+<g id="Background">
+<circle id="outer-ring" cx="15" cy="15" r="13" fill="#FB1858"/>
+<circle id="inner-ring" cx="15" cy="15" r="10" fill="white"/>
+</g>
+<g id="Icon_Circle">
+<path id="Vector" d="M5.81 11C5.29 12.2316 5 13.5751 5 15C5 16.4249 5.29 17.7695 5.81 19L8 15L5.81 11Z" fill="#333333"/>
+<path id="Vector_2" d="M24.189 11L22 15L24.189 19C24.71 17.7695 25 16.4249 25 15C25 13.5751 24.71 12.2316 24.189 11Z" fill="#333333"/>
+</g>
+</g>
+</g>
+</svg>

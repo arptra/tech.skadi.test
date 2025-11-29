@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:gravity="center" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="@dimen/search_item_height">
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content">
+        <ImageView android:id="@+id/icon_progress" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/loading" android:layout_marginEnd="@dimen/size_dp_8"/>
+        <TextView android:textSize="@dimen/text_size_13" android:textColor="@color/theme_white_alpha_color" android:id="@+id/more_menu_desp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="desp" android:singleLine="true"/>
+    </LinearLayout>
+</LinearLayout>

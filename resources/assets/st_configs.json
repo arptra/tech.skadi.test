@@ -1,0 +1,281 @@
+{
+  "version": 32,
+  "iccoaBlackList": [
+    { "vid": "0011", "pid": "0011" },
+    { "vid": "0011", "pid": "0015" },
+    { "vid": "0011", "pid": "0016" },
+    { "vid": "0011", "pid": "0017" },
+    { "vid": "0011", "pid": "0018" },
+    { "vid": "0011", "pid": "0021" },
+    { "vid": "0011", "pid": "001D" },
+    { "vid": "0011", "pid": "001C" },
+    { "vid": "0011", "pid": "0022" },
+    { "vid": "0011", "pid": "0023" },
+    { "vid": "0023", "pid": "0011" },
+    { "vid": "0023", "pid": "0010" }
+  ],
+  "whiteMusicApps": [
+    "com.meizu.media.music",
+    "com.tencent.qqmusic",
+    "com.tencent.qqmusictv",
+    "com.netease.cloudmusic",
+    "com.netease.cloudmusic.tv",
+    "com.netease.cloudmusic.iot",
+    "cmccwm.mobilemusic",
+    "cn.kuwo.player",
+    "cn.kuwo.kwmusichd",
+    "cn.kuwo.kwmusiccar",
+    "com.kugou.android",
+    "com.kugou.android.tv",
+    "com.spotify.music",
+    "com.apple.android.music"
+  ],
+  "carWithPadList": [
+    "2001",
+    "2007",
+    "2010",
+    "2017"
+  ],
+  "devices": {
+    "company": [
+      {
+        "-id": "0001",
+        "companyName": "XINGJI",
+        "category": [
+          {
+            "-id": "0001",
+            "categoryName": "Phone"
+          },
+          {
+            "-id": "0002",
+            "categoryName": "XR",
+            "model": [
+              { "-id": "1001", "modelName": "Star Concept" },
+              { "-id": "1002", "modelName": "Star" },
+              { "-id": "1003", "modelName": "Star Air" },
+              { "-id": "1004", "modelName": "Air Pro" }
+            ]
+          },
+          {
+            "-id": "0003",
+            "categoryName": "Ring",
+            "model": [
+              { "-id": "1200", "modelName": "Unicron" },
+              { "-id": "1201", "modelName": "MYVURing" },
+              { "-id": "1202", "modelName": "MYVURing-intl" },
+              { "-id": "1203", "modelName": "MYVURing-USA" }
+            ]
+          }
+        ]
+      },
+      {
+        "-id": "0002",
+        "companyName": "ECARX",
+        "category": [
+          {
+            "-id": "1001",
+            "categoryName": "Car",
+            "model": [
+              { "-id": "2001", "modelName": "se1000_dx11_slave" },
+              { "-id": "2002", "modelName": "PS4" },
+              { "-id": "2003", "modelName": "E171" },
+              { "-id": "2004", "modelName": "DHU609G" },
+              { "-id": "2005", "modelName": "ex11" },
+              { "-id": "2006", "modelName": "BX11_A2" },
+              { "-id": "2007", "modelName": "E371" },
+              { "-id": "2008", "modelName": "antora1000_e245" },
+              { "-id": "2009", "modelName": "CS11_A4" },
+              { "-id": "2010", "modelName": "se1000_ds11_slave" },
+              { "-id": "2011", "modelName": "se1000_e335_slave" },
+              { "-id": "2012", "modelName": "P145" },
+              { "-id": "2013", "modelName": "E22H" },
+              { "-id": "2014", "modelName": "CX11" },
+              { "-id": "2015", "modelName": "DCY11" },
+              { "-id": "2016", "modelName": "CS11" },
+              { "-id": "2017", "modelName": "E371_MX" },
+              { "-id": "2018", "modelName": "L946" },
+              { "-id": "2019", "modelName": "IHU623G" },
+              { "-id": "2020", "modelName": "IHU624G" },
+              { "-id": "2021", "modelName": "SX12A2" },
+              { "-id": "2022", "modelName": "G636" },
+              { "-id": "2023", "modelName": "FS12-A1" },
+              { "-id": "2024", "modelName": "SS11-A3" },
+              { "-id": "2025", "modelName": "Geely EX5" },
+              { "-id": "2026", "modelName": "se1000_v446kcn_slave" },
+              { "-id": "2027", "modelName": "P181" },
+              { "-id": "2028", "modelName": "FX11-A2" },
+              { "-id": "2029", "modelName": "P177" },
+              { "-id": "2030", "modelName": "G733" }
+            ]
+          },
+          {
+            "-id": "1002",
+            "categoryName": "HUD",
+            "model": [
+              { "-id": "2101", "modelName": "Master" }
+            ]
+          }
+        ]
+      },
+      {
+        "-id": "0003",
+        "companyName": "meizu",
+        "category": [
+          {
+            "-id": "2001",
+            "categoryName": "PHONE",
+            "model": [
+              { "-id": "3001", "modelName": "MEIZU 20" },
+              { "-id": "3002", "modelName": "MEIZU 20 Pro" },
+              { "-id": "3003", "modelName": "MEIZU 20 Inf" },
+              { "-id": "3004", "modelName": "m2461" },
+              { "-id": "3005", "modelName": "m2481" },
+              { "-id": "3006", "modelName": "MEIZU 21 Note" },
+              { "-id": "3007", "modelName": "m2431" },
+              { "-id": "3008", "modelName": "m2521" }
+            ]
+          },
+          {
+            "-id": "2002",
+            "categoryName": "PAD",
+            "model": [
+              { "-id": "4001", "modelName": "AIPad U1" },
+              { "-id": "4002", "modelName": "T0743" }
+            ]
+          }
+        ]
+      },
+      {
+        "-id": "9000",
+        "companyName": "Apple",
+        "category": [
+          {
+            "-id": "9000",
+            "categoryName": "iPhone",
+            "model": [
+              { "-id": "9000", "modelName": "iPhone" }
+            ]
+          },
+          {
+            "-id": "9100",
+            "categoryName": "iWatch",
+            "model": [
+              { "-id": "9100", "modelName": "iWatch" }
+            ]
+          }
+        ]
+      },
+      {
+        "-id": "9999",
+        "companyName": "3rd",
+        "category": [
+          {
+            "-id": "9999",
+            "categoryName": "3rd",
+            "model": [
+              { "-id": "9999", "modelName": "3rd" },
+              { "-id": "A000", "modelName": "Harmony" },
+              { "-id": "A001", "modelName": "SamSung" },
+              { "-id": "A002", "modelName": "Vivo" },
+              { "-id": "A003", "modelName": "Oppo" },
+              { "-id": "A004", "modelName": "Motorola" },
+              { "-id": "A005", "modelName": "Infinix" },
+              { "-id": "A006", "modelName": "Xiaomi" }
+            ]
+          }
+        ]
+      },
+      {
+        "-id": "0004 ",
+        "companyName": "XINGJI-intl",
+        "category": [
+          {
+            "-id": "3001",
+            "categoryName": "XR-intl",
+            "model": [
+              { "-id": "5001", "modelName": "Star Air intl" },
+              { "-id": "5002", "modelName": "Star Air pro intl" }
+            ]
+          }
+        ]
+      },
+      {
+        "-id": "0005",
+        "companyName": "HongQi",
+        "category": [
+          {
+            "-id": "1001",
+            "categoryName": "Car",
+            "model": [
+              { "-id": "6001", "modelName": "FAW" },
+              { "-id": "6002", "modelName": "DHU3013009" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "iccoaWhiteApps": [
+    "com.tencent.tmgp.sgame",
+    "com.ss.android.ugc.aweme",
+    "com.alibaba.android.rimet",
+    "com.tencent.mobileqq",
+    "com.UCMobile",
+    "com.smile.gifmaker",
+    "com.xunmeng.pinduoduo",
+    "tv.danmaku.bili",
+    "com.jingdong.app.mall",
+    "com.tencent.wemeet.app",
+    "com.xingin.xhs",
+    "com.duowan.kiwi",
+    "com.zhihu.android",
+    "com.taobao.taobao",
+    "com.baidu.searchbox",
+    "com.tencent.mm",
+    "com.tencent.qqlive",
+    "com.sina.weibo",
+    "com.qiyi.video",
+    "com.sankuai.meituan",
+    "com.youku.phone",
+    "com.baidu.netdisk",
+    "com.tencent.qqmusic",
+    "com.kugou.android",
+    "com.shizhuang.duapp",
+    "com.ss.android.article.video",
+    "com.cmcc.cmvideo",
+    "com.netease.cloudmusic",
+    "com.le123.ysdq",
+    "com.tencent.karaoke",
+    "com.eg.android.AlipayGphone",
+    "com.ximalaya.ting.android",
+    "com.sankuai.meituan.takeoutnew",
+    "com.wuba.zhuanzhuan",
+    "com.umetrip.android.msky.app",
+    "com.autonavi.minimap",
+    "com.baidu.tieba",
+    "com.ss.android.article.news",
+    "com.xs.fm",
+    "com.achievo.vipshop",
+    "com.achievo.vipshop",
+    "air.tv.douyu.android",
+    "com.hunantv.imgo.activity",
+    "com.baidu.BaiduMap",
+    "com.tencent.androidqqmail",
+    "com.unionpay",
+    "com.ss.android.lark",
+    "com.tencent.wework",
+    "com.ss.android.ugc.live",
+    "com.quark.browser",
+    "com.baidu.homework",
+    "com.tencent.mtt",
+    "com.xunlei.downloadprovider",
+    "com.taobao.idlefish",
+    "com.fenbi.android.solar",
+    "me.ele",
+    "com.microsoft.emmx",
+    "com.tmall.wireless",
+    "com.bairimeng.dmmdzz.mi",
+    "com.kuaikan.comic",
+    "com.hpbr.bosszhipin"
+  ]
+}

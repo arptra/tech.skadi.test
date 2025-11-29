@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="add_nor_address_color">#ffa900</color>
+    <color name="address_highlight_color">#1368fb</color>
+    <color name="broadcast_color">#8c8c8c</color>
+    <color name="circle_fill_color">#1a1368fb</color>
+    <color name="circle_stroke_color">#451368fb</color>
+    <color name="del_history_color">#f44747</color>
+    <color name="del_nor_address_color">#8d8d8d</color>
+    <color name="dialog_bg_color">#ffffff</color>
+    <color name="energy_text_color">#2eb860</color>
+    <color name="mask_color">#1a000000</color>
+    <color name="no_connect_font_color">#ff0000</color>
+    <color name="poi_index_color">#f24e55</color>
+    <color name="poi_select_color">#33135bd8</color>
+    <color name="progress_dialog_bg_color">#ffffff</color>
+    <color name="scrollbar_color">#33000000</color>
+    <color name="search_highlight_color">#1368fb</color>
+    <color name="search_item_address_color">#8c8c8c</color>
+    <color name="search_item_name_color">#000000</color>
+    <color name="search_menu_color">#cc000000</color>
+    <color name="text_blue">#1368fb</color>
+    <color name="theme_black_2_color">#f6f6f6</color>
+    <color name="theme_black_3_color">#f6f6f6</color>
+    <color name="theme_black_4_color">#ffffff</color>
+    <color name="theme_black_5_color">#f6f6f6</color>
+    <color name="theme_black_color">#ffffff</color>
+    <color name="theme_color_1">#ffffff</color>
+    <color name="theme_color_2">#000000</color>
+    <color name="theme_color_3">#1368fb</color>
+    <color name="theme_color_4">#f0f0f0</color>
+    <color name="theme_color_5">#dedede</color>
+    <color name="theme_color_6">#dedede</color>
+    <color name="theme_white_alpha_color">#8c8c8c</color>
+    <color name="theme_white_color">#000000</color>
+</resources>

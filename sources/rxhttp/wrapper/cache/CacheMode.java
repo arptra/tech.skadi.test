@@ -1,0 +1,9 @@
+package rxhttp.wrapper.cache;
+
+public enum CacheMode {
+    ONLY_NETWORK,
+    ONLY_CACHE,
+    NETWORK_SUCCESS_WRITE_CACHE,
+    READ_CACHE_FAILED_REQUEST_NETWORK,
+    REQUEST_NETWORK_FAILED_READ_CACHE
+}

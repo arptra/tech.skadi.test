@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:id="@+id/guide_parent" android:layout_width="wrap_content" android:layout_height="wrap_content">
+    <LinearLayout android:orientation="horizontal" android:id="@+id/guide_bg_vertical" android:layout_width="match_parent" android:layout_height="match_parent" android:layoutDirection="ltr">
+        <View android:id="@+id/guide_bg_left" android:background="0x7f08077d" android:layout_width="48dp" android:layout_height="match_parent"/>
+        <View android:id="@+id/guide_bg_middle" android:background="0x7f08077e" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_marginStart="-1px"/>
+        <View android:id="@+id/guide_bg_right" android:background="0x7f080780" android:layout_width="48dp" android:layout_height="match_parent" android:layout_marginStart="-1px"/>
+    </LinearLayout>
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@+id/guide_content" android:layout_width="wrap_content" android:layout_height="wrap_content">
+        <TextView android:textSize="@dimen/mc_guide_popup_text_size" android:textColor="#ffffff" android:gravity="left|center_vertical|center_horizontal|center" android:id="@+id/guide_message" android:paddingTop="10dp" android:paddingBottom="10dp" android:layout_width="0dp" android:layout_height="wrap_content" android:maxWidth="276dp" android:layout_weight="1" android:lineSpacingExtra="@dimen/mc_guide_popup_text_line_spacing" android:fontFamily="sans-serif-medium" android:paddingStart="10dp" android:paddingEnd="10dp"/>
+        <TextView android:background="#30ffffff" android:paddingTop="1dp" android:layout_width="2px" android:layout_height="wrap_content" android:singleLine="true" android:includeFontPadding="false"/>
+        <ImageView android:layout_gravity="center" android:id="@+id/guide_close" android:paddingTop="10dp" android:paddingBottom="10dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="0x7f08067f" android:paddingStart="10dp" android:paddingEnd="10dp"/>
+    </LinearLayout>
+</FrameLayout>

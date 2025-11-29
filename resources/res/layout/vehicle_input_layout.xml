@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="50dp" style="@style/PWKInputViewStyle">
+    <EditText android:textColorHint="#0f58d5" android:id="@+id/number_0" android:textCursorDrawable="@drawable/shape_et_cursor" android:layout_marginEnd="@dimen/size_dp_2" style="@style/PWKInputItemStyle_LIGHT_FILLED_KEY"/>
+    <EditText android:textColorHint="#0f58d5" android:id="@+id/number_1" android:textCursorDrawable="@drawable/shape_et_cursor" android:layout_marginEnd="@dimen/size_dp_2" style="@style/PWKInputItemStyleKey"/>
+    <EditText android:textColorHint="#0f58d5" android:id="@+id/number_2" android:textCursorDrawable="@drawable/shape_et_cursor" android:layout_marginEnd="@dimen/size_dp_2" style="@style/PWKInputItemStyleKey"/>
+    <EditText android:textColorHint="#0f58d5" android:id="@+id/number_3" android:textCursorDrawable="@drawable/shape_et_cursor" android:layout_marginEnd="@dimen/size_dp_2" style="@style/PWKInputItemStyleKey"/>
+    <EditText android:textColorHint="#0f58d5" android:id="@+id/number_4" android:textCursorDrawable="@drawable/shape_et_cursor" android:layout_marginEnd="@dimen/size_dp_2" style="@style/PWKInputItemStyleKey"/>
+    <EditText android:textColorHint="#0f58d5" android:id="@+id/number_5" android:textCursorDrawable="@drawable/shape_et_cursor" android:layout_marginEnd="@dimen/size_dp_2" style="@style/PWKInputItemStyleKey"/>
+    <EditText android:textColorHint="#0f58d5" android:id="@+id/number_6" android:textCursorDrawable="@drawable/shape_et_cursor" android:layout_marginEnd="@dimen/size_dp_2" style="@style/PWKInputItemStyleKey"/>
+    <EditText android:textSize="@dimen/text_size_10" android:textColorHint="@color/energy_text_color" android:id="@+id/number_7" android:visibility="visible" android:hint="@string/new_energy_hint" android:textCursorDrawable="@drawable/shape_et_cursor" android:paddingStart="10dp" android:paddingEnd="10dp" style="@style/PWKInputItemStyle_ENERGY_FILLED_KEY"/>
+</merge>

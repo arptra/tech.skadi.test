@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:height="48dp" android:width="288dp" android:autoMirrored="true" android:viewportWidth="288" android:viewportHeight="48">
+    <path android:fillColor="@drawable/$third_bg_confirm_button__0" android:pathData="M12,0L276,0A12,12 0,0 1,288 12L288,36A12,12 0,0 1,276 48L12,48A12,12 0,0 1,0 36L0,12A12,12 0,0 1,12 0z"/>
+</vector>

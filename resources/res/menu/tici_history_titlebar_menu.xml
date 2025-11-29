@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt">
+    <item android:id="@+id/menu_create_tici_file" android:title="@string/tici_new_file"/>
+    <item android:id="@+id/menu_import_from_file" android:title="@string/tici_import_from_system_file"/>
+    <item android:id="@+id/menu_import_from_other_app" android:visible="false" android:title="@string/tici_import_from_other_app"/>
+</menu>

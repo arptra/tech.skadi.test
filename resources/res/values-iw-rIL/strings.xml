@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="poscon.consent.screen.no">לא, תודה</string>
+    <string name="poscon.consent.screen.yes">כן, בטח</string>
+    <string name="poscon.consent.v3.screen.1">ייתכן שיישום זה יאסוף מידע על סביבתך, כגון אותות של רשתות Wi-Fi ורשתות סלולריות סמוכות</string>
+    <string name="poscon.consent.v3.screen.2">באישורך, מידע זה יישלח אל HERE כד לסייע בשיפור השירותים של HERE. מידע זו אינו משמש כדי לזהות אותך ו-HERE ישמור מידע אנונימי בלבד.</string>
+    <string name="poscon.consent.v3.screen.3">תוכל לבטל את הסכמתך בכל עת</string>
+    <string name="poscon.consent.v3.screen.learn.more">מידע על נהלי הפרטיות של HERE</string>
+    <string name="poscon.consent.v3.screen.turn.on">האם אתה מסכים לספק ל-HERE מידע זה?</string>
+</resources>

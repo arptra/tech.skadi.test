@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:layout_width="match_parent" android:layout_height="match_parent">
+    <com.honey.account.ui.fastscrollletter.MyFastScrollLetterRecyclerView android:id="@+id/country_recyclerview" android:layout_width="match_parent" android:layout_height="match_parent" android:paddingEnd="30dp"/>
+    <com.meizu.common.fastscrollletter.FastScrollLetter android:id="@+id/country_fastscrollLetter" android:visibility="visible" android:layout_width="match_parent" android:layout_height="match_parent"/>
+</merge>

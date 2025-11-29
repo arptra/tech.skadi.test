@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="poscon.consent.screen.no">Ні, дякую</string>
+    <string name="poscon.consent.screen.yes">Так, звісно</string>
+    <string name="poscon.consent.v3.screen.1">Ця програма може збирати відомості про ваше оточення, наприклад про мережі Wi-Fi і сигнали мобільних мереж поблизу</string>
+    <string name="poscon.consent.v3.screen.2">З вашого дозволу ці відомості надсилатимуться до HERE з метою покращення послуг HERE. Ця інформація не дозволяє ідентифікувати вас, а HERE отримуватиме її лише в анонімізованому вигляді.</string>
+    <string name="poscon.consent.v3.screen.3">Ви можете відкликати свою згоду будь-коли</string>
+    <string name="poscon.consent.v3.screen.learn.more">Дізнатися більше про політику конфіденційності HERE</string>
+    <string name="poscon.consent.v3.screen.turn.on">Ви бажаєте надати HERE ці відомості?</string>
+</resources>

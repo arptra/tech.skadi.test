@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:exitFadeDuration="@android:integer/config_mediumAnimTime">
+    <item android:drawable="0x7f0807d3" android:state_activated="true"/>
+    <item android:drawable="@color/list_hovered_background" android:state_hovered="true"/>
+    <item android:drawable="@android:color/transparent"/>
+</selector>

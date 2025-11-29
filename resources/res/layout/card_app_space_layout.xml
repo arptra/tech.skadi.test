@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:layout_width="match_parent" android:layout_height="wrap_content">
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/no_disturb_model" android:layout_width="match_parent" android:layout_height="@dimen/card_item_height" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toTopOf="0">
+        <ImageView android:id="@+id/card_icon" android:layout_width="48dp" android:layout_height="48dp" android:src="@drawable/app_space_voice_assistance_png" android:scaleType="fitXY" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toTopOf="0"/>
+        <ImageView android:id="@+id/card_right_icon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/icon_search" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintEnd_toEndOf="0" app:layout_constraintTop_toTopOf="0"/>
+        <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="12dp" app:layout_constraintStart_toEndOf="@+id/card_icon" app:layout_constraintTop_toTopOf="@+id/card_icon">
+            <TextView android:textSize="17sp" android:id="@+id/card_title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ar_application_guide" android:lineHeight="24dp" android:textFontWeight="@integer/medium" style="@style/Theme.Upuphone.Font.Title"/>
+            <TextView android:textSize="14sp" android:id="@+id/card_sub_title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="@string/ar_application_guide_intro" android:lineHeight="20dp" style="@style/Theme.Upuphone.Font.Sub.Title"/>
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:state_enabled="false" android:state_selected="true" android:color="@color/color_guide_1"/>
+    <item android:state_enabled="false" android:state_selected="false" android:color="@color/color_CCCCCC"/>
+    <item android:state_selected="true" android:color="@color/mz_theme_color_blue"/>
+    <item android:color="@color/subtitle_text_color"/>
+</selector>

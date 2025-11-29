@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="mc_chooser_item_width">24dp</dimen>
+    <dimen name="mc_empty_tips_text_size_light">14sp</dimen>
+    <dimen name="mc_enhancegallery_max_overscroll_distance">120dp</dimen>
+    <dimen name="mc_galleryflow_picture_size">90dp</dimen>
+</resources>

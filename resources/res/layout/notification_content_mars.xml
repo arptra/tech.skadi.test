@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:orientation="vertical" android:id="@+id/notification_main" android:clipChildren="false" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingHorizontal="12dp" android:paddingVertical="9.5dp">
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content">
+        <ImageView android:id="@+id/notification_logo" android:layout_width="16dp" android:layout_height="16dp" android:layout_marginTop="0dp" android:src="@drawable/notification_logo" android:layout_marginStart="0dp"/>
+        <TextView android:textSize="12sp" android:textColor="@color/notification_title_text_color" android:id="@+id/notification_title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="0dp" android:text="@string/guide_app_name" android:layout_marginStart="4dp" android:textFontWeight="400"/>
+    </LinearLayout>
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@+id/notify_content" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp">
+        <TextView android:textSize="15sp" android:textColor="@color/notification_content_text_color" android:id="@+id/notification_content" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:lineHeight="22dp" android:textFontWeight="500"/>
+        <ImageView android:id="@+id/notification_split" android:background="#0d000000" android:visibility="visible" android:layout_width="1dp" android:layout_height="20dp" android:layout_marginStart="6dp" android:layout_marginEnd="6dp"/>
+        <ImageView android:id="@+id/notification_touchpad" android:visibility="visible" android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/notification_touchpad" android:layout_marginStart="10dp" android:layout_marginEnd="10dp"/>
+    </LinearLayout>
+</LinearLayout>

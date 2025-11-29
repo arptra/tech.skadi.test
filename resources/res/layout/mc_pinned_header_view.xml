@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:background="0x7f080660" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="@dimen/mz_card_list_item_padding_left" android:paddingEnd="@dimen/mz_card_list_item_padding_right">
+    <include android:layout_width="match_parent" android:layout_height="@dimen/mz_pinned_interval_header_title_height" layout="@layout/mc_pinned_group_header"/>
+</LinearLayout>

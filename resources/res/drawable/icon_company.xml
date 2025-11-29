@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:height="18dp" android:width="18dp" android:autoMirrored="true" android:viewportWidth="18" android:viewportHeight="18">
+    <path android:fillColor="#00000000" android:pathData="M4.125,15L13.875,15A1.5,1.5 0,0 0,15.375 13.5L15.375,6.75A1.5,1.5 0,0 0,13.875 5.25L4.125,5.25A1.5,1.5 0,0 0,2.625 6.75L2.625,13.5A1.5,1.5 0,0 0,4.125 15z" android:strokeColor="@color/adjion_text_color" android:strokeWidth="1.5" android:strokeAlpha="0.8"/>
+    <path android:fillColor="@color/adjion_text_color" android:pathData="M13.313,3.75C13.416,3.75 13.501,3.666 13.488,3.563C13.396,2.823 12.765,2.25 12,2.25H6C5.235,2.25 4.604,2.823 4.512,3.563C4.499,3.666 4.584,3.75 4.687,3.75H6H12H13.313Z" android:fillAlpha="0.8" android:fillType="1"/>
+    <path android:fillColor="@color/adjion_text_color" android:pathData="M6.75,11.55C6.75,11.757 6.918,11.925 7.125,11.925H10.875C11.082,11.925 11.25,11.757 11.25,11.55V10.95C11.25,10.743 11.082,10.575 10.875,10.575H7.125C6.918,10.575 6.75,10.743 6.75,10.95V11.55Z" android:fillAlpha="0.65" android:fillType="1"/>
+</vector>

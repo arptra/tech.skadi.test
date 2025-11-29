@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:orientation="vertical" android:id="@+id/main" android:layout_width="match_parent" android:layout_height="match_parent">
+    <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+        <Button android:id="@+id/get_brightness" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="获取亮度"/>
+        <Button android:id="@+id/set_brightness" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="设置亮度"/>
+    </LinearLayout>
+    <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="20dp">
+        <Button android:id="@+id/get_weather" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="获取天气"/>
+        <Button android:id="@+id/get_steps" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="获取步数"/>
+    </LinearLayout>
+    <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="20dp">
+        <Button android:id="@+id/screenshot" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="截图"/>
+        <Button android:id="@+id/start_screen_record" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="开始录屏"/>
+        <Button android:id="@+id/end_screen_record" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="结束录屏"/>
+    </LinearLayout>
+    <Button android:id="@+id/get_language" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="获取语言"/>
+    <Button android:id="@+id/get_permission" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="申请权限"/>
+    <EditText android:id="@+id/edit_text" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:hint="hint"/>
+    <ImageView android:id="@+id/image_view" android:layout_width="300dp" android:layout_height="300dp"/>
+</LinearLayout>

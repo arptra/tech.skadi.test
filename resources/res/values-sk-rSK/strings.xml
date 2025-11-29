@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="poscon.consent.screen.no">Nie, ďakujem</string>
+    <string name="poscon.consent.screen.yes">OK, určite</string>
+    <string name="poscon.consent.v3.screen.1">Aplikácia môže zhromažďovať informácie o vašom okolí, napríklad o blízkych sieťach Wi-Fi a celulárnych signáloch</string>
+    <string name="poscon.consent.v3.screen.2">Ak súhlasíte, tieto informácie budú zasielané HERE s cieľom zlepšovania služieb HERE. Na základe týchto informácií vás nie je možné identifikovať a HERE uchová iba anonymizované informácie.</string>
+    <string name="poscon.consent.v3.screen.3">Svoj súhlas môžete kedykoľvek odvolať</string>
+    <string name="poscon.consent.v3.screen.learn.more">Ďalšie informácie o zásadách ochrany súkromia HERE</string>
+    <string name="poscon.consent.v3.screen.turn.on">Súhlasíte so zdieľaním týchto informácií HERE?</string>
+</resources>

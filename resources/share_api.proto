@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+option java_package = "com.upuphone.runasone.share.lib";
+
+message Message {
+  StreamType type = 1;
+  string dirPath = 2;
+  string taskId = 3;
+  string fileInfos = 4;
+  string extra = 5;
+  repeated string paths = 6;
+  int32  operator = 7;
+  string packageName = 8;
+  int32  port = 9;
+  string ipAddress = 10;
+  string fileResumeInfo = 11;
+  int32  status = 12;
+  int64  chunkSize = 13;
+  bytes  chunkData = 14;
+  int64  totalSize = 15;
+  int32  count = 16;
+  int64  beginStart = 17;
+  int64  chunkStart = 18;
+  int32  order = 19;
+  string md5 = 20;
+  string fileName = 21;
+  int64  chunkEnd = 22;
+
+}
+
+enum StreamType {
+  DEFAULT = 0;
+  PULL = 1;
+  SIGNAL = 2;
+  CANCEL = 3;
+  SENDER_SYN = 4;
+  RECEIVER_ACK = 5;
+  SENDER_DATA = 6;
+  SENDER_FINISH = 7;
+  RECEIVER_FINISH = 8;
+  SENDER_FAIL = 9;
+  SENDER_CANCEL = 10;
+  RECEIVER_CANCEL = 11;
+  RECEIVER_FAIL = 12;
+  RECEIVE_OTA_FINISH = 13;
+  RECEIVER_DATA_ACK = 14;
+}

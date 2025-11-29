@@ -1,0 +1,261 @@
+package io.reactivex.rxjava3.internal.operators.observable;
+
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.ObservableSource;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.exceptions.Exceptions;
+import io.reactivex.rxjava3.functions.BiFunction;
+import io.reactivex.rxjava3.functions.Function;
+import io.reactivex.rxjava3.internal.operators.observable.ObservableGroupJoin;
+import io.reactivex.rxjava3.internal.queue.SpscLinkedArrayQueue;
+import io.reactivex.rxjava3.internal.util.ExceptionHelper;
+import io.reactivex.rxjava3.plugins.RxJavaPlugins;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
+public final class ObservableJoin<TLeft, TRight, TLeftEnd, TRightEnd, R> extends AbstractObservableWithUpstream<TLeft, R> {
+    final Function<? super TLeft, ? extends ObservableSource<TLeftEnd>> leftEnd;
+    final ObservableSource<? extends TRight> other;
+    final BiFunction<? super TLeft, ? super TRight, ? extends R> resultSelector;
+    final Function<? super TRight, ? extends ObservableSource<TRightEnd>> rightEnd;
+
+    public static final class JoinDisposable<TLeft, TRight, TLeftEnd, TRightEnd, R> extends AtomicInteger implements Disposable, ObservableGroupJoin.JoinSupport {
+        static final Integer LEFT_CLOSE = 3;
+        static final Integer LEFT_VALUE = 1;
+        static final Integer RIGHT_CLOSE = 4;
+        static final Integer RIGHT_VALUE = 2;
+        private static final long serialVersionUID = -6071216598687999801L;
+        final AtomicInteger active;
+        volatile boolean cancelled;
+        final CompositeDisposable disposables = new CompositeDisposable();
+        final Observer<? super R> downstream;
+        final AtomicReference<Throwable> error = new AtomicReference<>();
+        final Function<? super TLeft, ? extends ObservableSource<TLeftEnd>> leftEnd;
+        int leftIndex;
+        final Map<Integer, TLeft> lefts = new LinkedHashMap();
+        final SpscLinkedArrayQueue<Object> queue = new SpscLinkedArrayQueue<>(Observable.bufferSize());
+        final BiFunction<? super TLeft, ? super TRight, ? extends R> resultSelector;
+        final Function<? super TRight, ? extends ObservableSource<TRightEnd>> rightEnd;
+        int rightIndex;
+        final Map<Integer, TRight> rights = new LinkedHashMap();
+
+        public JoinDisposable(Observer<? super R> observer, Function<? super TLeft, ? extends ObservableSource<TLeftEnd>> function, Function<? super TRight, ? extends ObservableSource<TRightEnd>> function2, BiFunction<? super TLeft, ? super TRight, ? extends R> biFunction) {
+            this.downstream = observer;
+            this.leftEnd = function;
+            this.rightEnd = function2;
+            this.resultSelector = biFunction;
+            this.active = new AtomicInteger(2);
+        }
+
+        public void cancelAll() {
+            this.disposables.dispose();
+        }
+
+        public void dispose() {
+            if (!this.cancelled) {
+                this.cancelled = true;
+                cancelAll();
+                if (getAndIncrement() == 0) {
+                    this.queue.clear();
+                }
+            }
+        }
+
+        public void drain() {
+            if (getAndIncrement() == 0) {
+                SpscLinkedArrayQueue<Object> spscLinkedArrayQueue = this.queue;
+                Observer<? super R> observer = this.downstream;
+                int i = 1;
+                while (!this.cancelled) {
+                    if (this.error.get() != null) {
+                        spscLinkedArrayQueue.clear();
+                        cancelAll();
+                        errorAll(observer);
+                        return;
+                    }
+                    boolean z = this.active.get() == 0;
+                    Integer num = (Integer) spscLinkedArrayQueue.poll();
+                    boolean z2 = num == null;
+                    if (z && z2) {
+                        this.lefts.clear();
+                        this.rights.clear();
+                        this.disposables.dispose();
+                        observer.onComplete();
+                        return;
+                    } else if (z2) {
+                        i = addAndGet(-i);
+                        if (i == 0) {
+                            return;
+                        }
+                    } else {
+                        Object poll = spscLinkedArrayQueue.poll();
+                        if (num == LEFT_VALUE) {
+                            int i2 = this.leftIndex;
+                            this.leftIndex = i2 + 1;
+                            this.lefts.put(Integer.valueOf(i2), poll);
+                            try {
+                                Object apply = this.leftEnd.apply(poll);
+                                Objects.requireNonNull(apply, "The leftEnd returned a null ObservableSource");
+                                ObservableSource observableSource = (ObservableSource) apply;
+                                ObservableGroupJoin.LeftRightEndObserver leftRightEndObserver = new ObservableGroupJoin.LeftRightEndObserver(this, true, i2);
+                                this.disposables.add(leftRightEndObserver);
+                                observableSource.subscribe(leftRightEndObserver);
+                                if (this.error.get() != null) {
+                                    spscLinkedArrayQueue.clear();
+                                    cancelAll();
+                                    errorAll(observer);
+                                    return;
+                                }
+                                for (TRight apply2 : this.rights.values()) {
+                                    try {
+                                        Object apply3 = this.resultSelector.apply(poll, apply2);
+                                        Objects.requireNonNull(apply3, "The resultSelector returned a null value");
+                                        observer.onNext(apply3);
+                                    } catch (Throwable th) {
+                                        fail(th, observer, spscLinkedArrayQueue);
+                                        return;
+                                    }
+                                }
+                            } catch (Throwable th2) {
+                                fail(th2, observer, spscLinkedArrayQueue);
+                                return;
+                            }
+                        } else if (num == RIGHT_VALUE) {
+                            int i3 = this.rightIndex;
+                            this.rightIndex = i3 + 1;
+                            this.rights.put(Integer.valueOf(i3), poll);
+                            try {
+                                Object apply4 = this.rightEnd.apply(poll);
+                                Objects.requireNonNull(apply4, "The rightEnd returned a null ObservableSource");
+                                ObservableSource observableSource2 = (ObservableSource) apply4;
+                                ObservableGroupJoin.LeftRightEndObserver leftRightEndObserver2 = new ObservableGroupJoin.LeftRightEndObserver(this, false, i3);
+                                this.disposables.add(leftRightEndObserver2);
+                                observableSource2.subscribe(leftRightEndObserver2);
+                                if (this.error.get() != null) {
+                                    spscLinkedArrayQueue.clear();
+                                    cancelAll();
+                                    errorAll(observer);
+                                    return;
+                                }
+                                for (TLeft apply5 : this.lefts.values()) {
+                                    try {
+                                        Object apply6 = this.resultSelector.apply(apply5, poll);
+                                        Objects.requireNonNull(apply6, "The resultSelector returned a null value");
+                                        observer.onNext(apply6);
+                                    } catch (Throwable th3) {
+                                        fail(th3, observer, spscLinkedArrayQueue);
+                                        return;
+                                    }
+                                }
+                            } catch (Throwable th4) {
+                                fail(th4, observer, spscLinkedArrayQueue);
+                                return;
+                            }
+                        } else if (num == LEFT_CLOSE) {
+                            ObservableGroupJoin.LeftRightEndObserver leftRightEndObserver3 = (ObservableGroupJoin.LeftRightEndObserver) poll;
+                            this.lefts.remove(Integer.valueOf(leftRightEndObserver3.index));
+                            this.disposables.remove(leftRightEndObserver3);
+                        } else {
+                            ObservableGroupJoin.LeftRightEndObserver leftRightEndObserver4 = (ObservableGroupJoin.LeftRightEndObserver) poll;
+                            this.rights.remove(Integer.valueOf(leftRightEndObserver4.index));
+                            this.disposables.remove(leftRightEndObserver4);
+                        }
+                    }
+                }
+                spscLinkedArrayQueue.clear();
+            }
+        }
+
+        public void errorAll(Observer<?> observer) {
+            Throwable terminate = ExceptionHelper.terminate(this.error);
+            this.lefts.clear();
+            this.rights.clear();
+            observer.onError(terminate);
+        }
+
+        public void fail(Throwable th, Observer<?> observer, SpscLinkedArrayQueue<?> spscLinkedArrayQueue) {
+            Exceptions.throwIfFatal(th);
+            ExceptionHelper.addThrowable(this.error, th);
+            spscLinkedArrayQueue.clear();
+            cancelAll();
+            errorAll(observer);
+        }
+
+        public void innerClose(boolean z, ObservableGroupJoin.LeftRightEndObserver leftRightEndObserver) {
+            synchronized (this) {
+                try {
+                    this.queue.offer(z ? LEFT_CLOSE : RIGHT_CLOSE, leftRightEndObserver);
+                } catch (Throwable th) {
+                    while (true) {
+                        throw th;
+                    }
+                }
+            }
+            drain();
+        }
+
+        public void innerCloseError(Throwable th) {
+            if (ExceptionHelper.addThrowable(this.error, th)) {
+                drain();
+            } else {
+                RxJavaPlugins.onError(th);
+            }
+        }
+
+        public void innerComplete(ObservableGroupJoin.LeftRightObserver leftRightObserver) {
+            this.disposables.delete(leftRightObserver);
+            this.active.decrementAndGet();
+            drain();
+        }
+
+        public void innerError(Throwable th) {
+            if (ExceptionHelper.addThrowable(this.error, th)) {
+                this.active.decrementAndGet();
+                drain();
+                return;
+            }
+            RxJavaPlugins.onError(th);
+        }
+
+        public void innerValue(boolean z, Object obj) {
+            synchronized (this) {
+                try {
+                    this.queue.offer(z ? LEFT_VALUE : RIGHT_VALUE, obj);
+                } catch (Throwable th) {
+                    while (true) {
+                        throw th;
+                    }
+                }
+            }
+            drain();
+        }
+
+        public boolean isDisposed() {
+            return this.cancelled;
+        }
+    }
+
+    public ObservableJoin(ObservableSource<TLeft> observableSource, ObservableSource<? extends TRight> observableSource2, Function<? super TLeft, ? extends ObservableSource<TLeftEnd>> function, Function<? super TRight, ? extends ObservableSource<TRightEnd>> function2, BiFunction<? super TLeft, ? super TRight, ? extends R> biFunction) {
+        super(observableSource);
+        this.other = observableSource2;
+        this.leftEnd = function;
+        this.rightEnd = function2;
+        this.resultSelector = biFunction;
+    }
+
+    public void subscribeActual(Observer<? super R> observer) {
+        JoinDisposable joinDisposable = new JoinDisposable(observer, this.leftEnd, this.rightEnd, this.resultSelector);
+        observer.onSubscribe(joinDisposable);
+        ObservableGroupJoin.LeftRightObserver leftRightObserver = new ObservableGroupJoin.LeftRightObserver(joinDisposable, true);
+        joinDisposable.disposables.add(leftRightObserver);
+        ObservableGroupJoin.LeftRightObserver leftRightObserver2 = new ObservableGroupJoin.LeftRightObserver(joinDisposable, false);
+        joinDisposable.disposables.add(leftRightObserver2);
+        this.source.subscribe(leftRightObserver);
+        this.other.subscribe(leftRightObserver2);
+    }
+}

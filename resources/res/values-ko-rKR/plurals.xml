@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="trsb_choose_num">
+        <item quantity="one">%d 항목 선택함</item>
+        <item quantity="other">%d 항목 선택함</item>
+    </plurals>
+</resources>

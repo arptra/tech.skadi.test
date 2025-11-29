@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:height="16dp" android:width="16dp" android:viewportWidth="16" android:viewportHeight="16">
+    <path android:fillColor="@color/tb_color_record_item_mark" android:pathData="M8,1.667L8,1.667A3,3 0,0 1,11 4.667L11,8A3,3 0,0 1,8 11L8,11A3,3 0,0 1,5 8L5,4.667A3,3 0,0 1,8 1.667z" android:fillAlpha="0.95"/>
+    <path android:fillColor="@color/tb_color_record_item_mark" android:pathData="M3.666,6.667C3.85,6.667 3.999,6.816 3.999,7V7.94C3.999,10.191 5.798,12 7.999,12C10.2,12 11.999,10.191 11.999,7.94V7C11.999,6.816 12.149,6.667 12.333,6.667H12.999C13.183,6.667 13.333,6.816 13.333,7V7.94C13.333,10.911 10.953,13.334 7.999,13.334C5.046,13.334 2.666,10.911 2.666,7.94V7C2.666,6.816 2.815,6.667 2.999,6.667H3.666Z" android:fillAlpha="0.95" android:fillType="1"/>
+    <path android:fillColor="@color/tb_color_record_item_mark" android:pathData="M7.667,12.667L8.334,12.667A0.333,0.333 0,0 1,8.667 13L8.667,14.334A0.333,0.333 0,0 1,8.334 14.667L7.667,14.667A0.333,0.333 0,0 1,7.334 14.334L7.334,13A0.333,0.333 0,0 1,7.667 12.667z" android:fillAlpha="0.95"/>
+</vector>

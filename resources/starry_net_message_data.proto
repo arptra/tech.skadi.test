@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option java_package = "com.upuphone.xr.interconnect.entity";
+option java_multiple_files = true;
+
+message StarryNetMessageData {
+  // 发送端标识
+  string senderPkg = 2;
+  // 接收端标识
+  string receiverPkg = 3;
+  // 消息内容
+  string message = 4;
+  // 消息内容
+  bytes data = 5;
+  int32 identifier = 6;
+}

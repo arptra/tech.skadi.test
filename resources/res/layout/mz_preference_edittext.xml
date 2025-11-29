@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:minHeight="@dimen/mz_preference_min_height" style="@style/Widget.Flyme.Preference.ContentLinearLayout">
+    <TextView android:ellipsize="marquee" android:id="@android:id/title" android:fadingEdge="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:singleLine="true" android:includeFontPadding="false" style="@style/Widget.Flyme.MultipleList.Title"/>
+    <LinearLayout android:orientation="horizontal" android:id="@+id/edittext_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="5dp">
+        <EditText android:textColor="@color/mz_alert_dialog_edittext_text_color" android:textColorHint="@color/mz_edittext_preference_hint_text_color" android:id="@android:id/edit" android:background="@null" android:layout_width="match_parent" android:layout_height="wrap_content" android:singleLine="true" android:imeOptions="flagNoFullscreen"/>
+    </LinearLayout>
+</LinearLayout>

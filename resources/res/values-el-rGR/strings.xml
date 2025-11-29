@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="poscon.consent.screen.no">Όχι, ευχαριστώ</string>
+    <string name="poscon.consent.screen.yes">Ναι, βεβαίως</string>
+    <string name="poscon.consent.v3.screen.1">Αυτή η εφαρμογή ενδέχεται να συλλέγει πληροφορίες σχετικά με το περιβάλλον γύρω σας, όπως είναι τα κοντινά σήματα Wi-Fi και κινητής τηλεφωνίας</string>
+    <string name="poscon.consent.v3.screen.2">Με την άδειά σας, αυτές οι πληροφορίες αποστέλλονται στη HERE για να τη βοηθήσουν να βελτιώσει τις υπηρεσίες HERE. Αυτές οι πληροφορίες δεν σας ταυτοποιούν και η HERE θα διατηρεί μόνο ανώνυμες πληροφορίες.</string>
+    <string name="poscon.consent.v3.screen.3">Μπορείτε να αναιρέσετε τη συναίνεσή σας ανά πάσα στιγμή</string>
+    <string name="poscon.consent.v3.screen.learn.more">Μάθετε περισσότερα σχετικά με τις πρακτικές απορρήτου της HERE</string>
+    <string name="poscon.consent.v3.screen.turn.on">Θα θέλατε να παρέχετε αυτές τις πληροφορίες στη HERE;</string>
+</resources>

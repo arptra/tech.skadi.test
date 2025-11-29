@@ -1,0 +1,5 @@
+{
+	"vprint_module": "dfsmn",
+	"asr_engine": "Xunfei",
+	"asr_text_path": "/sdcard/voiceai/ast.text"
+}

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:layout_width="match_parent" android:layout_height="wrap_content">
+    <TextView android:textSize="19dp" android:textColor="?attr/colorOnSurface" android:gravity="center" android:id="@+id/tv_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginLeft="24dp" android:layout_marginTop="38dp" android:layout_marginRight="24dp" android:fontFamily="sans-serif-medium"/>
+    <FrameLayout android:id="@+id/fl_content" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginLeft="24dp" android:layout_marginTop="22dp" android:layout_marginRight="24dp" android:layout_below="@+id/tv_title"/>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="38dp" android:layout_marginBottom="24dp" android:weightSum="2" android:layout_below="@+id/fl_content" android:layout_marginStart="24dp" android:layout_marginEnd="24dp">
+        <Button android:textSize="17dp" android:textColor="@color/ha_blue" android:id="@+id/bt_dialog_cancel" android:background="@drawable/ha_cancel_button_shape" android:clickable="true" android:layout_width="match_parent" android:layout_height="48dp" android:layout_marginRight="6dp" android:layout_weight="1"/>
+        <Button android:textSize="17dp" android:textColor="@color/ha_blue" android:id="@+id/bt_dialog_ok" android:background="@drawable/ha_ok_button_shape" android:layout_width="match_parent" android:layout_height="48dp" android:layout_marginLeft="6dp" android:layout_weight="1" android:layout_below="@+id/tv_nick_error"/>
+        <Button android:textSize="17dp" android:textColor="@color/ha_blue" android:id="@+id/bt_success_ok" android:background="@drawable/ha_ok_button_shape" android:visibility="gone" android:layout_width="match_parent" android:layout_height="48dp" android:layout_weight="1" android:layout_below="@+id/tv_nick_error"/>
+    </LinearLayout>
+</RelativeLayout>

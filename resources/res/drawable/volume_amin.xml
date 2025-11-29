@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:oneshot="true">
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00000"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00001"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00002"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00003"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00004"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00005"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00006"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00007"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00008"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00009"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00010"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00011"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00012"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00013"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00014"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00015"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00016"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00017"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00018"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00019"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00020"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00021"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00022"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00023"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00024"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00025"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00026"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00027"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00028"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/volume_00029"/>
+</animation-list>

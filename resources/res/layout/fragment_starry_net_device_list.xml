@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:orientation="vertical" android:tag="layout/fragment_starry_net_device_list_0" android:background="@drawable/rect_radius12_8_f9fafb" android:layout_width="match_parent" android:layout_height="wrap_content">
+    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent" android:layout_height="50dp">
+        <TextView android:textSize="16sp" android:id="@+id/tv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="20dp" android:text="@string/available_device" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintLeft_toLeftOf="0" app:layout_constraintTop_toTopOf="0"/>
+        <ProgressBar android:id="@+id/pb_scan_flag" android:layout_width="24dp" android:layout_height="24dp" android:layout_marginLeft="10dp" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintLeft_toRightOf="@+id/tv" app:layout_constraintTop_toTopOf="0" style="?android:attr/progressBarStyleSmall"/>
+        <TextView android:textSize="14sp" android:textColor="#cbcaca" android:id="@+id/tv_scan" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="20dp" android:text="@string/start_scan" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintRight_toRightOf="0" app:layout_constraintTop_toTopOf="0"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <flyme.support.v7.widget.MzRecyclerView android:id="@+id/rv_device_list" android:layout_width="match_parent" android:layout_height="320dp"/>
+</LinearLayout>

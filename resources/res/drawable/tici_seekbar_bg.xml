@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt">
+    <item android:gravity="center_vertical" android:height="@dimen/tici_seekbar_size">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/mz_seekbar_radius"/>
+            <solid android:color="@color/tici_seek_bar_bg_color"/>
+        </shape>
+    </item>
+    <item android:gravity="left|center_vertical|center_horizontal|center|start" android:height="@dimen/tici_seekbar_size" android:width="@dimen/tici_seekbar_half_size">
+        <shape android:shape="rectangle">
+            <corners android:topLeftRadius="@dimen/mz_seekbar_radius" android:bottomLeftRadius="@dimen/mz_seekbar_radius"/>
+            <solid android:color="@color/tici_seek_thumb"/>
+        </shape>
+    </item>
+</layer-list>

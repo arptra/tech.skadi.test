@@ -1,0 +1,3 @@
+com.upuphone.runasone.CoreApplication
+com.upuphone.runasone.share.lib.application.ShareApplication
+com.upuphone.runasone.relay.lib.application.RelayApplication

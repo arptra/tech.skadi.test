@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:background="@color/device_connect_background" android:layout_width="match_parent" android:layout_height="match_parent">
+    <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent" android:layout_marginTop="0dp">
+        <androidx.viewpager.widget.ViewPager android:id="@+id/view_pager" android:layout_width="match_parent" android:layout_height="match_parent"/>
+        <ImageView android:id="@+id/select_img" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="100dp" android:src="@drawable/video_select" android:layout_alignParentRight="true" android:layout_marginEnd="20dp"/>
+    </RelativeLayout>
+    <RelativeLayout android:id="@+id/titlebar_layout" android:background="@color/device_connect_background" android:paddingTop="40dp" android:paddingBottom="20dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_alignParentTop="true" android:paddingHorizontal="20dp">
+        <ImageView android:id="@+id/back_img" android:paddingRight="5dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/icon_system_back"/>
+        <TextView android:textSize="17sp" android:textColor="@color/common_blue" android:id="@+id/feedback_back_select" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/done_tips" android:layout_alignParentRight="true" android:textFontWeight="@integer/medium"/>
+    </RelativeLayout>
+</RelativeLayout>

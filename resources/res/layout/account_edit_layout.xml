@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+    <TextView android:textSize="12sp" android:textColor="?attr/colorOnSurfaceVariant" android:id="@+id/account_edit_layout_hilt" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="8dp" android:paddingStart="12dp"/>
+    <FrameLayout android:layout_width="match_parent" android:layout_height="52dp">
+        <androidx.appcompat.widget.AppCompatEditText android:textSize="17sp" android:textColor="?attr/colorOnSurface" android:textColorHint="?attr/colorStateDisabled" android:gravity="left|center_vertical|center_horizontal|center|start" android:layout_gravity="center_vertical" android:id="@+id/account_edit_layout_edit" android:background="@drawable/ha_et_bg_grey" android:layout_width="match_parent" android:layout_height="match_parent" android:cursorVisible="true" android:imeOptions="actionNext" android:drawableStart="@drawable/account_left" android:fontFamily="sans-serif-medium" android:textAlignment="viewStart" android:paddingHorizontal="12dp" android:importantForAutofill="2"/>
+        <androidx.appcompat.widget.LinearLayoutCompat android:gravity="center_vertical" android:layout_gravity="left|center_vertical|center_horizontal|center|start" android:orientation="horizontal" android:id="@+id/account_edit_layout_area_code" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layoutDirection="ltr" android:paddingStart="12dp">
+            <TextView android:textSize="15sp" android:textColor="?attr/colorOnSurface" android:id="@+id/account_edit_layout_area_code_tv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif-medium"/>
+            <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="0x7f08066c" android:layout_marginStart="10dp" android:layout_marginEnd="16.5dp"/>
+            <View android:layout_width="1dp" android:layout_height="match_parent"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </FrameLayout>
+    <TextView android:textColor="?attr/colorError" android:id="@+id/account_edit_layout_error" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:paddingStart="12dp"/>
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent">
+    <androidx.appcompat.widget.LinearLayoutCompat android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="?attr/cornerMedium">
+        <com.honey.account.view.widget.OptionItemLayout android:id="@+id/ll_account_service" android:background="@drawable/immersive_item_bkg_head" android:paddingTop="?attr/marginSmall" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="60dp" app:mainTitle="@string/honey_service_agreement" app:rightIcon="@drawable/honey_mz_arrow_next_right"/>
+        <com.honey.account.view.widget.OptionItemLayout android:id="@+id/ll_account_privacy" android:background="@drawable/immersive_item_bkg_foot" android:paddingBottom="?attr/marginSmall" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="60dp" app:mainTitle="@string/honey_privacy_policy" app:rightIcon="@drawable/honey_mz_arrow_next_right"/>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+    <androidx.appcompat.widget.LinearLayoutCompat android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="?attr/marginMedium">
+        <com.honey.account.view.widget.OptionItemLayout android:id="@+id/ll_account_cancellation" android:background="@drawable/immersive_item_bkg_alone" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="60dp" android:paddingVertical="?attr/marginSmall" app:mainTitle="@string/account_cancellation" app:rightIcon="@drawable/honey_mz_arrow_next_right"/>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</LinearLayout>

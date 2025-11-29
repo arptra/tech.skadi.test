@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt">
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/card_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginLeft="20dp" android:layout_marginTop="16dp" android:layout_marginRight="20dp" android:layout_marginBottom="16dp" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintTop_toTopOf="0">
+        <LinearLayout android:orientation="vertical" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginRight="16dp" android:layout_centerVertical="true" app:layout_constraintEnd_toStartOf="@+id/fl_indicator" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toTopOf="0" app:layout_goneMarginRight="0dp">
+            <TextView android:textSize="17sp" android:textColor="@color/title_text_color" android:gravity="start" android:id="@+id/tv_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:textAlignment="viewStart" android:lineHeight="24sp" android:textFontWeight="@integer/medium"/>
+            <TextView android:textSize="14sp" android:textColor="@color/subtitle_text_color" android:gravity="start" android:id="@+id/tv_subtitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:lineSpacingExtra="0dp" android:lineSpacingMultiplier="1" android:textAlignment="viewStart" android:lineHeight="20sp" android:textFontWeight="@integer/regular"/>
+        </LinearLayout>
+        <FrameLayout android:id="@+id/fl_indicator" android:layout_width="wrap_content" android:layout_height="wrap_content" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintEnd_toEndOf="0" app:layout_constraintTop_toTopOf="0">
+            <LinearLayout android:gravity="center" android:orientation="horizontal" android:id="@+id/ll_indicator" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content">
+                <TextView android:textSize="14sp" android:textColor="@color/mainbody_text_color" android:ellipsize="end" android:gravity="right|center_vertical|center_horizontal|center|end" android:id="@+id/tv_indicator" android:layout_width="wrap_content" android:layout_height="wrap_content" android:lines="1"/>
+                <ImageView android:id="@+id/iv_indicator" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@color/grey"/>
+            </LinearLayout>
+            <com.meizu.common.widget.Switch android:id="@+id/switch_indicator" android:visibility="visible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:thumb="@drawable/sp_thumb_bg" android:track="@drawable/sp_track_bg" android:showText="false"/>
+        </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</merge>

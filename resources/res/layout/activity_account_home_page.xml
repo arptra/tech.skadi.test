@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:layout_width="match_parent" android:layout_height="match_parent">
+    <ViewStub android:id="@+id/stub_error" android:layout="@layout/layout_network_error" android:inflatedId="@+id/error_view" android:layout_width="match_parent" android:layout_height="match_parent"/>
+    <ScrollView android:scrollbars="none" android:layout_width="match_parent" android:layout_height="match_parent" android:overScrollMode="always">
+        <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@+id/ll_account_info" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="112dp" android:layout_marginHorizontal="?attr/cornerHeavy" android:paddingHorizontal="8dp">
+                <ImageView android:id="@+id/iv_avatar" android:layout_width="64dp" android:layout_height="64dp"/>
+                <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginStart="20dp">
+                    <TextView android:textSize="24sp" android:textColor="?attr/colorOnSurface" android:ellipsize="end" android:id="@+id/tv_nick_name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:lines="1" android:fontFamily="sans-serif-medium"/>
+                    <TextView android:textSize="14sp" android:textColor="?attr/colorOnSurfaceVariant" android:id="@+id/tv_account" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp"/>
+                </LinearLayout>
+            </LinearLayout>
+            <androidx.appcompat.widget.LinearLayoutCompat android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+                <com.honey.account.view.widget.OptionItemLayout android:id="@+id/ll_change_pwd" android:background="@drawable/immersive_item_bkg_head" android:paddingTop="?attr/marginSmall" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="60dp" app:mainTitle="@string/change_name_psw" app:rightIcon="@drawable/honey_mz_arrow_next_right"/>
+                <com.honey.account.view.widget.OptionItemLayout android:id="@+id/ll_bind_phone" android:background="@drawable/immersive_item_bkg_middle" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="60dp" app:mainTitle="@string/change_bind_phone" app:rightIcon="@drawable/honey_mz_arrow_next_right"/>
+                <com.honey.account.view.widget.OptionItemLayout android:id="@+id/ll_bind_email" android:background="@drawable/immersive_item_bkg_foot" android:paddingBottom="?attr/marginSmall" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="60dp" app:mainTitle="@string/setting_email" app:rightIcon="@drawable/honey_mz_arrow_next_right"/>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+            <androidx.appcompat.widget.LinearLayoutCompat android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="?attr/cornerMedium">
+                <com.honey.account.view.widget.OptionItemLayout android:id="@+id/ll_account_about" android:background="@drawable/immersive_item_bkg_alone" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="60dp" android:paddingVertical="?attr/marginSmall" app:mainTitle="@string/about" app:rightIcon="@drawable/honey_mz_arrow_next_right"/>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+            <androidx.appcompat.widget.LinearLayoutCompat android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="?attr/cornerMedium">
+                <com.honey.account.view.widget.OptionItemLayout android:id="@+id/ll_login_out" android:background="@drawable/immersive_item_bkg_alone" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="60dp" android:paddingVertical="?attr/marginSmall" app:mainTitle="@string/login_out" app:rightIcon="@drawable/honey_mz_arrow_next_right"/>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>

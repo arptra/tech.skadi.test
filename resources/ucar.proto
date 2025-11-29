@@ -1,0 +1,731 @@
+syntax = 'proto3';
+
+option java_package = "com.ucar.databus.proto";
+option java_outer_classname = "UCarProto";
+
+// =====================Sensor Start====================
+
+message Gps {
+  double altitude = 1;
+  double latitude = 2;
+  double longitude = 3;
+  uint32 antenna_state = 4;
+  uint32 pdop = 5;
+  uint32 speed = 6;
+  uint32 heading = 7;
+  uint32 sats_used = 8;
+  uint32 sats_visible = 9;
+  uint64 timestamp = 10;
+}
+
+message Lights {
+  bool low_beam_on = 1;
+  bool high_beam_on = 2;
+  bool clearance_lamp_on = 3;
+  bool backup_lamp_on = 4;
+  bool stop_lamp_on = 5;
+}
+
+message GyroScope {
+  enum GyroType {
+    GYRO_UNKNOWN = 0;
+    GYRO_SINGLE = 1;
+    GYRO_THREE = 2;
+  }
+
+  int32 gyro_type = 1;
+  double legyro_x = 2;
+  double legyro_y = 3;
+  double legyro_z = 4;
+  uint64 timestamp = 5;
+}
+
+message Acceleration {
+  double acc_x = 1;
+  double acc_y = 2;
+  double acc_z = 3;
+  uint64 timestamp = 4;
+}
+
+message Oil {
+  uint32 max_fuel = 1;//0.1L
+  uint32 current_fuel = 2;
+  bool is_low_fuel = 3;
+}
+
+message Battery {
+  uint32 max_power = 1; //0.1kwH
+  uint32 current_power = 2;
+  bool is_low_power = 3;
+}
+
+message GearInfo {
+  enum GearState {
+    GEAR_UNKNOWN = 0;
+    GEAR_PARK = 1;
+    GEAR_DRIVE = 2;
+    GEAR_REVERSE = 3;
+    GEAR_NEUTRAL = 4;
+  }
+
+  GearState gear = 1;
+  uint32 speed = 2;
+}
+
+message LightSensorInfo {
+  double max_lux = 1;
+  double min_lux = 2;
+  double current_lux = 3;
+}
+
+message SensorIndex {
+  Gps gps = 1;
+  Lights lights = 2;
+  GyroScope gyro_scope = 3;
+  Acceleration acceleration = 4;
+  Oil oil = 5;
+  GearInfo gear_info = 6;
+  LightSensorInfo light_sensor_info = 7;
+  Battery battery = 8;
+}
+
+// ===================Control Start====================
+message Heartbeat {
+  uint64 timestamp = 1;
+}
+
+// for port
+message GetPortRequest {
+  enum ServerType {
+    UNKNOWN = 0;
+    SENSOR = 1;
+    AUDIO = 2;
+    UIBC = 3;
+  }
+  ServerType type = 1;
+}
+
+message GetPortResponse {
+  enum Result {
+    UNKNOWN = 0;
+    SUCCESS = 1;
+    FAILURE = 2;
+  }
+
+  Result result = 1;
+  int32 port = 2;
+}
+
+message NotifyCarToForeground {
+  uint64 timestamp = 1;
+}
+
+message NotifyCarToBackground {
+  uint64 timestamp = 1;
+}
+
+message NotifyMicrophoneState {
+  bool state = 1;
+  SampleRate sample_rate = 2;
+  ChannelMask channel_mask = 3;
+  EncodingFormat encoding_format = 4;
+}
+
+enum ChannelMask {
+  UNKNOWN_CHANNEL = 0;
+  CHANNEL_MONO = 1;
+  CHANNEL_STEREO = 2;
+}
+
+enum EncodingFormat {
+  UNKNOWN_FORMAT = 0;
+  ENCODING_PCM_8BIT = 1;
+  ENCODING_PCM_16BIT = 2;
+  ENCODING_PCM_24BIT_PACKED = 3;
+  ENCODING_PCM_32BIT = 4;
+  ENCODING_PCM_FLOAT = 5;
+}
+
+enum SampleRate {
+  UNKNOWN_RATE = 0;
+  SAMPLE_RATE_8000 = 8000;
+  SAMPLE_RATE_11025 = 11025;
+  SAMPLE_RATE_12000 = 12000;
+  SAMPLE_RATE_16000 = 16000;
+  SAMPLE_RATE_22050 = 22050;
+  SAMPLE_RATE_24000 = 24000;
+  SAMPLE_RATE_32000 = 32000;
+  SAMPLE_RATE_44100 = 44100;
+  SAMPLE_RATE_48000 = 48000;
+  SAMPLE_RATE_96000 = 96000;
+  SAMPLE_RATE_192000 = 192000;
+}
+
+enum LensFacing {
+  LENS_FACING_FRONT = 0;
+  LENS_FACING_BACK = 1;
+  LENS_FACING_EXTERNAL = 2;
+}
+
+enum Orientation {
+  ORIENTATION_0 = 0;
+  ORIENTATION_90 = 90;
+  ORIENTATION_180 = 180;
+  ORIENTATION_270 = 270;
+}
+
+enum CameraAction {
+  CAMERA_ACTION_OPEN = 0;
+  CAMERA_ACTION_CAPTURE = 1;
+  CAMERA_ACTION_CLOSE = 2;
+}
+
+enum VideoType {
+  VIDEO_UNDEFINED = 0;
+  VIDEO_CAST = 1;
+  VIDEO_COMMUNICATION = 2;
+  VIDEO_CAMERA_PREVIEW = 3;
+  VIDEO_CAMERA_PICTURE = 4;
+}
+
+message PictureSize {
+  int32 width = 1;
+  int32 height = 2;
+}
+
+message FpsRange {
+  int32 min = 1;
+  int32 max = 2;
+}
+
+message NotifyAddCamera {
+  string camera_id = 1;
+  string name = 2;
+  LensFacing lens_facing = 3;
+  Orientation orientation = 4;
+  repeated PictureSize supported_sizes = 5;
+  repeated FpsRange fps_ranges = 6;
+  PictureSize max_size = 7;
+}
+
+message NotifyRemoveCamera {
+  repeated string ids = 1;
+}
+
+message SetCameraState {
+  string camera_id = 1;
+  FpsRange fps_range = 2;
+  CameraAction action = 3;
+  PictureSize picture_size = 4;
+}
+
+message NotifyCameraStateChanged {
+  enum State {
+    OPENED = 0;
+    CLOSED = 1;
+    ERROR = 2;
+    PREEMPTED = 3;
+    NO_PERMISSION = 4;
+    BUSY = 5;
+  }
+
+  string camera_id = 1;
+  State state = 2;
+}
+
+message NotifyMirrorState {
+  // Phone should notify current mirror state to car!
+  enum MirrorState {
+    STATE_STOP_MIRROR = 0;
+    STATE_DISCONNECT_LINK = 1;
+    STATE_GO_TO_DESKTOP = 2;
+    STATE_BACK_TO_FOREGROUND = 3;
+  }
+  MirrorState mirror_state = 1;
+}
+
+
+message NotifyAudioPlayerState {
+  enum AudioPlayerState {
+    START_PLAYER = 0;
+    STOP_PLAYER = 1;
+    PAUSE_PLAYER = 2;
+    RESUME_PLAYER = 3;
+  }
+
+  AudioType type = 1;
+  AudioPlayerState state = 2;
+  SampleRate sample_rate = 3;
+  ChannelMask channel_mask = 4;
+  EncodingFormat encoding_format = 5;
+  string mime_type = 6;
+}
+
+enum AudioType {
+  UNDEFINED = 0;
+  STREAM_IP_CALL = 1;
+  STREAM_MODEM_CALL = 2;
+  STREAM_AI_ASSISTANT = 3;
+  STREAM_RING = 4;
+  STREAM_NOTIFICATION = 5;
+  STREAM_TTS = 6;
+  STREAM_SYSTEM = 7;
+  STREAM_MICROPHONE = 9;
+  STREAM_NUM = 10;
+  STREAM_CAST_MUSIC = 0x10;
+}
+
+enum CALL_STATE {
+  UNKNOWN_STATE = 0;                //未知状态
+  IDLE = 1;                         //空闲，已挂断
+  RINGING = 2;                      //响铃
+  OFFHOOK = 3;                      //通话中
+  INCOMING = 4;                     //来电中
+  DIALING = 5;                      //拨号中
+  ALERTING = 6;                     //拨号响铃中
+  ACTIVE = 7;                       //通话中
+  HOLDING = 8;                      //通话保持中
+}
+
+message NotifyPhoneState {
+  CALL_STATE cs = 1;
+  bool is_screen_locked = 2;          //是否锁屏
+  bool is_wechat_qq_call = 3;         //是否为qq或微信语音通话
+  bool is_voice_assistant_active = 4; //手机端语音助手是否唤醒
+  bool is_low_power = 5;     //手机端是否低电压，具体低电压阀值，由手机端决定
+  bool is_overheat = 6;      //手机端温度是否过高，具体高温阀值，由手机端决定
+}
+
+message NotifyMusicInfo {
+  string artist_name = 1;
+  string album_name = 2;
+  string cover_art = 3;
+  string lyrics = 4;
+  uint64 playing_times_ms = 5;
+  string title = 6;
+  string author_name = 7;
+  string writer_name = 8;
+  string composer_name = 9;
+  int32 playing_current_time_ms = 10;
+  bool is_favorite = 11;
+  bool is_playing = 12;
+  bytes cover_art_bitmap = 13; //建议在每首歌切换的时候提供一次
+  int32 id = 14; //应用融合、小窗投屏可以根据id获取应用名称，图标，-1表示session已销毁，非上车应用，全屏投屏时均为0
+}
+
+message NotifyNavigationInfo {
+  bool isNavigating = 1;
+  bytes directionIcon = 2;
+  string distance = 3;
+  string distanceUnit = 4;
+  string operation = 5;
+  string where = 6;
+  string title1 = 7;
+  string title2 = 8;
+  int32 id = 9; //应用融合、小窗投屏可以根据id获取应用名称，图标，
+}
+
+message CustomKeyEvent {
+  enum KeyCode {
+    KEY_CODE_UNDEFINED = 0;
+    KEY_CODE_MAIN = 0x1FA7;
+    KEY_CODE_TEL = 0x1FA8;
+    KEY_CODE_NAVI = 0x1FA9;
+    KEY_CODE_MEDIA = 0x1FAA;
+    KEY_CODE_VR_START = 0x1FAB;
+    KEY_CODE_VR_STOP = 0x1FAC;
+    KEY_CODE_NAVI_QUIT = 0x1FB1;
+    KEY_CODE_NEXT_FOCUS = 0x1FB2;
+    KEY_CODE_PRE_FOCUS = 0x1FB3;
+    KEY_CODE_IN_FOCUS = 0x1FB4;
+    KEY_CODE_OUT_FOCUS = 0x1FB5;
+    KEY_CODE_MEDIA_FAVOR = 0x1FB6;
+  }
+  int32 action = 1;
+  KeyCode keycode = 2;
+  int32 meta_state = 3;
+  uint64 timestamp = 4;
+}
+
+message VRCmdToPhone {
+  enum VRCmd {
+    VR_CMD_UNDEFINED = 0;
+    VR_CMD_MUSIC_PRE = 1;
+    VR_CMD_MUSIC_NEXT = 2;
+    VR_CMD_MUSIC_PAUSE = 3;
+    VR_CMD_MUSIC_PLAY = 4;
+    VR_CMD_CALL = 5;
+    VR_CMD_ENDCALL = 6;
+    VR_CMD_TEL = 7;
+    VR_CMD_MAP = 8;
+    VR_CMD_MUSIC = 9;
+    VR_CMD_VR_START = 10;
+    VR_CMD_VR_STOP = 11;
+    VR_CMD_NAVI_QUIT = 12;
+    VR_CMD_NAVI_HOME = 13;
+    VR_CMD_NAVI_COMPANY = 14;
+  }
+  VRCmd cmd = 1;
+  string source = 2;
+}
+
+message NotifyCallHungUp {
+  uint64 timestamp = 1;
+}
+
+message NotifySwitchDayOrNight {
+  enum Mode {
+    UNKNOWN = 0;
+    DAY = 1;
+    NIGHT = 2;
+  }
+  Mode mode = 1;
+}
+
+message AwakenVoiceAssistant {
+  bytes pcm_data = 1;
+  SampleRate sample_rate = 2;
+  ChannelMask channel_mask = 3;
+  EncodingFormat encoding_format = 4;
+  uint64 timestamp = 5;
+  string source = 6;
+}
+
+/**
+ * 车机端音频播放器控制参数
+ */
+message AudioPlayerControl {
+  // 音频类型，建议只对STREAM_CAST_MUSIC使用
+  AudioType audio_type = 1;
+
+  // 控制音乐播放过程的缓存量，范围100~800，音乐默认300、非音乐默认100，单位ms
+  int32 buffering_count = 2;
+
+  // 控制音乐播放过程的缓存量自增步长，范围10~200，默认100，单位ms
+  int32 speed_adjust_step = 3;
+
+  // 音频调整策略模式，默认为0，目前定义:  0-音乐流畅优先模式 1-音画同步优先模式
+  int32 policy_mode = 4;
+}
+
+// for send bluetooth mac
+message BluetoothMacInfo {
+  enum OPType {
+    ADD = 0;
+    DELETE = 1;
+  }
+  OPType op_type = 1;
+  string bluetooth_mac = 2;
+}
+
+message Disconnect {
+}
+
+message GetUCarConfigRequest {
+}
+
+message GetUCarConfigResponse {
+  bytes carBrMac = 1;
+  int32 screenWidth = 2;
+  int32 screenHeight = 3;
+  int32 dpi = 4;
+  int32 videoDisplayWidth = 5;
+  int32 videoDisplayHeight = 6;
+  int32 fps = 7;
+  bool isSupportP2P = 8;
+  bool isSupportSoftAP = 9;
+  bool isDataTransMode = 10;
+  int32 default5gChannel = 11;
+  bool isSupportCamera = 12;
+  bool isSupportMic = 13;
+  bool isSupportLowLatencyDecodingMode = 14;
+  bool isSupportVoiceWaken = 15;
+  bytes carCustomField = 16;
+  string sdkVersion = 17;
+  int32 workModes = 18;
+  bool isSupportPOINav = 19;
+  bool isSupportRotation = 20;
+  bool isSupportHomeKey = 21;
+  bool isSupportBackKey = 22;
+  bool isSupportHevc = 23;
+  int32 realDpi = 24;
+}
+
+message GetAppListRequest {
+}
+
+enum AppCategory {
+  MAP = 0; //地图导航类应用
+  MEDIA = 1; //音乐电台类应用
+  VIDEO = 2; //视频播放类应用
+  IM = 3; //社交通讯类应用
+  NEWS = 4; //新闻阅读类应用
+  GAME = 5; //游戏类应用
+  SHOPPING = 6; //网上购物类应用
+  TRAVEL = 7; //旅游出行类应用
+  FINANCIAL = 8; //金融理财类应用
+  MEETING = 9; //会议类应用
+  TOOL = 10; //实用工具类应用
+  OFFICE = 11; //办公软件类应用
+  EDUCATION = 12; //教育学习类应用
+  HEALTHY = 13; //医疗健康类应用
+  SYSTEM = 14; //系统优化类应用
+  LIFE = 15; //生活娱乐类应用
+  SMART_SERVICE = 16; //智慧类服务
+  OTHER = 17; //其它
+}
+
+message AppGeneralInfoMessage {
+  int32 id = 1;
+  string label = 2;
+  AppCategory category = 3;
+}
+
+message GetAppListResponse {
+  int32 total = 1;
+  repeated AppGeneralInfoMessage appInfo = 2;
+}
+
+message GetAppDetailInfoRequest {
+  int32 total = 1;
+  repeated int32 id = 2;
+}
+
+message AppDetailInfoMessage {
+  int32 id = 1;
+  string label = 2;
+  AppCategory category = 3;
+  string packageName = 4;
+  bytes icon = 5;
+  bool isSupportLandscape = 6;
+  bool isSupportPortrait = 7;
+}
+
+message GetAppDetailInfoResponse {
+  int32 total = 1;
+  repeated AppDetailInfoMessage appDetailInfo = 2;
+}
+
+enum AppInvokeCategory {
+  START = 0;
+  STOP = 1;
+  PAUSE = 2;
+  RESUME = 3;
+  UPDATE = 4;
+}
+
+enum AppStateCategory {
+  STARTED = 0;
+  STOPPED = 1;
+  PAUSED = 2;
+  RESUMED = 3;
+  DESTROYED = 4;
+}
+
+message InvokeApp {
+  int32 id = 1;
+  string packageName = 2;
+  AppInvokeCategory invokeState = 3;
+  int32 displayMode = 4;
+}
+
+message DisplayVisibleRegion {
+  int32 mode = 1;
+  int32 originWidth = 2;
+  int32 originHeight = 3;
+  int32 left = 4;
+  int32 top = 5;
+  int32 right = 6;
+  int32 bottom = 7;
+}
+
+message AppStateChanged {
+  int32 id = 1;
+  bool isNeedShow = 2;
+  int32 displayRotation = 3;
+  AppStateCategory state = 4;
+  uint64 timestamp = 5;
+  DisplayVisibleRegion visibleRegion = 6;
+}
+
+message AppListChanged {
+  enum AppListState {
+    INSTALLED = 0;
+    REMOVED = 1;
+    UPDATED = 2;
+    REORDERED = 3;
+  }
+  repeated int32 id = 1;
+  AppListState state = 2;
+}
+
+message POIDetailInfo {
+  enum CoordinateType {
+    WGS84 = 0;
+    GCJ02 = 1;
+    BD09 = 2;
+  }
+  CoordinateType type = 1;
+  double latitude = 2;
+  double longitude = 3;
+  double altitude = 4;
+}
+
+message POIAddress {
+  string address = 1;
+  string name = 2;
+  POIDetailInfo poiInfo = 3;
+}
+
+message CallInfo {
+  CALL_STATE callState = 1;
+  string number = 2;
+  string name = 3;
+  bool isIPCall = 4;
+  bool isNeedShowFloatingWindow = 5;
+  int32 connectedTime = 6;
+  int32 inCallAppId = 7;
+}
+
+message PickUpCall{
+  uint64 timestamp = 1;
+}
+
+message NotifyCarVrState{
+  bool isVrActive = 1;
+}
+
+message AddNotification{
+  //新增通知的Id，如果已经存在同样id的通知，则更新通知，其中普通通知ID大于1000,
+  // ID 1-10保留为音乐卡片通知，
+  // ID 11-20 保留为地图卡片通知，
+  // ID 21-30保留为日程卡片通知，
+  // ID 31-40保留为快递卡片通知，
+  // ID 41-50保留为外卖卡片通知，
+  // ID 51-60保留为天气卡片通知，
+  // ID 61-70保留为会议卡片通知，
+  // ID 71-80保留为通话卡片通知
+  int32 id = 1;
+  bool isOngoing = 2;
+  string contentTitle = 3;
+  string contentText = 4;
+  int32 contentIntentId = 5;
+  bytes icon = 6;
+  string packageName = 7;
+  bytes contentBigIcon = 8;
+  string actionFirstTitle = 9;
+  string actionSecondTitle = 10;
+  string actionThirdTitle = 11;
+  int32 actionFirstPendingIntentId = 12;
+  int32 actionSecondPendingIntentId = 13;
+  int32 actionThirdPendingIntentId = 14;
+}
+
+message ClickNotification{
+  int32 id = 1;
+  int32 actionPendingIntentId = 2;
+}
+
+message DeleteNotification{
+  int32 total = 1;
+  repeated int32 ids = 2;
+}
+
+message TouchPadVibrator {
+  bool vibrator = 1;
+}
+
+message ControlIndex {
+  Heartbeat heartbeat = 1;
+  GetPortRequest get_port_request = 2;
+  GetPortResponse get_port_response = 3;
+  NotifyCarToForeground notify_car_to_foreground = 4;
+  NotifyCarToBackground notify_car_to_background = 5;
+  NotifyMicrophoneState notify_microphone_state = 6;
+  NotifyMirrorState notify_mirror_state = 7;
+  NotifyAudioPlayerState notify_audio_player_state = 8;
+  NotifyPhoneState notify_phone_state = 9;
+  NotifyMusicInfo notify_music_info = 10;
+  NotifyNavigationInfo notify_navigation_info = 11;
+  CustomKeyEvent custom_key_event = 12;
+  VRCmdToPhone vr_cmd_to_phone = 13;
+  NotifyCallHungUp notify_call_hung_up = 14;
+  NotifySwitchDayOrNight notify_switch_day_or_night = 15;
+  AwakenVoiceAssistant awaken_voice_assistant = 16;
+  AudioPlayerControl audio_player_control = 17;
+  NotifyAddCamera notify_add_camera = 18;
+  NotifyRemoveCamera notify_remove_camera = 19;
+  SetCameraState set_camera_state = 20;
+  NotifyCameraStateChanged camera_state = 21;
+  BluetoothMacInfo bluetooth_mac = 22;
+  Disconnect disconnect = 23;
+  GetUCarConfigRequest get_ucar_config_request = 24;
+  GetUCarConfigResponse get_ucar_config_response = 25;
+  GetAppListRequest  get_app_list_request = 26;
+  GetAppListResponse get_app_list_response = 27;
+  GetAppDetailInfoRequest get_app_detail_info_request = 28;
+  GetAppDetailInfoResponse get_app_detail_info_response = 29;
+  InvokeApp invoke_app = 30;
+  AppStateChanged app_state_changed = 31;
+  AppListChanged app_list_changed = 32;
+  POIAddress poi_address = 33;
+  CallInfo call_info = 34;
+  PickUpCall pick_up_call = 35;
+  AddNotification add_notification = 36;
+  ClickNotification click_notification = 37;
+  DeleteNotification delete_notification = 38;
+  TouchPadVibrator touch_pad_vibrator = 39;
+  NotifyCarVrState notify_car_vr_state = 40;
+}
+
+// ==========================Auth==========================
+message AuthRequest {
+  int32 version = 1;                  // 手机端协议版本
+  bytes authPk = 2;                   // 手机端认证公钥R（x || y）
+  bytes authPkHmac = 3;               // 手机端认证公钥R的消息认证码
+  bytes agreementPk = 4;              // 手机端协商公钥R'（x || y）
+  bytes agreementPkSig = 5;           // 手机端协商公钥R'的ECDSA签名
+  bytes random = 6;                   // 手机端随机数Na
+  bytes id = 7;                       // 手机端唯一id（6字节）
+  string model = 8;                   // 手机端型号名称（32字节，UTF-8）
+  bool userConfirmed = 9;             // 手机密钥协商消息的用户确认状态
+  int32 workModes = 10;      // 手机端支持的工作模式
+  string productName = 11;   // 手机互联的产品名称（UTF-8）
+}
+
+message AuthResponse {
+  int32 version = 1;              // 车机端协议版本
+  bytes authPk = 2;               // 车机端认证公钥S（x || y）
+  bytes authPkHmac = 3;           // 车机端认证公钥S的消息认证码
+  bytes agreementPk = 4;          // 车机端协商公钥S'（x || y）
+  bytes agreementPkSig = 5;       // 车机端协商公钥S'的ECDSA签名
+  bytes random = 6;               // 车机端随机数Nb
+  int32 result = 7;               // 车机协商结果
+  int32 workModes = 8;   // 车机端选择的工作模式
+  int32 dayOrNightMode = 9; //车机端当前白天黑夜模式 0:unknown, 1:day, 2:night
+  string screenInfo = 10; // 车机端屏幕信息(w_h_dpi_sww_swh)
+}
+
+message AuthConfirm {
+  bytes cipher = 1;           // 手机本地IP地址用会话密钥加密的密文
+}
+
+message AuthIndex {
+  AuthRequest auth_request = 1;
+  AuthResponse auth_response = 2;
+  AuthConfirm auth_confirm = 3;
+}
+
+// ==========================Audio==========================
+message AudioIndex {
+  AudioType audio_type = 1;
+}
+
+// ==========================Cert==========================
+message CarCertificate {
+  bytes content = 1;
+}
+
+message CertIndex {
+  CarCertificate certificate = 1;
+}

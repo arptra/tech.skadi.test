@@ -1,0 +1,27 @@
+[
+  {
+    "scene": "SCENE_LAUNCH",
+    "name": "wakeup_launcher",
+    "guideWord":["开始导航", "播放音乐", "打电话","发微信","大声点", "亮一点","今天天气","定个闹钟","今天限行"]
+  },
+  {
+    "scene": "SCENE_NAVI",
+    "name": "wakeup_navigation",
+    "guideWord":["切换骑行导航","驾驶导航","退出导航","导航回家","关闭导航播报"]
+  },
+  {
+    "scene": "SCENE_TRANSLATE",
+    "name": "wakeup_translate",
+    "guideWord":["开始翻译", "中翻英", "中文转写","停止翻译"]
+  },
+  {
+    "scene": "SCENE_MEDIA",
+    "name": "wakeup_media",
+    "guideWord":["下一首","暂停音乐","大声点","小声点"]
+  },
+  {
+    "scene": "SCENE_VIDEO",
+    "name": "wakeup_video",
+    "guideWord":["下一个", "大声点","亮一点","退出视频"]
+  }
+]

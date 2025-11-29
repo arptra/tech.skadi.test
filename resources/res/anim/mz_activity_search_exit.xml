@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <alpha android:interpolator="@interpolator/mz_overflow_popup_alpha_anim_interpolator" android:duration="100" android:fillBefore="true" android:fillAfter="true" android:fromAlpha="1" android:toAlpha="0" android:fillEnabled="true"/>
+    <translate android:interpolator="@interpolator/mz_activity_to_next_open_enter_translate" android:duration="350" android:fromYDelta="50%" android:toYDelta="75%"/>
+</set>

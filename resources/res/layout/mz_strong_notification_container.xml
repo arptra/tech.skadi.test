@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt">
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@+id/notice_sec_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:minWidth="160dp" android:paddingHorizontal="@dimen/mz_notice_padding_horizontal" android:paddingVertical="@dimen/fd_sys_margin_regular">
+        <ImageView android:id="@+id/icon" android:layout_width="@dimen/mz_notice_icon_size" android:layout_height="@dimen/mz_notice_icon_size" android:src="0x7f080ad3"/>
+        <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginStart="@dimen/mz_notice_text_margin_icon">
+            <TextView android:textSize="10sp" android:textColor="?attr/colorOnSurfaceVariant" android:id="@+id/tips" android:layout_width="wrap_content" android:layout_height="wrap_content" android:maxLines="1"/>
+            <TextView android:textSize="14sp" android:textColor="?attr/colorOnSurface" android:ellipsize="end" android:id="@+id/description" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:maxLines="1" android:fontFamily="sans-serif-medium"/>
+        </LinearLayout>
+    </LinearLayout>
+</merge>

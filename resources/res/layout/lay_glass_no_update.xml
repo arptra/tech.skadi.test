@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:gravity="center_horizontal" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent">
+    <com.upuphone.xr.sapp.view.GlassModelImageView android:layout_width="392dp" android:layout_height="196dp" android:src="@mipmap/ic_glass_model_star"/>
+    <TextView android:textSize="24sp" android:textStyle="bold" android:textColor="@color/ota_title" android:gravity="center" android:id="@+id/tv_glass_version" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:layout_marginHorizontal="40dp" android:lineHeight="32sp"/>
+    <TextView android:textSize="14sp" android:textColor="@color/ota_info" android:gravity="center" android:id="@+id/tv_glass_is_latest_version" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="@string/glass_is_latest_version_param" android:layout_marginHorizontal="40dp" android:lineHeight="20sp" android:textFontWeight="350"/>
+</LinearLayout>

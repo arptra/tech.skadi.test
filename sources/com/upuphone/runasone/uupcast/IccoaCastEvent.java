@@ -1,0 +1,42 @@
+package com.upuphone.runasone.uupcast;
+
+public @interface IccoaCastEvent {
+    public static final int ICCOA_AUTH_ERROR = -1;
+    public static final int ICCOA_AUTH_FAIL = 3;
+    public static final int ICCOA_AUTH_NEED_CONFIRM = 2;
+    public static final int ICCOA_AUTH_NEED_PIN = 1;
+    public static final int ICCOA_AUTH_OK = 0;
+    public static final int ICCOA_BLE_SCAN_RESULT = 9;
+    public static final int ICCOA_CONNECT_P2P_FAIL = 14;
+    public static final int ICCOA_CONNECT_P2P_SUCCESS = 13;
+    public static final int ICCOA_DEVICE_LOSE = 41;
+    public static final int ICCOA_DISCONNECT_P2P = 15;
+    public static final int ICCOA_DISCOVER_P2P_FAIL = 12;
+    public static final int ICCOA_DISCOVER_P2P_SUCCESS = 11;
+    public static final int ICCOA_DISPLAY_CONNECTED = 36;
+    public static final int ICCOA_DISPLAY_DISCONNECTED = 37;
+    public static final int ICCOA_DISPLAY_ERROR = 38;
+    public static final int ICCOA_GET_USB_ACCESSORY = 28;
+    public static final int ICCOA_PLAYER_EXIT = 30;
+    public static final int ICCOA_PLAYER_INIT = 27;
+    public static final int ICCOA_RECV_BLE_MESSAGE = 16;
+    public static final int ICCOA_REMOVE_AUTH_CACHE = 26;
+    public static final int ICCOA_REQUEST_PIN_DIALOG = 10;
+    public static final int ICCOA_START_BLE_SCAN = 23;
+    public static final int ICCOA_START_CONNECT_BLE = 25;
+    public static final int ICCOA_START_CONNECT_P2P = 17;
+    public static final int ICCOA_START_DISCONNECT_BLE = 29;
+    public static final int ICCOA_START_P2P_AUTH = 19;
+    public static final int ICCOA_START_P2P_AUTH_ERROR = 22;
+    public static final int ICCOA_START_P2P_REAUTH = 20;
+    public static final int ICCOA_START_USB_AUTH = 18;
+    public static final int ICCOA_START_USB_AUTH_ERROR = 21;
+    public static final int ICCOA_STOP_BLE_SCAN = 24;
+    public static final int ICCOA_USB_ACCESSORY_ATTACHED = 31;
+    public static final int ICCOA_USB_ACCESSORY_DETACHED = 32;
+    public static final int ICCOA_USB_ACCESSORY_PERMISSION_DENIED = 34;
+    public static final int ICCOA_USB_ACCESSORY_PERMISSION_OK = 33;
+    public static final int ICCOA_USB_CONNECT = 39;
+    public static final int ICCOA_USB_DISCONNECT = 35;
+    public static final int ICCOA_USB_START_AUTH = 40;
+}

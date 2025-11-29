@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<StarryNetApp xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" app:appIcon="@drawable/navi_glass_icon" app:appId="com.upuphone.ar.navi.lite.service.NaviDocerService" app:appName="@string/navi_app_name" app:appRemoteId="com.upuphone.ar.navi.lite@service.NaviDocerService" app:launchEntry="com.upuphone.ar.navi.lite.service.NaviDocerService" app:launchType="1" app:needSync="false"/>

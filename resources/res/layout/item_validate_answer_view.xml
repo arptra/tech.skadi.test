@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+    <TextView android:textSize="17sp" android:textColor="?attr/colorOnSurface" android:gravity="center_vertical" android:id="@+id/item_validate_answer_title" android:layout_width="match_parent" android:layout_height="60dp" android:fontFamily="sans-serif-medium" android:paddingHorizontal="16dp"/>
+    <androidx.appcompat.widget.AppCompatEditText android:textSize="@dimen/factor_text_size_h10" android:textColor="?attr/colorOnSurface" android:textColorHint="?attr/colorStateDisabled" android:id="@+id/item_validate_answer_value" android:background="@drawable/factor_edit_text_bg" android:layout_width="match_parent" android:layout_height="58dp" android:hint="答案" android:imeOptions="actionNext"/>
+</LinearLayout>

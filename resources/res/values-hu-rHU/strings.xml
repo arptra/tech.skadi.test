@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="poscon.consent.screen.no">Köszönöm, nem</string>
+    <string name="poscon.consent.screen.yes">OK, persze</string>
+    <string name="poscon.consent.v3.screen.1">Az alkalmazás olyan információkat gyűjthet be a környezetével kapcsolatban, mint a közeli wifi-kapcsolatok vagy a térerő.</string>
+    <string name="poscon.consent.v3.screen.2">Engedélyével az adatokat szolgáltatásunk javítására használjuk fel. Az információk alapján nem lehet Önt beazonosítani, mi pedig kizárólag anonim információt tárolunk.</string>
+    <string name="poscon.consent.v3.screen.3">Hozzájárulását bármikor visszavonhatja.</string>
+    <string name="poscon.consent.v3.screen.learn.more">Tudjon meg többet adatvédelmi irányelveinkről.</string>
+    <string name="poscon.consent.v3.screen.turn.on">Szeretné megosztani ezt az információt?</string>
+</resources>

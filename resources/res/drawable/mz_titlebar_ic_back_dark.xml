@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<inset xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt">
+    <bitmap android:src="@drawable/mz_titlebar_ic_back_dark_normal" android:tint="?attr/colorOnSurface"/>
+</inset>

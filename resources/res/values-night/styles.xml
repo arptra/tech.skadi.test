@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme.NoActionBar.Light">
+        <item name="?0x10104e0">false</item>
+        <item name="?0x101056c">false</item>
+        <item name="MeizuCommon.Switch">@style/Theme.Upuphone.Switch</item>
+        <item name="mcIgnoreSysNightMode">true</item>
+    </style>
+    <style name="Base.Theme.SplashScreen.DayNight">
+    </style>
+    <style name="MyActionBar">
+        <item name="android:textColorPrimary">@color/title_text_color</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:titleTextStyle">@style/ActionbarTitle</item>
+        <item name="android:colorPrimaryDark">@color/title_text_color</item>
+        <item name="?0x10104e0">false</item>
+        <item name="?0x101056c">false</item>
+        <item name="MeizuCommon.Switch">@style/Theme.Upuphone.Switch</item>
+        <item name="mcIgnoreSysNightMode">true</item>
+        <item name="windowActionBar">true</item>
+    </style>
+    <style name="Policy.AppTheme">
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:windowAnimationStyle">@style/PolicySdkActivityAnimation</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="?0x1010590">false</item>
+        <item name="MeizuCommon.LabelTextViewStyle">@style/Widget.MeizuCommon.LabelTextView</item>
+    </style>
+    <style name="Theme.AR.Phone">
+        <item name="?0x10104e0">true</item>
+        <item name="?0x1010605">false</item>
+    </style>
+    <style name="Theme.Acticity.Main">
+        <item name="?0x10104e0">false</item>
+        <item name="?0x101056c">false</item>
+        <item name="?0x1010590">false</item>
+    </style>
+    <style name="Theme.AppCompat.DayNight">
+    </style>
+    <style name="Theme.AppCompat.DayNight.DarkActionBar">
+    </style>
+    <style name="Theme.AppCompat.DayNight.Dialog">
+    </style>
+    <style name="Theme.AppCompat.DayNight.Dialog.Alert">
+    </style>
+    <style name="Theme.AppCompat.DayNight.Dialog.MinWidth">
+    </style>
+    <style name="Theme.AppCompat.DayNight.DialogWhenLarge">
+    </style>
+    <style name="Theme.AppCompat.DayNight.NoActionBar">
+    </style>
+    <style name="Theme.Flyme.AppCompat.Light.Dialog.Alert">
+    </style>
+    <style name="Theme.Material3.DayNight">
+    </style>
+    <style name="Theme.Material3.DayNight.BottomSheetDialog">
+    </style>
+    <style name="Theme.Material3.DayNight.Dialog">
+    </style>
+    <style name="Theme.Material3.DayNight.Dialog.Alert">
+    </style>
+    <style name="Theme.Material3.DayNight.Dialog.MinWidth">
+    </style>
+    <style name="Theme.Material3.DayNight.DialogWhenLarge">
+    </style>
+    <style name="Theme.Material3.DayNight.NoActionBar">
+    </style>
+    <style name="Theme.Material3.DayNight.SideSheetDialog">
+    </style>
+    <style name="Theme.Material3.DynamicColors.DayNight">
+    </style>
+    <style name="Theme.MaterialComponents.DayNight">
+    </style>
+    <style name="Theme.MaterialComponents.DayNight.BottomSheetDialog">
+    </style>
+    <style name="Theme.MaterialComponents.DayNight.Bridge">
+    </style>
+    <style name="Theme.MaterialComponents.DayNight.DarkActionBar">
+    </style>
+    <style name="Theme.MaterialComponents.DayNight.DarkActionBar.Bridge">
+    </style>
+    <style name="Theme.MaterialComponents.DayNight.Dialog">
+    </style>
+    <style name="Theme.MaterialComponents.DayNight.Dialog.Alert">
+    </style>
+    <style name="Theme.MaterialComponents.DayNight.Dialog.Alert.Bridge">
+    </style>
+    <style name="Theme.MaterialComponents.DayNight.Dialog.Bridge">
+    </style>
+    <style name="Theme.MaterialComponents.DayNight.Dialog.FixedSize">
+    </style>
+    <style name="Theme.MaterialComponents.DayNight.Dialog.FixedSize.Bridge">
+    </style>
+    <style name="Theme.MaterialComponents.DayNight.Dialog.MinWidth">
+    </style>
+    <style name="Theme.MaterialComponents.DayNight.Dialog.MinWidth.Bridge">
+    </style>
+    <style name="Theme.MaterialComponents.DayNight.DialogWhenLarge">
+    </style>
+    <style name="Theme.MaterialComponents.DayNight.NoActionBar">
+    </style>
+    <style name="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
+    </style>
+    <style name="Theme.StarryNet">
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_200</item>
+    </style>
+    <style name="Theme.SuperApp">
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_200</item>
+    </style>
+    <style name="ThemeOverlay.AppCompat.DayNight">
+    </style>
+    <style name="ThemeOverlay.Material3.DynamicColors.DayNight">
+    </style>
+    <style name="TiciTheme.Web">
+        <item name="?0x1010590">false</item>
+    </style>
+    <style name="TodoManageActivityStyle">
+        <item name="mainBgColor">#0b0b0c</item>
+        <item name="mainBottomActionBarColor">#17171a</item>
+        <item name="mainButtonTextColor">#206cff</item>
+        <item name="mainDialogBgColor">#1c1c1e</item>
+        <item name="mainSubTitleTextColor">#64ebebf5</item>
+        <item name="mainTitleTextColor">#eeeeee</item>
+    </style>
+</resources>

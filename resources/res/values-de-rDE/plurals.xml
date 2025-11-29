@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="trsb_choose_num">
+        <item quantity="one">Gewählt: %d</item>
+        <item quantity="other">Gewählt: %d</item>
+    </plurals>
+</resources>

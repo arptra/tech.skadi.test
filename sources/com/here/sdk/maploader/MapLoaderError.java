@@ -1,0 +1,46 @@
+package com.here.sdk.maploader;
+
+public enum MapLoaderError {
+    RESOURCE_NOT_FOUND(1),
+    NOT_READY(2),
+    INVALID_ARGUMENT(3),
+    OPERATION_CANCELLED(4),
+    ALREADY_INSTALLED(5),
+    TIME_OUT(6),
+    SERVICE_UNAVAILABLE(7),
+    ACCESS_DENIED(8),
+    TOO_MANY_REQUESTS(9),
+    NETWORK_CONNECTION_ERROR(10),
+    FORBIDDEN(11),
+    MAP_DATA_ERROR(12),
+    UNEXPECTED_SERVER_RESPONSE(13),
+    MAP_MANAGER_ERROR(14),
+    INCOMPLETE_DATA(15),
+    SERVICE_ACCESS_FAILED(16),
+    INTERNAL_ERROR(17),
+    OFFLINE(18),
+    CACHE_IO_ERROR(19),
+    PROTECTED_CACHE_CORRUPTED(20),
+    MIGRATION_REQUIRED(21),
+    OPERATION_AFTER_DISPOSE(22),
+    CATALOG_CONFIGURATION_ERROR(23),
+    PENDING_UPDATE(24),
+    UPDATE_BLOCKED_AS_ANOTHER_PENDING(25),
+    BROKEN_UPDATE(26),
+    PARALLEL_REQUEST(27),
+    PROXY_AUTHENTICATION_FAILED(28),
+    PROXY_SERVER_UNREACHABLE(29),
+    NOT_ENOUGH_SPACE(30);
+    
+    public static final MapLoaderError REQUEST_LIMIT_REACHED = null;
+    public final int value;
+
+    static {
+        MapLoaderError mapLoaderError;
+        REQUEST_LIMIT_REACHED = mapLoaderError;
+    }
+
+    private MapLoaderError(int i) {
+        this.value = i;
+    }
+}

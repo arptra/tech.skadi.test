@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:layout_width="wrap_content" android:layout_height="wrap_content">
+    <RelativeLayout android:id="@+id/bg_layout" android:background="@drawable/bg_frequency_select" android:layout_width="140dp" android:layout_height="88dp">
+        <LinearLayout android:gravity="center" android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerInParent="true">
+            <ImageView android:id="@+id/ic_img" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/ic_problem_glass"/>
+            <TextView android:textSize="14sp" android:textColor="@color/feedback_common_item_color" android:id="@+id/name_tv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:lineHeight="20dp" android:textFontWeight="@integer/medium"/>
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

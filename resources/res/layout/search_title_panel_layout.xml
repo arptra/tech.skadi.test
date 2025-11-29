@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:id="@+id/search_title_layout" android:background="@drawable/search_title_bg" android:layout_width="match_parent" android:layout_height="wrap_content">
+    <RelativeLayout android:id="@+id/RelativeLayout" android:layout_width="match_parent" android:layout_height="@dimen/size_dp_64">
+        <ImageView android:id="@+id/search_title_back" android:layout_width="wrap_content" android:layout_height="@dimen/size_dp_64" android:src="@drawable/ic_arrow_back" android:paddingHorizontal="@dimen/size_dp_12"/>
+        <TextView android:textSize="@dimen/text_size_20" android:textColor="@color/theme_white_color" android:gravity="center" android:id="@+id/search_title_name" android:layout_width="wrap_content" android:layout_height="@dimen/size_dp_64" android:text="@string/initiate_navigation" android:layout_toEndOf="@+id/search_title_back"/>
+        <ImageView android:id="@+id/search_title_setting" android:layout_width="wrap_content" android:layout_height="@dimen/size_dp_64" android:src="@drawable/settings_icon" android:layout_centerVertical="true" android:layout_alignParentEnd="true" android:paddingHorizontal="@dimen/size_dp_16"/>
+    </RelativeLayout>
+</RelativeLayout>

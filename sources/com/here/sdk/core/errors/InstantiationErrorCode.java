@@ -1,0 +1,22 @@
+package com.here.sdk.core.errors;
+
+public enum InstantiationErrorCode {
+    ILLEGAL_ARGUMENTS(1),
+    FAILED(2),
+    SHARED_SDK_ENGINE_NOT_INSTANTIATED(3),
+    CACHE_FOLDER_ACCESS_DENIED(4),
+    PERSISTENT_MAP_STORAGE_FOLDER_ACCESS_DENIED(5),
+    FAILED_TO_LOCK_CACHE_FOLDER(6),
+    FAILED_TO_CREATE_ANALYTICS_SERVICE(7),
+    ACCESS_KEY_CONTAINS_ILLEGAL_SYMBOL(8),
+    ACCESS_KEY_SECRET_CONTAINS_ILLEGAL_SYMBOL(9),
+    LAYER_CONFIGURATION_MISMATCH(10),
+    SDK_ENGINE_ALREADY_DISPOSED(11),
+    INVALID_CATALOG_CONFIGURATION(12);
+    
+    public final int value;
+
+    private InstantiationErrorCode(int i) {
+        this.value = i;
+    }
+}

@@ -1,0 +1,38 @@
+package com.upuphone.xr.sapp.fragment;
+
+import android.widget.TextView;
+import com.upuphone.xr.sapp.databinding.FragmentCommonSettingBinding;
+import kotlin.Metadata;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
+import kotlin.jvm.internal.Intrinsics;
+import kotlin.jvm.internal.Lambda;
+import kotlin.jvm.internal.SourceDebugExtension;
+
+@SourceDebugExtension({"SMAP\nCommonSettingFragment.kt\nKotlin\n*S Kotlin\n*F\n+ 1 CommonSettingFragment.kt\ncom/upuphone/xr/sapp/fragment/CommonSettingFragment$initView$4\n+ 2 View.kt\nandroidx/core/view/ViewKt\n*L\n1#1,155:1\n256#2,2:156\n*S KotlinDebug\n*F\n+ 1 CommonSettingFragment.kt\ncom/upuphone/xr/sapp/fragment/CommonSettingFragment$initView$4\n*L\n87#1:156,2\n*E\n"})
+@Metadata(d1 = {"\u0000\u0010\n\u0000\n\u0002\u0010\u0002\n\u0000\n\u0002\u0010\u000b\n\u0002\b\u0003\u0010\u0000\u001a\u00020\u00012\u000e\u0010\u0002\u001a\n \u0004*\u0004\u0018\u00010\u00030\u0003H\n¢\u0006\u0004\b\u0005\u0010\u0006"}, d2 = {"<anonymous>", "", "it", "", "kotlin.jvm.PlatformType", "invoke", "(Ljava/lang/Boolean;)V"}, k = 3, mv = {1, 9, 0}, xi = 48)
+public final class CommonSettingFragment$initView$4 extends Lambda implements Function1<Boolean, Unit> {
+    final /* synthetic */ CommonSettingFragment this$0;
+
+    /* JADX INFO: super call moved to the top of the method (can break code semantics) */
+    public CommonSettingFragment$initView$4(CommonSettingFragment commonSettingFragment) {
+        super(1);
+        this.this$0 = commonSettingFragment;
+    }
+
+    public /* bridge */ /* synthetic */ Object invoke(Object obj) {
+        invoke((Boolean) obj);
+        return Unit.INSTANCE;
+    }
+
+    public final void invoke(Boolean bool) {
+        FragmentCommonSettingBinding K0 = this.this$0.k;
+        if (K0 == null) {
+            Intrinsics.throwUninitializedPropertyAccessException("binding");
+            K0 = null;
+        }
+        TextView textView = K0.j;
+        Intrinsics.checkNotNullExpressionValue(textView, "tvNewUpdate");
+        textView.setVisibility(Intrinsics.areEqual((Object) bool, (Object) Boolean.TRUE) ? 0 : 8);
+    }
+}

@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<StarryNetApp xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" app:appIcon="@drawable/translation_app_icon" app:appId="com.upuphone.ar.transcribe.phone.TranscribeService" app:appName="@string/transcribe_app_name" app:appRemoteId="com.upuphone.ar.transcribe.phone@TranscribeService" app:launchEntry="com.upuphone.ar.transcribe.phone.TranscribeService" app:launchType="1" app:needSync="false"/>

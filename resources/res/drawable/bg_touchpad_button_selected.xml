@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt">
+    <solid android:color="@color/touchpad_button_bg_selected"/>
+    <stroke android:width="2dp" android:color="@color/mz_theme_color_blue"/>
+    <corners android:radius="16dp"/>
+</shape>

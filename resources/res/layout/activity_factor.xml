@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:orientation="vertical" android:background="?attr/colorSurfaceBright" android:fitsSystemWindows="true" android:layout_width="match_parent" android:layout_height="match_parent">
+    <androidx.appcompat.widget.Toolbar android:id="@+id/factor_toolbar" android:layout_width="match_parent" android:layout_height="?attr/actionBarSize" app:navigationIcon="@null">
+        <TextView android:textSize="20sp" android:textColor="?attr/colorPrimary" android:id="@+id/cancel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/cancel" android:fontFamily="sans-serif-medium"/>
+    </androidx.appcompat.widget.Toolbar>
+    <TextView android:textSize="36sp" android:textColor="?attr/colorOnSurface" android:gravity="center" android:layout_gravity="center_horizontal" android:id="@+id/factor_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="32dp" android:text="@string/verify_identity" android:fontFamily="sans-serif-medium" android:layout_marginHorizontal="36dp"/>
+    <FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+        <FrameLayout android:id="@+id/main_container" android:visibility="visible" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_marginBottom="@dimen/factor_padding_bottom"/>
+        <sdk.meizu.account.factor.authentication.sdk.view.LoadingView android:layout_gravity="center_horizontal" android:id="@+id/factor_loading" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="223dp" android:layout_marginHorizontal="62dp"/>
+    </FrameLayout>
+</LinearLayout>

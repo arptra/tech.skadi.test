@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:layout_width="match_parent" android:layout_height="match_parent">
+    <include android:layout_gravity="center" android:id="@+id/loading_view" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" layout="@layout/mc_loading_view_layout"/>
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/layout_empty_view" android:layout_width="match_parent" android:layout_height="match_parent">
+        <com.meizu.common.widget.EmptyView android:layout_gravity="center" android:id="@+id/empty_view" android:visibility="invisible" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="100dp" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintTop_toTopOf="0" app:mcTitle="@string/mz_wif_setting_dialog_message" app:mcTitleTextAppearance="@style/TextAppearance.Small.EmptyViewToast.Title"/>
+        <Button android:layout_gravity="center" android:id="@+id/btn_setting_net_work" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="24dp" android:text="@string/policy_sdk_btn_setting_network" app:layout_constraintEnd_toEndOf="0" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toBottomOf="@+id/empty_view" style="@style/Widget.DeviceDefault.Light.Button.LightColor.Color.Blue"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

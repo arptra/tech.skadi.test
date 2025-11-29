@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:id="@+id/feedback_main_navi" app:startDestination="@+id/feedBackFragment">
+    <fragment android:label="feedBackFragment" android:name="com.upuphone.xr.sapp.fragment.FeedBackFragment" android:id="@+id/feedBackFragment"/>
+    <fragment android:label="fragment_large" android:name="com.upuphone.xr.sapp.fragment.LargeFragment" android:id="@+id/largeImgFragment"/>
+    <fragment android:label="mediaShowListFragment" android:name="com.upuphone.xr.sapp.fragment.MediaShowListFragment" android:id="@+id/mediaShowListFragment"/>
+    <fragment android:label="mediaSelectFragment" android:name="com.upuphone.xr.sapp.fragment.MediaSelectFragment" android:id="@+id/mediaSelectFragment"/>
+    <fragment android:label="CommonH5Fragment" android:name="com.upuphone.xr.sapp.vu.fragment.CommonH5Fragment" android:id="@+id/commonH5Fragment"/>
+    <fragment android:label="mediaPreviewFragment" android:name="com.upuphone.xr.sapp.fragment.MediaPreviewFragment" android:id="@+id/mediaPreviewFragment"/>
+</navigation>

@@ -1,0 +1,1 @@
+{"styles": [{"extends": "japan_admin_labels", "replaces": "ocm_admin_labels", "layer": "ocm_cartography_labels", "technique": "icontext", "attr": {}}]}

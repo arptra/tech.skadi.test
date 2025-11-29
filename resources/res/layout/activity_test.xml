@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:layout_width="match_parent" android:layout_height="match_parent">
+    <EditText android:id="@+id/search_edit" android:layout_width="0dp" android:layout_height="60dp" android:layout_margin="15dp" android:hint="@string/search_edit_toast" app:layout_constraintEnd_toEndOf="0" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toTopOf="0"/>
+    <Button android:id="@+id/search" android:layout_width="60dp" android:layout_height="42dp" android:text="@string/search" app:layout_constraintBottom_toBottomOf="@+id/search_edit" app:layout_constraintEnd_toEndOf="@+id/search_edit" app:layout_constraintTop_toTopOf="@+id/search_edit"/>
+    <LinearLayout android:orientation="horizontal" android:id="@+id/navi_set_layout" android:layout_width="match_parent" android:layout_height="wrap_content" app:layout_constraintTop_toBottomOf="@+id/search">
+        <Button android:id="@+id/home" android:layout_width="0dp" android:layout_height="60dp" android:text="@string/home" android:layout_weight="1"/>
+        <Button android:id="@+id/company" android:layout_width="0dp" android:layout_height="60dp" android:text="@string/company" android:layout_weight="1"/>
+        <Button android:id="@+id/custom" android:layout_width="0dp" android:layout_height="60dp" android:text="@string/custom" android:layout_weight="1"/>
+    </LinearLayout>
+    <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" app:layout_constraintTop_toBottomOf="@+id/navi_set_layout">
+        <Button android:id="@+id/nav_setting" android:layout_width="0dp" android:layout_height="60dp" android:text="@string/navi_setting" android:layout_weight="1"/>
+        <Button android:id="@+id/other_setting" android:layout_width="0dp" android:layout_height="60dp" android:text="其他设置" android:layout_weight="1"/>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

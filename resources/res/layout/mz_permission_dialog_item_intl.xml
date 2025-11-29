@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:id="@+id/rl" android:background="?android:attr/selectableItemBackground" android:layout_width="match_parent" android:layout_height="match_parent" android:paddingHorizontal="@dimen/mz_alert_dialog_normal_margin_start" android:paddingVertical="16dp">
+    <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginEnd="16dp" android:layout_toStartOf="@+id/switch1" android:layout_alignParentStart="true">
+        <TextView android:id="@+id/switch_title" style="@style/Widget.Flyme.MultipleList.Title"/>
+        <TextView android:id="@+id/switch_info" style="@style/Widget.Flyme.MultipleList.Desc.Normal.AdjoinTitleIntl"/>
+    </LinearLayout>
+    <com.meizu.common.widget.Switch android:id="@+id/switch1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="false" android:layout_centerVertical="true" android:layout_alignParentEnd="true"/>
+</RelativeLayout>

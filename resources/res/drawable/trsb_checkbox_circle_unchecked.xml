@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:height="25dp" android:width="24dp" android:viewportWidth="24" android:viewportHeight="25">
+    <path android:fillColor="#00000000" android:pathData="M2,12.5C2,6.977 6.477,2.5 12,2.5C17.523,2.5 22,6.977 22,12.5C22,18.023 17.523,22.5 12,22.5C6.477,22.5 2,18.023 2,12.5Z" android:strokeColor="@color/tb_checkbox_unchecked" android:strokeWidth="2"/>
+</vector>

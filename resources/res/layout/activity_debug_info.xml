@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:background="@color/device_connect_background" android:layout_width="match_parent" android:layout_height="match_parent" android:keepScreenOn="true">
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@+id/ll_top_bar" android:layout_width="match_parent" android:layout_height="64dp" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toTopOf="0">
+        <ImageButton android:id="@+id/btn_back" android:background="@null" android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/icon_system_back" android:contentDescription="back" android:layout_marginStart="20dp" android:layout_marginEnd="16dp" android:stateListAnimator="@animator/zoom_out_90"/>
+        <TextView android:textSize="20sp" android:textColor="@color/title_text_color" android:id="@+id/tv_title_tip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Debug Page" android:lineHeight="24sp" android:textFontWeight="500"/>
+    </LinearLayout>
+    <com.upuphone.xr.sapp.view.NestedScrollViewSelf android:id="@+id/debug_info_scroll_view" android:layout_width="0dp" android:layout_height="0dp" android:fillViewport="true" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintEnd_toEndOf="0" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toBottomOf="@+id/ll_top_bar">
+        <LinearLayout android:orientation="vertical" android:id="@+id/ll_content_layout" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:layout_marginHorizontal="10dp">
+            <androidx.cardview.widget.CardView android:layout_width="match_parent" android:layout_height="wrap_content" app:cardCornerRadius="10dp" app:cardElevation="0dp">
+                <LinearLayout android:orientation="vertical" android:padding="10dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="互联版本信息:"/>
+                    <TextView android:id="@+id/starry_info_text" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <Spinner android:id="@+id/netconfig_spinner" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_margin="10dp"/>
+            <Button android:id="@+id/open_debug_login_btn" android:layout_width="match_parent" android:layout_height="40dp" android:layout_margin="10dp" android:text="打开调试登陆页面"/>
+            <Button android:id="@+id/open_rn_page_btn" android:layout_width="match_parent" android:layout_height="40dp" android:layout_margin="10dp" android:text="打开RN页面"/>
+            <include android:id="@+id/dump_layout" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" layout="@layout/layout_debug_info_dump_log"/>
+            <include android:id="@+id/flutter_debug_layout" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" layout="@layout/layout_debug_force_muti_device"/>
+            <Button android:textSize="16sp" android:id="@+id/debug_feedback" android:layout_width="match_parent" android:layout_height="40dp" android:layout_margin="10dp" android:layout_marginBottom="20dp" android:text="@string/problem_feedback"/>
+            <Button android:id="@+id/load_so_btn" android:layout_width="match_parent" android:layout_height="40dp" android:layout_margin="10dp" android:text="测试加载so"/>
+        </LinearLayout>
+    </com.upuphone.xr.sapp.view.NestedScrollViewSelf>
+</androidx.constraintlayout.widget.ConstraintLayout>

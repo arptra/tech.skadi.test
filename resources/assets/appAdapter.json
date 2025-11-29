@@ -1,0 +1,90 @@
+{
+  "star": {
+    "manufacturer": "xjsd",
+    "model": "star",
+    "versionName": "com.upuphone.star.launcher",
+    "versionCode": "1.0.3-SNAPSHOT",
+    "compileTime": "",
+    "appInfos": {
+      "navi": {
+        "glass": {
+          "packageName": "com.upuphone.navi",
+          "appVersionName": "navi",
+          "appVersionCode": "0.0.5-SNAPSHOT",
+          "appCompileTime": ""
+        },
+        "phone": {
+          "packageName": "com.upuphone.navi",
+          "appVersionName": "navi",
+          "appVersionCode": "0.0.6-SNAPSHOT",
+          "appCompileTime": ""
+        }
+      },
+      "translator": {
+        "glass": {
+          "packageName": "com.upuphone.translator",
+          "appVersionName": "navi",
+          "appVersionCode": "0.0.5-SNAPSHOT",
+          "appCompileTime": ""
+        },
+        "phone": {
+          "packageName": "com.upuphone.translator",
+          "appVersionName": "navi",
+          "appVersionCode": "0.0.6-SNAPSHOT",
+          "appCompileTime": ""
+        }
+      },
+      "video": {
+        "glass": {
+          "packageName": "com.upuphone.dlna",
+          "appVersionName": "dlna",
+          "appVersionCode": "0.0.5-SNAPSHOT",
+          "appCompileTime": ""
+        },
+        "phone": {
+          "packageName": "com.upuphone.dlna",
+          "appVersionName": "dlna",
+          "appVersionCode": "0.0.6-SNAPSHOT",
+          "appCompileTime": ""
+        }
+      }
+    }
+  },
+  "air": {
+    "manufacturer": "xjsd",
+    "model": "air",
+    "versionName": "com.upuphone.star.launcher",
+    "versionCode": "1.0.3-SNAPSHOT",
+    "compileTime": "",
+    "appInfos": {
+      "navi": {
+        "glass": {
+          "packageName": "com.upuphone.navi",
+          "appVersionName": "navi",
+          "appVersionCode": "0.0.5-SNAPSHOT",
+          "appCompileTime": ""
+        },
+        "phone": {
+          "packageName": "com.upuphone.navi",
+          "appVersionName": "navi",
+          "appVersionCode": "0.0.6-SNAPSHOT",
+          "appCompileTime": ""
+        }
+      },
+      "translator": {
+        "glass": {
+          "packageName": "com.upuphone.translator",
+          "appVersionName": "navi",
+          "appVersionCode": "0.0.5-SNAPSHOT",
+          "appCompileTime": ""
+        },
+        "phone": {
+          "packageName": "com.upuphone.translator",
+          "appVersionName": "navi",
+          "appVersionCode": "0.0.6-SNAPSHOT",
+          "appCompileTime": ""
+        }
+      }
+    }
+  }
+}

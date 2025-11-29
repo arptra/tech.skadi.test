@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt">
+    <item android:gravity="center" android:height="24dp" android:width="24dp">
+        <inset android:inset="1dp">
+            <shape android:shape="oval">
+                <stroke android:width="2dp" android:color="@color/mz_btn_checkbox_outline_color_state"/>
+                <solid android:color="@color/mz_btn_checkbox_uncheck_solid_color_state"/>
+            </shape>
+        </inset>
+    </item>
+</layer-list>

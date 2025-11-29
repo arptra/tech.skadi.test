@@ -1,0 +1,18 @@
+return {
+    ['nav.clause.DIRECTION.route-signpost.onthe'] = 'บน{ROUTE} ไปทาง{SIGNPOST}',
+    ['nav.clause.DIRECTION.route-signpost.ontothe'] = 'ไปยัง{ROUTE} ไปทาง{SIGNPOST}',
+    ['nav.clause.DIRECTION.route-signpost.the'] = '{ROUTE} ไปทาง{SIGNPOST}',
+    ['nav.clause.DIRECTION.route-signpost.towards'] = 'ไปทาง{ROUTE} {SIGNPOST}',
+    ['nav.clause.DIRECTION.route.onthe'] = 'บน{ROUTE}',
+    ['nav.clause.DIRECTION.route.ontothe'] = 'ไปยัง{ROUTE}',
+    ['nav.clause.DIRECTION.route.the'] = '{ROUTE}',
+    ['nav.clause.DIRECTION.signpost.towards'] = 'ไปทาง{SIGNPOST}',
+    ['nav.clause.DIRECTION.street-signpost.on'] = 'บน{STREET} ไปทาง{SIGNPOST}',
+    ['nav.clause.DIRECTION.street-signpost.onto'] = 'ไปยัง{STREET} ไปทาง{SIGNPOST}',
+    ['nav.clause.DIRECTION.street.on'] = 'บน{STREET}',
+    ['nav.clause.DIRECTION.street.onto'] = 'ไปยัง{STREET}',
+    ['nav.clause.TURN_KEEP.lane'] = 'ใช้{LANE}',
+    ['nav.clause.TURN_KEEP.lane-move'] = 'ใช้{LANE}และ{MOVE}',
+    ['nav.clause.TURN_KEEP.move'] = '{MOVE}',
+    ['nav.clause.INTERVAL.afterdistance'] = 'หลังจาก{DISTANCE}',
+}

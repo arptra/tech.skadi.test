@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:drawable="@drawable/mz_vec_btn_checked_true_normal">
+    <target android:name="checkedStart" android:animation="@animator/mc_anim_btn_checked_alpha_out"/>
+    <target android:name="checkedPath" android:animation="@animator/mc_anim_btn_checked_fade_out"/>
+    <target android:name="checkedEnd" android:animation="@animator/mc_anim_btn_checked_alpha_out"/>
+</animated-vector>

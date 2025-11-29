@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:height="43dp" android:width="183dp" android:viewportWidth="183" android:viewportHeight="43">
+    <path android:fillColor="#3d93e0" android:pathData="M164,5L159.71,0.71C159.32,0.32 158.68,0.32 158.29,0.71L154,5H164Z"/>
+    <path android:fillColor="@drawable/$touchpad_bubble__0" android:pathData="M8,5L175,5A8,8 0,0 1,183 13L183,35A8,8 0,0 1,175 43L8,43A8,8 0,0 1,0 35L0,13A8,8 0,0 1,8 5z"/>
+</vector>

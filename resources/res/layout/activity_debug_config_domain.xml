@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:background="@color/device_connect_background" android:layout_width="match_parent" android:layout_height="match_parent" android:keepScreenOn="true">
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@+id/ll_top_bar" android:layout_width="match_parent" android:layout_height="64dp" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toTopOf="0">
+        <ImageButton android:id="@+id/btn_back" android:background="@null" android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/icon_system_back" android:contentDescription="back" android:layout_marginStart="20dp" android:layout_marginEnd="16dp" android:stateListAnimator="@animator/zoom_out_90"/>
+        <TextView android:textSize="20sp" android:textColor="@color/title_text_color" android:id="@+id/tv_title_tip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Debug Page" android:lineHeight="24sp" android:textFontWeight="500"/>
+    </LinearLayout>
+    <com.meizu.common.widget.MzButton android:textSize="13sp" android:textColor="@color/white" android:id="@+id/btn_save" android:layout_width="wrap_content" android:layout_height="wrap_content" android:minHeight="40dp" android:text="Save" android:layout_marginEnd="20dp" android:stateListAnimator="@null" android:paddingHorizontal="15dp" android:paddingVertical="10dp" app:layout_constraintBottom_toBottomOf="@+id/ll_top_bar" app:layout_constraintEnd_toEndOf="0" app:layout_constraintTop_toTopOf="0" style="@style/Theme.Upuphone.Font.Button"/>
+    <com.upuphone.xr.sapp.view.NestedScrollViewSelf android:id="@+id/debug_info_scroll_view" android:layout_width="0dp" android:layout_height="0dp" android:fillViewport="true" app:layout_constraintBottom_toBottomOf="0" app:layout_constraintEnd_toEndOf="0" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toBottomOf="@+id/ll_top_bar">
+        <LinearLayout android:orientation="vertical" android:id="@+id/ll_content_layout" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:layout_marginHorizontal="10dp">
+            <include android:id="@+id/protocol_intl_layout" android:layout_width="match_parent" android:layout_height="wrap_content" layout="@layout/layout_debug_info_intl_protocol"/>
+            <include android:id="@+id/protocol_china_layout" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" layout="@layout/layout_debug_info_china_protocol"/>
+            <include android:id="@+id/nbs_intl_layout" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" layout="@layout/layout_debug_info_intl_nbs"/>
+            <include android:id="@+id/nbs_china_layout" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" layout="@layout/layout_debug_info_china_nbs"/>
+            <include android:id="@+id/survey_intl_layout" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" layout="@layout/layout_debug_info_intl_survey"/>
+            <include android:id="@+id/survey_china_layout" android:layout_width="match_parent" android:layout_height="wrap_content" layout="@layout/layout_debug_info_china_survey"/>
+            <include android:id="@+id/km_intl_layout" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" layout="@layout/layout_debug_info_intl_km"/>
+            <include android:id="@+id/km_china_layout" android:layout_width="match_parent" android:layout_height="wrap_content" layout="@layout/layout_debug_info_china_km"/>
+            <include android:id="@+id/nlu_layout" android:layout_width="match_parent" android:layout_height="wrap_content" layout="@layout/layout_debug_info_voice_assistant"/>
+        </LinearLayout>
+    </com.upuphone.xr.sapp.view.NestedScrollViewSelf>
+</androidx.constraintlayout.widget.ConstraintLayout>

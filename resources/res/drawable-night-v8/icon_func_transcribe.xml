@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:height="40dp" android:width="40dp" android:viewportWidth="40" android:viewportHeight="40">
+    <path android:fillColor="@color/color_trans_func_icon" android:pathData="M20,7.333L20,7.333A6,6 0,0 1,26 13.333L26,20A6,6 0,0 1,20 26L20,26A6,6 0,0 1,14 20L14,13.333A6,6 0,0 1,20 7.333z"/>
+    <path android:fillColor="@color/color_trans_func_icon" android:pathData="M11.333,17.333C11.702,17.333 12,17.632 12,18V19.879C12,24.38 15.598,28 20,28C24.402,28 28,24.38 28,19.879V18C28,17.632 28.299,17.333 28.667,17.333H30C30.368,17.333 30.667,17.632 30.667,18V19.879C30.667,25.821 25.907,30.667 20,30.667C14.093,30.667 9.333,25.821 9.333,19.879V18C9.333,17.632 9.632,17.333 10,17.333H11.333Z" android:fillType="1"/>
+    <path android:fillColor="@color/color_trans_func_icon" android:pathData="M19.333,29.333L20.667,29.333A0.667,0.667 0,0 1,21.333 30L21.333,32.667A0.667,0.667 0,0 1,20.667 33.333L19.333,33.333A0.667,0.667 0,0 1,18.667 32.667L18.667,30A0.667,0.667 0,0 1,19.333 29.333z"/>
+</vector>

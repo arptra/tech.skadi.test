@@ -1,0 +1,1 @@
+{"inherit": ["../../common/ocm/logistics.scene.json", "../assets/assets.logistics.day.json"], "extends": ["../../common/ocm/common.json", "../../miami/schemes/normal.day.definitions.json", "../schemes/normal.day.definitions.json", "../schemes/logistics.day.definitions.json"]}

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:layout_width="match_parent" android:layout_height="match_parent" android:minHeight="@dimen/mz_action_bar_default_height_appcompat_split">
+    <LinearLayout android:gravity="center_horizontal" android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="match_parent" android:layout_centerInParent="true">
+        <com.meizu.common.widget.MzButton android:layout_gravity="center_vertical" android:id="@android:id/button1" android:layout_width="142dp" android:layout_height="@dimen/mz_bottom_bar_corner_button_height" android:text="取消订单" style="@style/Widget.DeviceDefault.Light.Button.LightColor.Color"/>
+        <com.meizu.common.widget.MzButton android:layout_gravity="center_vertical" android:id="@android:id/button2" android:layout_width="142dp" android:layout_height="@dimen/mz_bottom_bar_corner_button_height" android:text="提交订单" android:layout_marginStart="20dp" style="@style/Widget.DeviceDefault.Light.Button.Color"/>
+    </LinearLayout>
+</RelativeLayout>

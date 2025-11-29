@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt">
+    <item android:id="@android:id/background" android:drawable="0x7f080809"/>
+    <item android:id="@android:id/secondaryProgress">
+        <clip android:gravity="left" android:drawable="0x7f080816" android:clipOrientation="horizontal"/>
+    </item>
+    <item android:id="@android:id/progress">
+        <clip android:gravity="left" android:drawable="0x7f080816" android:clipOrientation="horizontal"/>
+    </item>
+</layer-list>

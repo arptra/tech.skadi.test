@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:layout_height="wrap_content" style="@style/Widget.MeizuCommon.McPickerLayout">
+    <ImageView android:layout_gravity="center" android:id="@+id/mc_select_box" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:src="0x7f0807fc" android:scaleType="fitXY"/>
+    <LinearLayout android:orientation="horizontal" android:id="@+id/mc_column_parent" android:layout_width="match_parent" android:layout_height="wrap_content" android:layoutDirection="ltr">
+        <FrameLayout android:id="@+id/mc_column1Layout" android:layout_width="wrap_content" android:layout_height="match_parent" android:layoutDirection="locale">
+            <com.meizu.common.widget.ScrollTextView android:layout_gravity="start" android:id="@+id/mc_scroll1" android:layout_width="90dp" android:layout_height="match_parent"/>
+            <TextView android:textSize="@dimen/mc_picker_text_size" android:textStyle="bold" android:textColor="@color/mc_picker_text_color" android:id="@+id/mc_scroll1_text" android:paddingTop="@dimen/mc_date_picker_padding_top" android:layout_width="wrap_content" android:layout_height="match_parent" android:layout_marginStart="68dp"/>
+        </FrameLayout>
+        <ImageView android:id="@+id/mc_divider_bar1" android:visibility="gone" android:layout_width="0px" android:layout_height="match_parent"/>
+        <FrameLayout android:id="@+id/mc_column2Layout" android:layout_width="wrap_content" android:layout_height="match_parent" android:layoutDirection="locale" android:layout_marginEnd="10dp">
+            <com.meizu.common.widget.ScrollTextView android:layout_gravity="start" android:id="@+id/mc_scroll2" android:layout_width="90dp" android:layout_height="match_parent"/>
+            <TextView android:textSize="@dimen/mc_picker_text_size" android:textStyle="bold" android:textColor="@color/mc_picker_text_color" android:id="@+id/mc_scroll2_text" android:paddingTop="@dimen/mc_date_picker_padding_top" android:layout_width="wrap_content" android:layout_height="match_parent" android:layout_marginStart="68dp"/>
+        </FrameLayout>
+    </LinearLayout>
+</FrameLayout>

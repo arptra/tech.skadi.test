@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:orientation="vertical" android:id="@+id/search_scroll" android:background="@color/theme_black_3_color" android:visibility="gone" android:layout_width="match_parent" android:layout_height="match_parent">
+    <FrameLayout android:id="@+id/marginTopView" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <include layout="@layout/search_title_panel_layout"/>
+    <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent">
+        <LinearLayout android:id="@+id/search_top_panel_layout" android:background="@drawable/search_title_bg" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <include layout="@layout/search_home_panel_layout"/>
+        </LinearLayout>
+        <include android:id="@+id/search_want_view" android:visibility="gone" layout="@layout/search_want_address_view"/>
+        <androidx.core.widget.NestedScrollView android:id="@+id/search_list_layout" android:background="@drawable/search_title_bg" android:layout_width="match_parent" android:layout_height="match_parent">
+            <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent">
+                <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+                    <com.upuphone.ar.navi.lite.view.SearchCommonView android:id="@+id/search_common_view" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                    <LinearLayout android:orientation="vertical" android:background="@drawable/search_top_edit_bg" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/size_dp_10" android:layout_marginStart="10dp" android:layout_marginEnd="10dp">
+                        <com.upuphone.ar.navi.lite.view.SearchMenuView android:id="@+id/searchmenu" android:background="@android:color/transparent" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_alignParentTop="true"/>
+                        <com.upuphone.ar.navi.lite.view.SlideRecyclerView android:scrollbarSize="5dp" android:scrollbarThumbVertical="@drawable/scrollbar_bg" android:id="@+id/search_list" android:visibility="gone" android:scrollbars="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_below="@+id/searchmenu" android:paddingStart="10dp" android:paddingEnd="10dp"/>
+                    </LinearLayout>
+                </LinearLayout>
+                <com.upuphone.ar.navi.lite.view.EmptyDataView android:id="@+id/search_empty_data" android:layout_width="match_parent" android:layout_height="match_parent"/>
+            </RelativeLayout>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+</LinearLayout>

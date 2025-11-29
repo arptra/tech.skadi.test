@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:height="28dp" android:width="28dp" android:autoMirrored="true" android:viewportWidth="28" android:viewportHeight="28">
+    <path android:fillColor="#00000000" android:pathData="M8.96,19.806C8.516,19.806 8.082,19.942 7.718,20.197L4.5,22.45V7.583C4.5,6.847 5.097,6.25 5.833,6.25H22.167C22.903,6.25 23.5,6.847 23.5,7.583V18.472C23.5,19.209 22.903,19.806 22.167,19.806H8.96ZM3.844,22.909C3.845,22.908 3.845,22.908 3.845,22.908L3.844,22.909Z" android:strokeColor="@drawable/$translation_icon__0" android:strokeWidth="2"/>
+    <path android:fillColor="@drawable/$translation_icon__1" android:pathData="M9.167,9.917L16.5,9.917A1,1 0,0 1,17.5 10.917L17.5,10.917A1,1 0,0 1,16.5 11.917L9.167,11.917A1,1 0,0 1,8.167 10.917L8.167,10.917A1,1 0,0 1,9.167 9.917z"/>
+    <path android:fillColor="@drawable/$translation_icon__2" android:pathData="M9.167,14L13,14A1,1 0,0 1,14 15L14,15A1,1 0,0 1,13 16L9.167,16A1,1 0,0 1,8.167 15L8.167,15A1,1 0,0 1,9.167 14z"/>
+</vector>

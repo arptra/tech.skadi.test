@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="poscon.consent.screen.no">Nej tak</string>
+    <string name="poscon.consent.screen.yes">OK, helt i orden</string>
+    <string name="poscon.consent.v3.screen.1">Denne app vil muligvis indsamle oplysninger om dine omgivelser, f.eks. trådløse netværk i nærheden og mobilsignaler</string>
+    <string name="poscon.consent.v3.screen.2">Med din tilladelse vil disse oplysninger blive sendt til HERE med henblik på at hjælpe HERE med at forbedre sine tjenester. Disse oplysninger identificerer ikke dig, og HERE vil kun opbevare anonymiserede oplysninger.</string>
+    <string name="poscon.consent.v3.screen.3">Du kan tilbagekalde dit samtykke når som helst</string>
+    <string name="poscon.consent.v3.screen.learn.more">Få mere at vide om privatlivspolitikken hos HERE</string>
+    <string name="poscon.consent.v3.screen.turn.on">Ønsker du at informere HERE om dette?</string>
+</resources>

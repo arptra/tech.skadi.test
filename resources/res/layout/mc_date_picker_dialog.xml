@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent" android:splitMotionEvents="false">
+    <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+        <com.meizu.common.widget.SimpleAdaptiveTextView android:textSize="19sp" android:textColor="?attr/colorOnSurface" android:layout_gravity="center_horizontal" android:id="@+id/time_preview" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="38dp" android:layout_marginBottom="22dp" android:maxLines="1" android:layout_marginStart="8dp" android:layout_marginEnd="8dp"/>
+    </LinearLayout>
+    <com.meizu.common.widget.DatePicker android:layout_gravity="center_horizontal" android:id="@+id/datePicker" android:layout_width="wrap_content" android:layout_height="wrap_content" android:spinnersShown="true" android:calendarViewShown="false" app:mcInternalLayout="@layout/mc_custom_date_picker" app:mcVisibleRow="5"/>
+</LinearLayout>

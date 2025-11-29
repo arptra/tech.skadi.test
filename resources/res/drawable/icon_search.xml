@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:height="24dp" android:width="24dp" android:autoMirrored="true" android:viewportWidth="24" android:viewportHeight="24">
+    <path android:fillColor="@color/icon_search_color" android:pathData="M12.548,16.704C12.304,16.964 12.307,17.37 12.557,17.625L12.746,17.82C13.01,18.091 13.447,18.088 13.707,17.813L18.784,12.46C19.028,12.202 19.028,11.799 18.784,11.542L13.707,6.189C13.447,5.914 13.01,5.911 12.746,6.182L12.557,6.376C12.307,6.632 12.304,7.038 12.548,7.298L16.96,12.001L12.548,16.704Z" android:fillAlpha="0.25"/>
+</vector>

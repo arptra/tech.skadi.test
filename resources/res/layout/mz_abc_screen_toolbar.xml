@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<flyme.support.v7.widget.ActionBarOverlayLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:id="@+id/decor_content_parent" android:layout_width="match_parent" android:layout_height="match_parent" android:splitMotionEvents="false">
+    <include layout="@layout/mz_screen_content_include"/>
+    <flyme.support.v7.widget.ActionBarContainer android:gravity="top" android:id="@+id/action_bar_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_alignParentTop="true" android:touchscreenBlocksFocus="true" style="?attr/actionBarStyle">
+        <flyme.support.v7.widget.Toolbar android:id="@+id/action_bar" android:layout_width="match_parent" android:layout_height="wrap_content" style="?attr/toolbarStyle"/>
+        <flyme.support.v7.widget.ActionBarContextView android:theme="?attr/actionBarTheme" android:id="@+id/action_context_bar" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" style="?attr/actionModeStyle"/>
+    </flyme.support.v7.widget.ActionBarContainer>
+    <flyme.support.v7.widget.ActionBarContainer android:gravity="center" android:id="@+id/split_action_bar" android:visibility="gone" android:clipChildren="false" android:layout_width="match_parent" android:layout_height="wrap_content" style="?attr/actionBarSplitStyle"/>
+    <ImageView android:id="@+id/mz_list_backtop_container" android:visibility="invisible" android:layout_width="@dimen/mz_list_backtop_btn_width" android:layout_height="@dimen/mz_list_backtop_btn_height" android:layout_marginRight="@dimen/mz_list_backtop_btn_margin_right" android:layout_marginBottom="@dimen/mz_list_backtop_btn_margin_bottom"/>
+    <ViewStub android:id="@+id/mz_action_bar_dropdown_stub" android:layout="@layout/mz_action_bar_drop_down_view" android:layout_width="match_parent" android:layout_height="match_parent"/>
+</flyme.support.v7.widget.ActionBarOverlayLayout>

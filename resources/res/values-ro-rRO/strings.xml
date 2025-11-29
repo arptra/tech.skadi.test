@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="poscon.consent.screen.no">Nu, mersi</string>
+    <string name="poscon.consent.screen.yes">OK, sigur</string>
+    <string name="poscon.consent.v3.screen.1">Această aplicație poate culege informații despre zona în care sunteți, cum ar fi rețelele Wi-Fi din apropiere sau semnalele celulare</string>
+    <string name="poscon.consent.v3.screen.2">Cu permisiunea dvs., aceste informații sunt trimise către HERE pentru îmbunătățirea serviciilor HERE. Aceste informații nu vă identifică și HERE va reține doar informații anonime.</string>
+    <string name="poscon.consent.v3.screen.3">Vă puteți anula consimțământul în orice moment</string>
+    <string name="poscon.consent.v3.screen.learn.more">Aflați mai multe despre politicile de confidențialitate de la HERE</string>
+    <string name="poscon.consent.v3.screen.turn.on">Doriți să furnizați HERE aceste informații?</string>
+</resources>

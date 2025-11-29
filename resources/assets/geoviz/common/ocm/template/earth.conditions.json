@@ -1,0 +1,1 @@
+{"definitions": {"Is.Continent": ["==", ["get", "category"], "CONTINENT"], "Is.Island": ["==", ["get", "category"], "ISLAND"], "Is.Earth.Layer": ["any", ["==", ["get", "$layer"], "CartographyLabel"], ["==", ["get", "$layer"], "LandLabel"]], "Is.MountainRange": ["==", ["get", "category"], "MOUNTAIN_RANGE_CENTERLINE"]}}

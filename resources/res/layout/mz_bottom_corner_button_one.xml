@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:layout_width="match_parent" android:layout_height="match_parent" android:minHeight="@dimen/mz_action_bar_default_height_appcompat_split">
+    <com.meizu.common.widget.MzButton android:gravity="center" android:id="@android:id/button1" android:layout_width="match_parent" android:layout_height="@dimen/mz_bottom_bar_corner_button_height" android:text="开始" android:layout_centerInParent="true" android:fontFamily="sans-serif-medium" android:layout_marginHorizontal="44dp" style="@style/Widget.DeviceDefault.Light.Button.Color"/>
+</RelativeLayout>

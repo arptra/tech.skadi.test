@@ -1,0 +1,1 @@
+{"exitInfoZoomToStorageLevel": {"$ref": "../../ocm/list/ocm.visibility-ranges.json#/logisticsExitInfoZoomToStorageLevel"}, "$concat": [{"$removeElement": {"filter": ["ocm_exit_info"], "from": {"$ref": "ocm.visibility-ranges.json#"}}}, {"ocm_exit_info": {"zoomToStorageLevel": {"$ref": "#/exitInfoZoomToStorageLevel"}, "minZoom": 13}}]}

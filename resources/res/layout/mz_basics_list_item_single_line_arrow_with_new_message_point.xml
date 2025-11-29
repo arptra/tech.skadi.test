@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:id="@+id/list_item" style="@style/Widget.Flyme.List.Layout">
+    <LinearLayout style="@style/Widget.Flyme.SingleList.ContainerRelativeLayout">
+        <TextView android:id="@+id/title" style="@style/Widget.Flyme.SingleList.Title"/>
+    </LinearLayout>
+    <LinearLayout android:gravity="center_vertical" android:layout_gravity="center_vertical" android:layout_width="wrap_content" android:layout_height="wrap_content">
+        <View android:layout_gravity="center_vertical" android:layout_width="20dp" android:layout_height="20dp"/>
+        <RelativeLayout android:layout_width="24dp" android:layout_height="24dp" android:layout_marginEnd="8dp">
+            <com.meizu.common.widget.NewMessageView android:id="@+id/arrow_right_new_message_point" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerInParent="true"/>
+        </RelativeLayout>
+        <com.meizu.common.widget.ImageFontCompatView android:id="@+id/arrow_right" android:layout_width="wrap_content" android:layout_height="wrap_content" app:fontTextColor="@color/mz_icon_font_text_color" app:textResName="@string/icon_font_arrow_next"/>
+    </LinearLayout>
+</LinearLayout>

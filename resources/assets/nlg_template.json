@@ -1,0 +1,1351 @@
+[{
+  "functionId": "GLOBAL01_P22",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": " Sorry, I didn't quite catch you. Please wake up and try again."
+  }]
+}, {
+  "functionId": "GLOBAL01_P10",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": " ${appName} account is not logged in, please log in and try again. "
+  }]
+}, {
+  "functionId": "GLOBAL01_P21",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": " Sorry, I didn't catch you."
+  }]
+}, {
+  "functionId": "GLOBAL01_P02",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "The Internet speed seems a bit slow, might as well check the network?"
+  }]
+}, {
+  "functionId": "GLOBAL01_P13",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Please unlock your phone to continue! "
+  }]
+}, {
+  "functionId": "GLOBAL01_P01",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Network error. Please check it.|Please check your Internet connection first and try again."
+  }]
+}, {
+  "functionId": "GLOBAL01_P12",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "There's no media right now. "
+  }]
+}, {
+  "functionId": "GLOBAL01_P23",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": " Sorry, this command is not supported in the current scenario."
+  }]
+}, {
+  "functionId": "GLOBAL01_P20",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": " Sorry, location acquisition failed, please try again later."
+  }]
+}, {
+  "functionId": "GLOBAL01_P19",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": " There is something wrong with the phone connection. Please try again."
+  }]
+}, {
+  "functionId": "GLOBAL01_P07",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": " You can't use your voice assistant until you connect your phone!"
+  }]
+}, {
+  "functionId": "GLOBAL01_P09",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": " ${appName} is not installed, please install and try again."
+  }]
+}, {
+  "functionId": "GLOBAL01_P04",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": " I can't understand you yet|I'm sorry, I didn't get it. "
+  }]
+}, {
+  "functionId": "GLOBAL01_P03",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Sorry, I didn't catch that. Please say it again."
+  }]
+}, {
+  "functionId": "GLOBAL01_P06",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": " The service is abnormal, please try again later. "
+  }]
+}, {
+  "functionId": "GLOBAL01_P05",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Sorry, this feature is not currently supported."
+  }]
+}, {
+  "functionId": "GLOBAL02_R10",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Please go to your phone Settings to enable location services!"
+  }]
+}, {
+  "functionId": "GLOBAL02_R08",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Please go to MY VIEW AR APP to enable the address book permissions oh!"
+  }]
+}, {
+  "functionId": "GLOBAL02_R09",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Please go to MY VIEW AR APP to allow call permissions!"
+  }]
+}, {
+  "functionId": "GLOBAL02_P06",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "你好，请问需要什么帮助呢？ "
+  }]
+}, {
+  "functionId": "GLOBAL02_R05",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Please go to MY VIEW AR APP to authorize microphone permissions!"
+  }]
+}, {
+  "functionId": "GLOBAL02_R01",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Please go to MY VIEW AR APP to allow access to the network! "
+  }]
+}, {
+  "functionId": "GLOBAL02_R02",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Go to MY VIEW AR APP and authorize location services"
+  }]
+}, {
+  "functionId": "GLOBAL02_R03",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Please go to MY VIEW AR APP and agree to the agreement! "
+  }]
+}, {
+  "functionId": "GLOBAL03_P03",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "There is no ${num} page! Which page do you want to turn to?"
+  }]
+}, {
+  "functionId": "GLOBAL03_P04",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Oh, it's page one already."
+  }]
+}, {
+  "functionId": "GLOBAL03_P01",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "That's not an option. Which one are you going to choose? "
+  }]
+}, {
+  "functionId": "GLOBAL03_P02",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+  }]
+}, {
+  "functionId": "GLOBAL03_P05",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "it's already the last page"
+  }]
+}, {
+  "functionId": "GLOBAL03_P06",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Sorry, this operation is not currently supported. "
+  }]
+}, {
+  "functionId": "GLOBAL05_P03",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Sorry, the current application does not support this operation."
+  }]
+}, {
+  "functionId": "GLOBAL05_P04",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "There's no video or music playing right now. "
+  }]
+},  {
+  "functionId": "GLOBAL04_R06",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "All right, bye.|All right, I'll go."
+  }]
+}, {
+  "functionId": "GLOBAL04_R07",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "There is no operation that can be canceled!"
+  }]
+}, {
+  "functionId": "GLOBAL06_P02",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "I'm here.|Aye."
+  }]
+}, {
+  "functionId": "GLOBAL06_P03",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Ok, bye.|Okay, I'm going to go."
+  }]
+}, {
+  "functionId": "GLOBAL06_P04",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "It's already on the desktop, can't go back."
+  }]
+}, {
+  "functionId": "GLOBAL06_P05",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Come on, it's on the desk now! "
+  }]
+},  {
+  "functionId": "CALL02_P11",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Which card should I dial?"
+  }]
+}, {
+  "functionId": "CALL02_P13",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "I found a number. Would you like to call it? "
+  }]
+},  {
+  "functionId": "CALL02_P04",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Sorry, I can't find his phone number."
+  }]
+}, {
+  "functionId": "CALL02_P03",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Which one is it?|Which one do you choose? "
+  }]
+}, {
+  "functionId": "CALL02_P06",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": " Which one is it?|Which one do you choose? "
+  }]
+}, {
+  "functionId": "CALL02_P05",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "${contactName} is not found in the address book, try using the contact's name."
+  }]
+},  {
+  "functionId": "CALL02_P02",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Calling ${phoneNum}..."
+  }]
+}, {
+  "functionId": "CALL04_P02",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": " ${phonNum_province} ${phoneNum} To answer the phone, or hang up? "
+  }]
+}, {
+  "functionId": "CALL04_P01",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "${contactName} Call, to answer or hang up?"
+  }]
+}, {
+  "functionId": "CALL07_P01",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Who are you calling?"
+  }]
+}, {
+  "functionId": "CALL01_P03",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Sorry, unable to call, please check the SIM card or whether it is set to provide empty information and try again. "
+  }]
+}, {
+  "functionId": "CALL01_P02",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Turn off airplane mode to make phone calls."
+  }]
+},  {
+  "functionId": "CALL01_P06",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "You need to open the MY VIEW AR APP to make a call. "
+  }]
+}, {
+  "functionId": "CALL01_P05",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "You can't make a call until you unlock your phone."
+  }]
+}, {
+  "functionId": "CALL09_P01",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "The service is abnormal. Please click the trackpad to answer or hang up."
+  }]
+},  {
+  "functionId": "SET02_P01",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Glasses need WiFi to work, so you can't turn it off."
+  }]
+}, {
+  "functionId": "SET02_P02",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Glasses need Bluetooth to work, which can't be turned off."
+  }]
+}, {
+  "functionId": "SET03_P07",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "You have paired your phone. If you want to pair it again, unbind it first."
+  }]
+},  {
+  "functionId": "SET05_P04",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "${Sys_Setting} is closed."
+  }]
+},  {
+  "functionId": "SET05_P03",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "${Sys_Setting} is open. "
+  }]
+},   {
+  "functionId": "SET08_P08",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "The volume should be between 0 and 100!|Say a number from 0 to 100!"
+  }]
+},   {
+  "functionId": "SET08_P03",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Oh, the volume is at a minimum.|The volume is already at a minimum!"
+  }]
+}, {
+  "functionId": "SET08_P01",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Oh, it's as loud as it can be.|The volume is as loud as it can be!"
+  }]
+}, {
+  "functionId": "SET08_P10",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "There's no mute, you can't hear you say turn up the volume"
+  }]
+}, {
+  "functionId": "SET08_P11",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Do you want to turn the volume up or down? "
+  }]
+}, {
+  "functionId": "SET09_P08",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "The brightness should be between 0 and 100!|Say a number from 0 to 100!"
+  }]
+}, {
+  "functionId": "SET09_P09",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Do you want to turn the brightness up or down? "
+  }]
+},  {
+  "functionId": "SET09_P01",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Gee, the screen is at its brightest.|The screen is already at its brightest!"
+  }]
+},  {
+  "functionId": "SET09_P03",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Oh, the screen is as dark as it gets.|The screen is already at its darkest!"
+  }]
+}, {
+  "functionId": "SET11_R01",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Are you sure you want to turn it off?"
+  }]
+}, {
+  "functionId": "APP01_R03",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": ""
+  }]
+}, {
+  "functionId": "APP01_R04",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Sorry, this app can't be opened on glasses."
+  }]
+}, {
+  "functionId": "APP01_R07",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Sorry, it failed to open. Try again later."
+  }]
+}, {
+  "functionId": "APP01_R08",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Which application is it?"
+  }]
+}, {
+  "functionId": "APP02_R08",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "Sorry, failed to close, try again?"
+  }]
+},  {
+  "functionId": "APP01_R10",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "I can't open ${appName} while charging."
+  }]
+}, {
+  "functionId": "APP02_R05",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "The app doesn't open on glasses."
+  }]
+}, {
+  "functionId": "APP01_R01",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "It's already open."
+  }]
+}, {
+  "functionId": "APP01_R09",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": " Are you sure you want to open ${appName}?"
+  }]
+}, {
+  "functionId": "APP02_R07",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": " This app was not found. "
+  }]
+},
+  {
+    "functionId": "GLOBAL01_P24",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Please go to MY VIEW AR APP and agree to the large model service agreement and try again."
+    }]
+  },
+  {
+    "functionId": "GLOBAL01_P25",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Please go to MY VIEW AR APP first, click on theVoice Assistant and agree to the large model service agreement and try again."
+    }]
+  },
+  {
+    "functionId": "GLOBAL01_P26",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Play failed, please open MY VIEW AR APP."
+    }]
+  },
+
+  {
+    "functionId": "GLOBAL01_P27",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Navigation is abnormal, please grant MY VIEW AR APP always permission in the phone location permission Settings."
+    }]
+  },
+  {
+    "functionId": "GLOBAL02_R11",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Please go to your phone Settings to enable location services!"
+    }]
+  },
+  {
+    "functionId": "NAVI04_P02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Please tell me your home address and I'll keep it for you"
+    }]
+  },{
+  "functionId": "NAVI04_P01",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+  }]
+},
+  {
+    "functionId": "NAVI05_P02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Please tell me the address of the company and I will keep it for you"
+    }]
+  },
+  {
+    "functionId": "NAVI06_P01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "You are now at ${currentRoadName}."
+    }]
+  },
+  {
+    "functionId": "NAVI07_P01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "The optimal route has been switched for you.|The optimal route was successfully switched."
+    }]
+  },
+  {
+    "functionId": "NAVI01_P08",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Now there is no navigation, can not refresh the route."
+    }]
+  },
+  {
+    "functionId": "NAVI01_P08",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Now there is no navigation, can not refresh the route."
+    }]
+  },
+  {
+    "functionId": "NAVI08_P01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "The ${vehcileType} route has been switched"
+    }]
+  },
+  {
+    "functionId": "NAVI08_P02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "The distance is too long to change to the ${vehcileType} route."
+    }]
+  },
+  {
+    "functionId": "NAVI08_P04",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "There's no navigation right now, so I can't switch modes of travel."
+    }]
+  },
+  {
+    "functionId": "NAVI09_P01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Changed to ${naviStrtegy} route."
+    }]
+  },
+  {
+    "functionId": "NAVI01_P09",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Sorry, this route is not currently supported"
+    }]
+  },
+  {
+    "functionId": "NAVI09_P02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "There is no navigation right now, so you can't change your route preference."
+    }]
+  },
+  {
+    "functionId": "NAVI10_P04",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Now there is no navigation, can not open real-time traffic conditions."
+    }]
+  },
+  {
+    "functionId": "NAVI10_P03",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "There's no navigation, no way to turn off live traffic."
+    }]
+  },
+  {
+    "functionId": "NAVI11_P01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "distance ${distance}, approximately ${tripTime}, estimated ${arriveTime} arrival."
+    }]
+  },
+  {
+    "functionId": "NAVI11_P02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Destination ${POI_name}, distance ${distance}, drive about ${tripTime}. Do you need to switch destinations?"
+    }]
+  },
+  {
+    "functionId": "NAVI11_P03",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Go to ${POI_name}, distance ${distance}, drive about ${time}. Do you need navigation?"
+    }]
+  },
+
+  {
+    "functionId": "NAVI11_P04",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Sorry, no navigation right now."
+    }]
+  },
+  {
+    "functionId": "NAVI02_P06",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "It's too far. Let's go another way."
+    }]
+  },
+  {
+    "functionId": "NAVI14_P01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "There is no navigation now, can not modify the destination."
+    }]
+  },
+  {
+    "functionId": "NAVI15_P01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Which one?|What's the number?|Which one is it?"
+    }]
+  },
+  {
+    "functionId": "NAVI15_P02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Don't find what you're looking for, search it at another address."
+    }]
+  },
+  {
+    "functionId": "NAVI16_P01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Front ${TrafficStatus}.."
+    }]
+  },
+  {
+    "functionId": "NAVI16_P01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Front ${TrafficStatus}.."
+    }]
+  },
+  {
+    "functionId": "NAVI01_P10",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Sorry, the traffic query failed, please try again later!"
+    }]
+  },
+  {
+    "functionId": "NAVI17_P03",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "There's no navigation right now."
+    }]
+  },
+  {
+    "functionId": "NAVI02_P05",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "You can just say the number or the destination, or swipe the trackpad to choose the address!"
+    }]
+  },
+  {
+    "functionId": "NAVI19_P03",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "I'll step down and call me if you need something."
+    }]
+  },
+  {
+    "functionId": "NAVI21_P01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "You are already near home, unable to initiate navigation."
+    }]
+  },
+  {
+    "functionId": "NAVI21_P02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "You are in the vicinity of the company and cannot initiate navigation."
+    }]
+  },
+  {
+    "functionId": "NAVI21_P03",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "You're near your destination. You can't navigate."
+    }]
+  },
+  {
+    "functionId": "NAVI21_P04",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Sorry, the navigation service is currently only available in China."
+    }]
+  },
+  {
+    "functionId": "NAVI22_P01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "So where are you going? Try another address."
+    }]
+  },
+  {
+    "functionId": "TRANS06_R02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "SIt's not translated yet."
+    }]
+  },
+  {
+    "functionId": "TRANS06_R02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "SIt's not translated yet."
+    }]
+  },
+  {
+    "functionId": "TRANS06_R02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "It's not translated yet."
+    }]
+  }, {
+  "functionId": "TRANS06_R03",
+  "tts": [{
+    "mood": "",
+    "speakID": "",
+    "template": "It hasn't been transcribed yet."
+  }]
+},
+  {
+    "functionId": "TRANS05_R01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Sorry, there is currently no support for this language. You can also check the supported languages in the MY VIEW AR APP."
+    }]
+  },
+  {
+    "functionId": "TRANS05_R03",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Please open the translator first."
+    }]
+  },
+  {
+    "functionId": "TRANS05_R03",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Sorry, there is currently no support for this language. You can also check the supported languages in the MY VIEW AR APP."
+    }]
+  },
+  {
+    "functionId": "GLOBAL06_P01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "GLOBAL05_P01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "GLOBAL05_P02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "GLOBAL05_P03",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Sorry, the current application does not support this operation."
+    }]
+  },
+  {
+    "functionId": "GLOBAL05_P04",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "There's no video or music playing right now."
+    }]
+  },
+  {
+    "functionId": "APP01_R02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": " All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "APP02_R01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": " All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "APP02_R02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": " This app hasn't been opened"
+    }]
+  },
+  {
+    "functionId": "APP02_R03",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": " All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "APP02_R04",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": " All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "NAVI04_P03",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": " All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "NAVI05_P01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": " All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "NAVI05_P03",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": " All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "SET05_P01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": " All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "SET05_P02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "SET08_P02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "SET08_P04",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "SET08_P05",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "SET08_P06",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "SET08_P07",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "SET08_P09",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "SET09_P02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "SET09_P04",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "SET09_P05",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "SET09_P06",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "SET09_P07",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "TRANSLATE03_P01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "TRANS06_R01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "TRANS05_R02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "TRANS05_R05",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "NAVI02_P01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Where do you want to go?"
+    }]
+  },
+  {
+    "functionId": "NAVI02_P02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "NAVI02_P02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "NAVI03_P01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Not the way you want to get around, try my recommendations."
+    }]
+  },
+  {
+    "functionId": "TRANS05_R04",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Sorry, there is currently no support for this language. You can also check the supported languages in the MY VIEW AR APP"
+    }]
+  },
+  {
+    "functionId": "TODO03_R01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Sorry, deleting to-dos failed. Please try again."
+    }]
+  },
+  {
+    "functionId": "TODO03_R02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "TODO03_R05",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "${num} to-dos are found . Which one is it?？"
+    }]
+  },
+  {
+    "functionId": "TODO03_R06",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "No to-dos found."
+    }]
+  },
+  {
+    "functionId": "TODO04_R01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Sorry, updating to-dos failed. Please try again."
+    }]
+  },
+  {
+    "functionId": "TODO04_R02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "TODO04_R07",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "You can say ’it's finished‘"
+    }]
+  },
+  {
+    "functionId": "TODO01_R01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "${num} to-dos are found . Which one is it?"
+    }]
+  },
+  {
+    "functionId": "TODO01_R02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "${num} to-dos are found ."
+    }]
+  },
+  {
+    "functionId": "TODO01_R02_01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "one to-do is found."
+    }]
+  },
+  {
+    "functionId": "TODO01_R03",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "There are no to-dos ."
+    }]
+  },
+  {
+    "functionId": "TODO02_R01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "All right!|Roger that!|No problem!|Okay!|Yes!"
+    }]
+  },
+  {
+    "functionId": "TODO02_R02",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Sorry, adding to-dos failed. Please try again."
+    }]
+  },
+  {
+    "functionId": "TODO02_R03",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "What content do you need to be reminded about?"
+    }]
+  },
+  {
+    "functionId": "MUSIC01_P03",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Please go to your mobile phone to play music first."
+    }]
+  },
+  {
+    "functionId": "SET17_P01",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Not recording right now."
+    }]
+  },
+  {
+    "functionId": "ALARMO1_R05",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Can you say turn on or off the alarm clock?"
+    }]
+
+  },
+  {
+    "functionId": "ALARM01_R06",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "For more, please check on your mobile phone"
+    }]
+
+  },
+  {
+    "functionId": "GLOBAL01_P30",
+    "tts": [{
+      "mood": "",
+      "speakID": "",
+      "template": "Sorry, this feature is not available in your region."
+    }]
+
+  }
+]

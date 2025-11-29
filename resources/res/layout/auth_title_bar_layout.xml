@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:layout_width="match_parent" android:layout_height="wrap_content">
+    <FrameLayout android:id="@+id/ui_common_base_ui_activity_status_bar_placeholder" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <ImageView android:id="@+id/close_icon" android:paddingLeft="8dp" android:paddingTop="13dp" android:paddingRight="8dp" android:paddingBottom="13dp" android:visibility="gone" android:layout_width="34dp" android:layout_height="44dp" android:src="@drawable/auth_close" android:layout_toRightOf="@+id/back_icon" android:layout_alignTop="@+id/back_icon"/>
+    <ImageView android:id="@+id/back_icon" android:paddingLeft="20dp" android:paddingTop="13dp" android:paddingRight="8dp" android:paddingBottom="13dp" android:layout_width="46dp" android:layout_height="44dp" android:src="@drawable/auth_back" android:layout_below="@+id/ui_common_base_ui_activity_status_bar_placeholder"/>
+</RelativeLayout>

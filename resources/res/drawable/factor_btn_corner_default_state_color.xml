@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt">
+    <item android:state_pressed="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <corners android:radius="@dimen/factor_cir_btn_radius_normal"/>
+                    <solid android:color="?attr/colorPrimary"/>
+                </shape>
+            </item>
+            <item>
+                <shape android:shape="rectangle">
+                    <corners android:radius="@dimen/factor_cir_btn_radius_normal"/>
+                    <solid android:color="?attr/colorStatePressed"/>
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item android:state_enabled="false">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/factor_cir_btn_radius_normal"/>
+            <solid android:color="?attr/colorSurfaceContainerLow"/>
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/factor_cir_btn_radius_normal"/>
+            <solid android:color="?attr/colorPrimary"/>
+        </shape>
+    </item>
+</selector>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" style="@style/Widget.Flyme.List.Layout">
+    <LinearLayout style="@style/Widget.Flyme.SingleList.ContainerRelativeLayout">
+        <TextView android:id="@+id/title" style="@style/Widget.Flyme.SingleList.Title"/>
+    </LinearLayout>
+    <View android:layout_gravity="center_vertical" android:layout_width="20dp" android:layout_height="20dp"/>
+    <com.meizu.common.widget.CircularProgressButton android:textSize="@dimen/mz_list_item_cir_progress_button_text_size" android:gravity="center" android:layout_gravity="center_vertical" android:id="@+id/circularbutton1" android:layout_width="wrap_content" android:layout_height="wrap_content" app:mcCirButtonCornerRadius="48dp" app:mcCirButtonSelectorError="@color/mc_cir_progress_button_red" app:mcCirButtonStrokeWidth="3dp" app:mcCirButtonTextComplete="完成" app:mcCirButtonTextError="错误" app:mcCirButtonTextIdle="安装"/>
+</LinearLayout>

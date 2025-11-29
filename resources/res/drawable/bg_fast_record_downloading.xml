@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt">
+    <item android:id="@android:id/background">
+        <shape android:shape="ring" android:innerRadiusRatio="2.5" android:thicknessRatio="12" android:useLevel="false" android:type="sweep"> &gt; 
+            <solid android:color="@color/fast_record_download_progress_bg_color"/>
+        </shape>
+    </item>
+    <item android:id="@android:id/progress">
+        <rotate android:fromDegrees="-90" android:toDegrees="-90" android:pivotX="50%" android:pivotY="50%">
+            <shape android:shape="ring" android:innerRadiusRatio="2.5" android:thicknessRatio="12" android:angle="0" android:type="sweep">
+                <solid android:color="@color/fast_record_download_progress_size_color"/>
+            </shape>
+        </rotate>
+    </item>
+</layer-list>

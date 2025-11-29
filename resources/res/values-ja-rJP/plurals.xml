@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="trsb_choose_num">
+        <item quantity="one">%d項目を選択中</item>
+        <item quantity="other">%d項目を選択中</item>
+    </plurals>
+</resources>

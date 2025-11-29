@@ -1,0 +1,1 @@
+{"inherit": ["../../common/ocm/ism.scene.json"], "extends": ["../../common/ocm/ism.common.json", "../../miami/schemes/normal.day.definitions.json", "../schemes/normal.day.definitions.json", "../schemes/ism.day.definitions.json"]}

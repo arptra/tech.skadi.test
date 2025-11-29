@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+option java_package = "com.upuphone.runasone";
+
+message Message {
+  StreamType       type = 1;//消息类型
+  string           sendAppUniteCode = 2;//发送方应用唯一码
+  repeated string  abilityKey = 3;//应用码列表
+  bytes            msg = 4; //消息本体
+  string           msgUniqueKey = 5;//消息唯一编码
+  AppUniteCodeType appUniteCodeType = 6;//添加或者删除本地保存的应用码
+  int32            errorCode = 7;//错误信息码
+  int32            successCode = 8;//成功码
+  bool             needCallBack = 9;//消息是否需要回调信息
+  string           receiveAppUniteCode = 10; //接收方的应用唯一码
+  int32            OpenType = 11; //0-activity 1-service 1-19版本新增  2-bindservice启动 2.3版本加入
+  int32            listenerId = 12; //回调id，用来区分上层注册多个回调 2.0.8新增
+  map<string, int32> abilityKeyMap = 13;//应用码映射关系表，为了减少消息体的大小 2.0.9新增
+  int32            sendAUCNum = 14;//发送方应用码映射值 2.0.9新增
+  int32            receiveAUCNum = 15;//接收方应用码映射值 2.0.9新增
+  bool             supportMap = 16;//是否支持映射表 2.0.9新增
+}
+
+enum StreamType {
+  OPEN = 0;//打开通道
+  CLOSE = 1;//关闭通道
+  CMD = 2;//命令，对应AppUniteCodeType
+  SEND_LIST = 3; //发送应用码列表
+  GET_LIST = 4; //请求对端应用码列表（暂时没用到）
+  SEND_MSG = 5; //发送消息
+  MSG_SUCCESS = 6; //发送消息成功
+  MSG_FAILED = 7; //发送消息失败
+  REMOTE_SUCCESS = 8; //开启远端连接成功
+  REMOTE_FAILED = 9;//开启远端连接失败
+  OPEN_ACTIVITY = 10; //打开页面
+  LIST_SUCCESS = 11;//拿到对端
+  BINDER_LIST = 12; //绑定了服务的应用码列表
+}
+enum AppUniteCodeType{
+  ADD = 0;
+  DEL = 1;
+}

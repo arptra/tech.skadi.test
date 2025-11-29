@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:height="44dp" android:width="44dp" android:viewportWidth="44" android:viewportHeight="44">
+    <path android:fillColor="@drawable/$model_nodis_night__0" android:pathData="M22,22m-22,0a22,22 0,1 1,44 0a22,22 0,1 1,-44 0"/>
+    <path android:fillColor="#1368fb" android:pathData="M19.531,22.808C17.517,23.655 15.397,23.443 13.701,22.384C13.277,22.172 12.853,22.172 12.535,22.384C12.217,22.596 12.005,23.02 12.111,23.443C12.535,26.303 14.231,28.845 16.775,30.434C18.365,31.387 20.167,31.916 21.97,31.916C23.136,31.916 24.302,31.705 25.362,31.281C28.118,30.328 30.344,28.104 31.299,25.35C32.359,22.384 32.041,19.313 30.45,16.771C28.966,14.229 26.422,12.534 23.454,12.111C23.03,12.005 22.606,12.217 22.394,12.534C22.182,12.958 22.182,13.382 22.394,13.699C23.454,15.5 23.56,17.512 22.818,19.524C22.182,21.007 21.015,22.172 19.531,22.808Z" android:fillType="1"/>
+</vector>

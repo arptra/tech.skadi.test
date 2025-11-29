@@ -1,0 +1,1 @@
+{"styles": [{"extends": "japan_boundary_line", "replaces": "ocm_boundary_line", "layer": "ocm_cartography_lines", "technique": "line", "attr": {}}, {"extends": "japan_boundary_outline", "replaces": "ocm_boundary_outline", "layer": "ocm_cartography_lines", "technique": "line", "attr": {}}]}

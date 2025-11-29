@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:gravity="center_horizontal" android:orientation="vertical" android:id="@+id/mc_content_toast_container" android:layout_width="match_parent" android:layout_height="wrap_content">
+    <LinearLayout android:gravity="center_vertical" android:layout_gravity="center_horizontal" android:id="@+id/mc_content_toast_parent" android:background="0x7f0809ad" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/mc_content_toast_content_margin" android:layout_marginBottom="@dimen/mc_content_toast_content_margin" android:minHeight="@dimen/mc_content_toast_min_height" android:elevation="30dp" android:paddingHorizontal="@dimen/mc_content_toast_content_horizontal_padding" android:outlineSpotShadowColor="#33000000">
+        <TextView android:ellipsize="end" android:id="@android:id/title" android:fadingEdge="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:maxWidth="@dimen/mc_content_toast_content_width_default" android:text="截屏保存成功,请在图库中查看" android:lineSpacingExtra="@dimen/mc_content_toast_line_spacing"/>
+    </LinearLayout>
+</LinearLayout>

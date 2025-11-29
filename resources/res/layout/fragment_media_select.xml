@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:background="@color/device_connect_background" android:paddingTop="40dp" android:layout_width="match_parent" android:layout_height="match_parent" android:paddingHorizontal="20dp">
+    <RelativeLayout android:id="@+id/titlebar_layout" android:layout_width="match_parent" android:layout_height="wrap_content">
+        <TextView android:textSize="20sp" android:textColor="@color/title_text_color" android:id="@+id/feedback_back_title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="@string/media_select_tips" android:drawablePadding="16dp" android:textFontWeight="@integer/medium" app:drawableStartCompat="@drawable/ic_system_close"/>
+        <TextView android:textSize="17sp" android:textColor="@color/common_blue" android:id="@+id/feedback_back_select" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="@string/done_tips" android:drawablePadding="16dp" android:layout_alignParentRight="true" android:textFontWeight="@integer/medium"/>
+    </RelativeLayout>
+    <com.luck.picture.lib.widget.RecyclerPreloadView android:id="@+id/recycler" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_marginTop="32dp" android:layout_below="@+id/titlebar_layout" android:overScrollMode="never"/>
+</RelativeLayout>

@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+option java_package = "com.upuphone.xr.interconnect.entity";
+
+// 连接后互通基本信息的第一个消息
+message ConnectMessage {
+  // 版本号，十分重要。为了和老消息明确区分，编号设置为4，老消息的字段编号最多为3，确保version在没有设置时为0。
+  uint32 version = 4;
+}

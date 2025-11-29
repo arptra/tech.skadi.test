@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:id="@+id/scl_fail_content" android:layout_width="match_parent" android:layout_height="wrap_content">
+    <TextView android:textSize="14sp" android:textColor="@color/fast_record_ars_tip_color" android:gravity="start" android:layout_gravity="start" android:id="@+id/tv_fail_tip_number" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAlignment="viewStart" android:lineHeight="22dp" android:textFontWeight="@integer/regular"/>
+    <TextView android:textSize="14sp" android:textColor="@color/fast_record_ars_tip_color" android:gravity="start" android:layout_gravity="start" android:id="@+id/tv_fail_tip_content" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAlignment="viewStart" android:layout_marginStart="4dp" android:lineHeight="22dp" android:textFontWeight="@integer/regular"/>
+</LinearLayout>

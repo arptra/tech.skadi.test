@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:height="25dp" android:width="24dp" android:viewportWidth="24" android:viewportHeight="25">
+    <path android:fillColor="@color/tb_checkbox_checked_cb_bg" android:pathData="M12,1.5C5.925,1.5 1,6.425 1,12.5C1,18.575 5.925,23.5 12,23.5C18.075,23.5 23,18.575 23,12.5C23,6.425 18.075,1.5 12,1.5Z" android:fillType="1"/>
+    <path android:fillColor="@color/tb_checkbox_checked_cb_hook" android:pathData="M6.251,13.561C5.991,13.301 5.991,12.879 6.251,12.619L6.785,12.085C7.045,11.825 7.467,11.825 7.728,12.085L10.209,14.566L16.275,8.5C16.535,8.24 16.957,8.24 17.218,8.5L17.751,9.033C18.011,9.294 18.011,9.716 17.751,9.976L11.223,16.505L11.214,16.514L10.68,17.047C10.42,17.308 9.998,17.308 9.737,17.047L6.251,13.561Z"/>
+</vector>

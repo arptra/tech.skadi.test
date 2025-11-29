@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:gravity="center_vertical" android:orientation="horizontal" android:id="@+id/progressDialog" android:background="@drawable/progress_view_bg" android:layout_width="@dimen/size_dp_120" android:layout_height="@dimen/size_dp_44">
+    <ImageView android:id="@+id/img_loading" android:layout_width="16dp" android:layout_height="16dp" android:src="@drawable/vp_loading" android:scaleType="fitXY" android:layout_centerInParent="true" android:layout_marginStart="@dimen/size_dp_20"/>
+    <TextView android:textSize="@dimen/text_size_14" android:textColor="@color/theme_white_color" android:gravity="center" android:id="@+id/message" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/loading_tips" android:layout_marginStart="@dimen/size_dp_8" android:layout_marginEnd="@dimen/size_dp_20"/>
+</LinearLayout>

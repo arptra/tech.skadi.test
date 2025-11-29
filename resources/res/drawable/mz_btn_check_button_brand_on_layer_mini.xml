@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt">
+    <item android:state_checked="true">
+        <layer-list>
+            <item>
+                <shape android:shape="oval">
+                    <size android:height="14dp" android:width="14dp"/>
+                    <solid android:color="@color/mz_btn_check_checked_color_state_brand"/>
+                </shape>
+            </item>
+            <item android:drawable="0x7f0806eb"/>
+        </layer-list>
+    </item>
+    <item android:state_checked="false" android:drawable="@drawable/mz_btn_check_button_square_off_mini"/>
+</selector>

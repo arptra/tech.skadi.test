@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android" android:background="#ff000000" android:shareInterpolator="false" android:zAdjustment="normal">
+    <translate android:interpolator="@interpolator/mz_activity_to_next_close_enter_translate" android:duration="350" android:fillBefore="true" android:fillAfter="true" android:fromXDelta="-25%" android:toXDelta="0" android:fillEnabled="true"/>
+</set>

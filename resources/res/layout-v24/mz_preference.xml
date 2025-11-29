@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" style="@style/Widget.Flyme.Preference.ContentLinearLayout">
+    <com.meizu.common.widget.SmoothCornerView android:id="@android:id/list_menu_presenter" android:layout_marginEnd="@dimen/mz_preference_icon_margin_horizontal" app:mzCornerRadius="@dimen/mz_list_icon_item_icon_corner_radius" style="@style/Widget.Flyme.Preference.Icon">
+        <ImageView android:id="@android:id/icon" android:scaleType="centerInside" style="@style/Widget.Flyme.Preference.Icon"/>
+    </com.meizu.common.widget.SmoothCornerView>
+    <LinearLayout android:id="@+id/preference_text_layout" style="@style/Widget.Flyme.Preference.TextContentLayout">
+        <TextView android:id="@android:id/title" style="@style/Widget.Flyme.Preference.Title"/>
+        <TextView android:id="@android:id/summary" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:lineSpacingExtra="4dp" style="@style/TextAppearance.Flyme.Body.Mini"/>
+    </LinearLayout>
+    <View android:id="@+id/divider" android:layout_width="0dp" android:layout_marginEnd="@dimen/mz_list_item_divider_margin_end" style="@style/Widget.Flyme.List.Vertical.Divider"/>
+    <LinearLayout android:gravity="center" android:orientation="vertical" android:id="@android:id/widget_frame" android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="@dimen/preference_widget_width"/>
+</LinearLayout>

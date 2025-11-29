@@ -1,0 +1,1 @@
+{"styles": [{"extends": "earth_labels", "layer": "ocm_cartography_labels", "technique": "text"}, {"extends": "mountain_range_line_labels", "layer": "ocm_cartography_lines", "technique": "text"}]}

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:height="400dp" android:width="312dp" android:viewportWidth="312" android:viewportHeight="400">
+    <path android:fillColor="@drawable/$bg_fast_svg_todo__0" android:pathData="M0,51.2C0,33.28 0,24.32 3.49,17.47C6.56,11.45 11.45,6.56 17.47,3.49C24.32,0 33.28,0 51.2,0H170.4C179.36,0 183.84,0 187.26,1.74C190.27,3.28 192.72,5.73 194.26,8.74C196,12.16 196,16.64 196,25.6V400H0V51.2Z"/>
+    <path android:fillColor="@drawable/$bg_fast_svg_todo__1" android:pathData="M116,25.6C116,16.64 116,12.16 117.74,8.74C119.28,5.73 121.73,3.28 124.74,1.74C128.16,0 132.64,0 141.6,0H260.8C278.72,0 287.68,0 294.53,3.49C300.55,6.56 305.44,11.45 308.51,17.47C312,24.32 312,33.28 312,51.2V400H116V25.6Z"/>
+    <path android:fillColor="#ffbe0a" android:pathData="M60.07,36.93l6.14,6.14l-6.14,6.14l-6.14,-6.14z" android:strokeAlpha="0.2" android:fillAlpha="0.2"/>
+    <path android:fillColor="@drawable/$bg_fast_svg_todo__2" android:pathData="M39.9,251.12l7.78,7.78l-7.78,7.78l-7.78,-7.78z"/>
+    <path android:fillColor="@drawable/$bg_fast_svg_todo__3" android:pathData="M271.9,167.12l7.78,7.78l-7.78,7.78l-7.78,-7.78z"/>
+</vector>

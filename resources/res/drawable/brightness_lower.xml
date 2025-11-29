@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:height="20dp" android:width="20dp" android:viewportWidth="20" android:viewportHeight="20">
+    <path android:fillColor="@color/setting_icon_color" android:pathData="M10,5.834C7.708,5.834 5.833,7.709 5.833,10.001C5.833,12.292 7.708,14.167 10,14.167C12.291,14.167 14.166,12.292 14.166,10.001C14.166,7.709 12.291,5.834 10,5.834Z" android:fillAlpha="0.4"/>
+    <path android:fillColor="@color/setting_icon_color" android:pathData="M9.167,2.5h1.667v1.667h-1.667z" android:fillAlpha="0.4"/>
+    <path android:fillColor="@color/setting_icon_color" android:pathData="M9.167,15.834h1.667v1.667h-1.667z" android:fillAlpha="0.4"/>
+    <path android:fillColor="@color/setting_icon_color" android:pathData="M14.714,4.106l1.179,1.179l-1.179,1.179l-1.179,-1.179z" android:fillAlpha="0.4"/>
+    <path android:fillColor="@color/setting_icon_color" android:pathData="M5.286,13.535l1.179,1.179l-1.181,1.181l-1.179,-1.179z" android:fillAlpha="0.4"/>
+    <path android:fillColor="@color/setting_icon_color" android:pathData="M17.5,9.166l-0,1.667l-1.667,0l-0,-1.667z" android:fillAlpha="0.4"/>
+    <path android:fillColor="@color/setting_icon_color" android:pathData="M4.167,9.166l-0,1.667l-1.667,0l-0,-1.667z" android:fillAlpha="0.4"/>
+    <path android:fillColor="@color/setting_icon_color" android:pathData="M15.898,14.718l-1.179,1.179l-1.183,-1.183l1.179,-1.179z" android:fillAlpha="0.4"/>
+    <path android:fillColor="@color/setting_icon_color" android:pathData="M6.464,5.285l-1.179,1.179l-1.178,-1.178l1.179,-1.179z" android:fillAlpha="0.4"/>
+</vector>

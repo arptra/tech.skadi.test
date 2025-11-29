@@ -1,0 +1,29 @@
+package rxhttp;
+
+import kotlin.Metadata;
+import kotlin.coroutines.Continuation;
+import kotlin.coroutines.jvm.internal.ContinuationImpl;
+import kotlin.coroutines.jvm.internal.DebugMetadata;
+import kotlin.jvm.functions.Function1;
+import kotlinx.coroutines.Deferred;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+@Metadata(k = 3, mv = {1, 9, 0}, xi = 48)
+@DebugMetadata(c = "rxhttp.AwaitTransformKt", f = "AwaitTransform.kt", i = {0}, l = {214}, m = "tryAwait", n = {"onCatch"}, s = {"L$0"})
+public final class AwaitTransformKt$tryAwait$1<T> extends ContinuationImpl {
+    Object L$0;
+    int label;
+    /* synthetic */ Object result;
+
+    public AwaitTransformKt$tryAwait$1(Continuation<? super AwaitTransformKt$tryAwait$1> continuation) {
+        super(continuation);
+    }
+
+    @Nullable
+    public final Object invokeSuspend(@NotNull Object obj) {
+        this.result = obj;
+        this.label |= Integer.MIN_VALUE;
+        return AwaitTransformKt.g((Deferred) null, (Function1) null, this);
+    }
+}

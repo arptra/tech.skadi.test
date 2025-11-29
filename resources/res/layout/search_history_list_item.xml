@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+    <RelativeLayout android:background="@color/transparent" android:layout_width="match_parent" android:layout_height="@dimen/size_dp_54">
+        <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="match_parent">
+            <ImageView android:id="@+id/icon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/default_generalsearch_sugg_tqueryicon_normal" android:layout_marginStart="@dimen/size_dp_10"/>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_weight="1">
+                <TextView android:textSize="@dimen/text_size_14" android:textStyle="bold" android:textColor="@color/search_item_name_color" android:ellipsize="end" android:id="@+id/name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="NameName" android:maxLines="1" android:layout_marginStart="@dimen/size_dp_4" android:layout_marginEnd="@dimen/size_dp_4"/>
+                <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/search_item_address_color" android:ellipsize="end" android:id="@+id/address" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="address" android:maxLines="1" android:layout_marginStart="@dimen/size_dp_4" android:layout_marginEnd="@dimen/size_dp_10"/>
+                <TextView android:textSize="@dimen/text_size_10" android:textColor="#ffffff" android:gravity="center" android:layout_gravity="center_vertical" android:id="@+id/frequent_address" android:background="@drawable/frequent_address_bg" android:visibility="gone" android:layout_width="40dp" android:layout_height="20dp" android:text="@string/frequent_address" android:layout_marginEnd="@dimen/size_dp_14"/>
+            </LinearLayout>
+            <LinearLayout android:gravity="center" android:orientation="vertical" android:id="@+id/route_info" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="@dimen/size_dp_14">
+                <ImageView android:id="@+id/route" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="3dp" android:src="@drawable/tips_routes" android:layout_above="@+id/distance" android:layout_centerHorizontal="true"/>
+                <TextView android:textSize="@dimen/text_size_12" android:textColor="@color/search_item_address_color" android:id="@+id/distance" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="distance"/>
+            </LinearLayout>
+        </LinearLayout>
+        <View android:id="@+id/line" android:background="@drawable/line_bg" android:layout_width="match_parent" android:layout_height="1dp" android:layout_alignParentBottom="true" android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+    <LinearLayout android:orientation="horizontal" android:id="@+id/itemMenu" android:layout_width="@dimen/size_dp_190" android:layout_height="match_parent">
+        <TextView android:textSize="@dimen/text_size_14" android:textColor="@color/theme_color_1" android:gravity="center" android:id="@+id/editAddrerss" android:background="@color/add_nor_address_color" android:layout_width="@dimen/size_dp_120" android:layout_height="match_parent" android:text="@string/add_common_addr" android:paddingStart="16dp" android:paddingEnd="16dp"/>
+        <TextView android:textSize="@dimen/text_size_14" android:textColor="@color/theme_color_1" android:gravity="center" android:id="@+id/delete" android:background="@color/del_history_color" android:layout_width="@dimen/size_dp_70" android:layout_height="match_parent" android:text="@string/car_delete_ok" android:paddingStart="16dp" android:paddingEnd="16dp"/>
+    </LinearLayout>
+</LinearLayout>

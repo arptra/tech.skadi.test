@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:layout_width="match_parent" android:layout_height="match_parent">
+    <EditText android:textSize="@dimen/text_input_text_size" android:id="@+id/mz_edit_content" android:layout_width="match_parent" android:layout_height="52dp" android:minHeight="52dp"/>
+    <View android:layout_gravity="right|center_vertical|center_horizontal|center|end" android:id="@+id/mz_edit_clean" android:background="0x7f0808c5" android:layout_width="22dp" android:layout_height="22dp" android:layout_marginEnd="12dp"/>
+</FrameLayout>

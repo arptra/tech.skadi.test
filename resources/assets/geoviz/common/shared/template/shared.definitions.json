@@ -1,0 +1,1 @@
+{"definitions": {"Default.Font": "fonts/FiraGO_Map.ttf", "Default.Margin": 3, "Default.PersistingMargin.Reducing": 2, "Global.Polygon.Opacity": 1, "SoftDepth.Threshold": ["interpolate", ["linear"], ["zoom"], 2, 300000, 7, 60000, 10, 7500, 12, 2000, 14, 2000, 16, 200, 18, 100], "AllowCroppedLabels": true}}

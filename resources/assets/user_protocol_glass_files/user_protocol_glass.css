@@ -1,0 +1,128 @@
+body {
+        font-size:  14.0px;
+        line-height:  22.0px;
+        padding: 0 20px;
+        margin: 0;
+      }
+
+      .split {
+        margin: 0 6px;
+      }
+
+      .content {
+        white-space: pre-wrap;
+        word-break: break-word;
+        padding-bottom:  60.0px;
+      }
+
+      .link {
+        font-size: 16px;
+        color: #5A7DA9;
+        font-weight: 500;
+        text-decoration: unset;
+        padding-bottom: 24px;
+      }
+
+      .title {
+        font-size:  24.0px;
+        text-align:  center;
+        font-weight:  bold;
+        line-height:  22.0px;
+        padding-top:  40.0px;
+        padding-bottom:  32.0px;
+        color: #333333;
+      }
+
+      .desc {
+        font-size:  14.0px ;
+      }
+
+      .version {
+        font-size:  14.0px ;
+        display:  block ;
+      }
+
+      .gmtUpdate {
+        font-size:  14.0px ;
+        display:  block ;
+      }
+
+      .gmtEffect {
+        font-size:  14.0px ;
+        display:  none ;
+      }
+
+      .y9-download {
+        font-size:  14.0px ;
+        display:  none ;
+        color:  #216fdb;
+      }
+
+      .paragraph {
+        position: relative;
+        margin: 0;
+        margin: 0;
+        padding: 0;
+      }
+
+      .y9-bold {
+        font-weight: bold;
+      }
+
+      .y9-italic {
+        font-style: italic;
+      }
+
+      .y9-underline {
+        text-decoration: underline;
+      }
+
+      .y9-strikethrough {
+        text-decoration: line-through;
+      }
+
+      .y9-underline-strikethrough {
+        text-decoration: underline line-through;
+      }
+
+      .y9-link {
+        display: inline-block;
+        color:  #216fdb;
+      }
+
+      .y9-rich-table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+        border-spacing: 0;
+        margin: 24px 0;
+        text-align: left;
+      }
+
+      .y9-rich-table-header {
+        position: relative;
+        color: #000000d9;
+        font-weight: bold;
+      }
+
+      .y9-rich-table-cell {
+        position: relative;
+        display: table-cell;
+        padding: 16px;
+        vertical-align: inherit;
+        overflow-wrap: break-word;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+      }
+
+      .y9-chapter {
+        font-weight:  bold;
+        font-size:  16.0px;
+        line-height:  18.0px;
+        padding-top:  24.0px;
+        padding-bottom:  8.0px;
+        color: #000;
+      }
+
+      .y9-variable {
+        font-size:  14.0px ;
+      }

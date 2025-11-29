@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp">
+    <com.upuphone.xr.sapp.view.CardItemView android:gravity="center_vertical" android:id="@+id/auto_connect" android:background="@drawable/bg_card_item" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingHorizontal="20dp" android:paddingVertical="16dp" app:card_sub_title="开启后，眼镜将自动连接手机相同网络，以保证投屏功能正常使用" app:card_title="自动连接手机无线网络" app:card_title_margin="0dp" app:card_title_size="16sp" app:card_type="1" app:layout_constraintEnd_toEndOf="0" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toTopOf="0"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

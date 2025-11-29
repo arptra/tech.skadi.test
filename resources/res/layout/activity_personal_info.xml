@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:orientation="vertical" android:paddingLeft="22dp" android:paddingTop="10dp" android:paddingRight="22dp" android:layout_width="match_parent" android:layout_height="match_parent">
+    <RelativeLayout android:id="@+id/rl_avatar" android:layout_width="match_parent" android:layout_height="60dp">
+        <TextView android:textColor="?attr/colorOnSurface" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/avatar" android:layout_centerVertical="true"/>
+        <ImageView android:id="@+id/iv_avatar_1" android:layout_width="30dp" android:layout_height="30dp" android:layout_centerVertical="true" android:layout_toStartOf="@+id/iv_avatar_icon"/>
+        <ImageView android:id="@+id/iv_avatar_icon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/honey_mz_arrow_next_right" android:layout_centerVertical="true" android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+    <RelativeLayout android:id="@+id/rl_nick_name" android:layout_width="match_parent" android:layout_height="60dp">
+        <TextView android:textColor="?attr/colorOnSurface" android:id="@+id/rl_nick_name_title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/nick_name" android:layout_centerVertical="true"/>
+        <TextView android:textColor="@color/ha_grey" android:id="@+id/tv_name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerVertical="true" android:textAlignment="viewEnd" android:layout_marginStart="10dp" android:layout_toStartOf="@+id/iv_name_icon" android:layout_toEndOf="@+id/rl_nick_name_title"/>
+        <ImageView android:id="@+id/iv_name_icon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="0x7f080405" android:layout_centerVertical="true" android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+    <RelativeLayout android:id="@+id/rl_account" android:layout_width="match_parent" android:layout_height="60dp">
+        <TextView android:textColor="?attr/colorOnSurface" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/account" android:layout_centerVertical="true"/>
+        <TextView android:textColor="@color/ha_grey" android:id="@+id/tv_phone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerVertical="true" android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+</LinearLayout>

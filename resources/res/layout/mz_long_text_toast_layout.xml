@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:layout_width="wrap_content" android:layout_height="wrap_content" android:elevation="30dp" android:outlineSpotShadowColor="#33000000">
+    <LinearLayout android:gravity="center_horizontal" android:orientation="vertical" android:paddingTop="@dimen/mz_complete_toast_background_padding" android:paddingBottom="@dimen/mz_complete_toast_background_padding" android:layout_width="@dimen/mz_complete_toast_long_msg_width" android:layout_height="wrap_content" android:minHeight="@dimen/mz_complete_toast_height" android:paddingHorizontal="@dimen/mz_complete_toast_long_msg_background_padding">
+        <ImageView android:id="@+id/toast_complete" android:layout_width="30dp" android:layout_height="30dp" android:layout_marginBottom="@dimen/mz_complete_toast_icon_margin_bottom" android:src="0x7f0806f7"/>
+        <TextView android:textSize="14sp" android:textColor="?attr/colorOnSurface" android:gravity="center" android:id="@+id/toast_text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif-medium"/>
+    </LinearLayout>
+</FrameLayout>

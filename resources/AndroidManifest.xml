@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="2040051" android:versionName="2.40.51" android:compileSdkVersion="34" android:compileSdkVersionCodename="14" android:requiredSplitTypes="base__abi,base__density" android:splitTypes="" package="com.upuphone.star.launcher.intl" platformBuildVersionCode="34" platformBuildVersionName="14">
+    <uses-sdk android:minSdkVersion="29" android:targetSdkVersion="34"/>
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <uses-permission android:name="android.permission.ACTION_NOTIFICATION_LISTENER_SETTINGS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="10000"/>
+    <uses-permission android:name="com.meizu.todolist.permission.ACCESS_TODOS"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.NEARBY_WIFI_DEVICES" android:usesPermissionFlags="10000"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.READ_CALENDAR"/>
+    <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
+    <uses-permission android:name="android.permission.GET_INTENT_SENDER_INTENT"/>
+    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS"/>
+    <uses-permission android:name="miui.permission.READ_STEPS"/>
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="lark" android:host="ssoclient"/>
+        </intent>
+        <provider android:authorities="org.khronos.openxr.runtime_broker;org.khronos.openxr.system_runtime_broker;com.flyme.linkUnion.LinkUnionBaseProvider"/>
+        <package android:name="com.tencent.mm"/>
+        <package android:name="com.tencent.qqmusic"/>
+        <package android:name="com.upuphone.ai.assistant"/>
+        <intent>
+            <action android:name="com.xjmz.glasses.ipc.usb.hid.ACTION"/>
+        </intent>
+        <package android:name="com.upuphone.datatrack"/>
+        <intent>
+            <action android:name="com.upuphone.datatrack"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.GET_CONTENT"/>
+            <data android:mimeType="*/*"/>
+        </intent>
+        <package android:name="com.upuphone.xr.sapp"/>
+        <package android:name="com.upuphone.star.launcher"/>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="https"/>
+        </intent>
+        <package android:name="com.sina.weibo"/>
+        <package android:name="com.sina.weibog3"/>
+        <package android:name="com.xingin.xhs"/>
+    </queries>
+    <uses-permission android:name="android.permission.CHANGE_COMPONENT_ENABLED_STATE"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="com.qualcomm.qti.sva.permission.SETTINGS"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="flyme.permission.READ_PRIVILEGED_CONTACTS_BAN"/>
+    <queries>
+        <package android:name="com.android.dialer"/>
+    </queries>
+    <uses-feature android:glEsVersion="20000" android:required="true"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.START_ACTIVITIES_FROM_BACKGROUND"/>
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+    <uses-permission android:name="android.permission.LOCAL_MAC_ADDRESS"/>
+    <uses-permission android:name="android.permission.SET_TIME_ZONE"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_PRIVILEGED"/>
+    <uses-permission android:name="android.permission.OP_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.NETWORK_SETTINGS"/>
+    <protected-broadcast android:name="com.upuphone.starrynet.device.changed"/>
+    <protected-broadcast android:name="com.upuphone.starrynet.action.CONNECTION_STATE_CHANGED"/>
+    <protected-broadcast android:name="com.upuphone.starrynet.action.DEVICE_NAME_CHANGED"/>
+    <protected-broadcast android:name="com.upuphone.starrynet.INIT"/>
+    <uses-permission android:name="android.car.permission.CAR_POWER"/>
+    <uses-permission android:name="com.upuphone.star.launcher.datatrack.SEND_EVENT"/>
+    <uses-permission android:name="com.upuphone.star.launcher.datatrack.READ_CONTENT"/>
+    <permission android:name="com.upuphone.star.launcher.intl.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" android:protectionLevel="signature"/>
+    <uses-permission android:name="com.upuphone.star.launcher.intl.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"/>
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" android:maxSdkVersion="22"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" android:maxSdkVersion="22"/>
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" android:maxSdkVersion="22"/>
+    <uses-permission android:name="com.fm.openservice.READ_PROPERTY"/>
+    <uses-permission android:name="com.asus.msa.SupplementaryDID.ACCESS"/>
+    <uses-permission android:name="freemme.permission.msa"/>
+    <uses-permission android:name="android.permission.NETWORK_STACK"/>
+    <uses-permission android:name="android.permission.TETHER_PRIVILEGED"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.OVERRIDE_WIFI_CONFIG"/>
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+    <uses-feature android:name="android.hardware.location.gps" android:required="true"/>
+    <application android:theme="@style/AppTheme.NoActionBar.Light" android:label="@string/app_name" android:icon="@mipmap/ic_sapp_launcher" android:name="com.upuphone.xr.sapp.MainApplication" android:allowBackup="true" android:supportsRtl="true" android:extractNativeLibs="false" android:fullBackupContent="@xml/backup_rules" android:usesCleartextTraffic="true" android:resizeableActivity="true" android:roundIcon="@mipmap/ic_sapp_launcher_round" android:appComponentFactory="androidx.core.app.CoreComponentFactory" android:requestLegacyExternalStorage="true" android:allowNativeHeapPointerTagging="false" android:preserveLegacyExternalStorage="true" android:dataExtractionRules="@xml/data_extraction_rules">
+        <receiver android:name="com.upuphone.xr.sapp.vu.receiver.UsbAttachDetachReceiver" android:enabled="true" android:exported="false">
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"/>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED"/>
+            </intent-filter>
+        </receiver>
+        <activity android:theme="@style/ThemeApp.Starting" android:name="com.upuphone.xr.sapp.superconnect.ui.SplashActivity" android:exported="true" android:launchMode="singleTop" android:screenOrientation="portrait" android:resizeableActivity="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="xjmz" android:host="openapp"/>
+            </intent-filter>
+        </activity>
+        <activity android:theme="@style/Theme.Acticity.Main" android:name="com.xjmz.myvu.MYVUActivity" android:exported="true" android:launchMode="singleTask" android:screenOrientation="portrait" android:windowSoftInputMode="adjustUnspecified|stateHidden|adjustResize"/>
+        <activity android:name="com.upuphone.xr.sapp.MainActivity" android:exported="true"/>
+        <activity android:name="com.xjmz.myvu.account.DebugLoginActivity" android:exported="true"/>
+        <activity android:theme="@style/Theme.Acticity.Main" android:name="com.upuphone.xr.sapp.FeedbackActivity" android:exported="false" android:launchMode="singleTop" android:screenOrientation="portrait" android:configChanges="keyboardHidden|orientation|screenSize" android:windowSoftInputMode="adjustUnspecified|stateHidden|adjustPan"/>
+        <activity android:name="com.upuphone.star.launcher.ddauth.DDAuthActivity" android:exported="true"/>
+        <activity android:theme="@style/Theme.Translucent.NoTitleBar" android:name="com.upuphone.star.launcher.wxapi.WXEntryActivity" android:exported="true" android:taskAffinity="com.upuphone.xr.sapp" android:launchMode="singleTask"/>
+        <activity android:name="com.upuphone.xr.sapp.ImportScheduleActivity" android:exported="true" android:launchMode="singleTop" android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <data android:scheme="cli_a6a4a2ca173a900c"/>
+            </intent-filter>
+        </activity>
+        <meta-data android:name="com.huawei.hms.client.appid" android:value="109220635"/>
+        <activity android:name="com.upuphone.xr.sapp.monitor.notification.NotificationMockActivity" android:exported="false"/>
+        <activity android:theme="@style/Theme.Flyme.AppCompat.Light.LitePopup.Color.Blue" android:label="编辑账号日程" android:name="com.upuphone.xr.sapp.dialog.EditScheduleDialog"/>
+        <activity android:theme="@style/Transparent" android:name="com.upuphone.xr.sapp.BridgeActivity" android:exported="true" android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.RELAY_OPEN"/>
+                <category android:name="android.intent.category.RELAY_OPEN"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="run_as_one" android:host="com.upuphone.bridge"/>
+            </intent-filter>
+        </activity>
+        <activity android:name="com.upuphone.xr.sapp.glass.GlassUpdateInfoActivity" android:launchMode="singleTop" android:screenOrientation="portrait"/>
+        <activity android:theme="@style/Theme.Acticity.Main" android:name="com.upuphone.xr.sapp.contract.ProtocolActivity" android:launchMode="singleTop" android:screenOrientation="portrait" android:configChanges="locale|layoutDirection"/>
+        <activity android:name="com.upuphone.xr.sapp.debug.SuperAppDebugActivity" android:exported="true" android:launchMode="singleTop" android:screenOrientation="portrait"/>
+        <activity android:name="com.upuphone.xr.sapp.RoleVprintActivity" android:exported="false" android:screenOrientation="portrait" android:configChanges="keyboardHidden|orientation|screenSize" android:windowSoftInputMode="adjustUnspecified|stateHidden|adjustPan"/>
+        <activity android:theme="@style/TodoManageActivityStyle" android:name="com.upuphone.xr.sapp.TodoManageActivity" android:exported="false" android:screenOrientation="portrait" android:configChanges="keyboardHidden|orientation|screenSize" android:windowSoftInputMode="adjustUnspecified|stateHidden|adjustResize"/>
+        <service android:label="@string/ar_application_wisdom_reminder" android:name="com.upuphone.xr.sapp.monitor.notification.NotificationMonitorService" android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" android:enabled="true" android:exported="true" android:priority="1000" android:directBootAware="false">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService"/>
+            </intent-filter>
+            <meta-data android:name="android.service.notification.default_filter_types" android:value="conversations|alerting|silent|ongoing"/>
+        </service>
+        <service android:name="com.upuphone.xr.sapp.keeplive.server.SuperService" android:enabled="true" android:exported="true" android:foregroundServiceType="11">
+            <intent-filter>
+                <action android:name="com.upuphone.service.superservice"/>
+                <action android:name="com.upuphone.runasone.service.bind"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </service>
+        <meta-data android:name="com.amap.api.v2.apikey" android:value="3554c960a183e77fea4c9d67964174a6"/>
+        <meta-data android:name="io.sentry.dsn" android:value="https://467bc2268eae42c393bdc81cf874d196@sentry-dev.upuphone.com/5"/>
+        <meta-data android:name="io.sentry.traces.sample-rate" android:value="1"/>
+        <meta-data android:name="io.sentry.traces.user-interaction.enable" android:value="true"/>
+        <meta-data android:name="io.sentry.session-tracking.enable" android:value="true"/>
+        <meta-data android:name="io.sentry.debug" android:value="true"/>
+        <meta-data android:name="io.sentry.anr.enable" android:value="true"/>
+        <meta-data android:name="io.sentry.anr.timeout-interval-millis" android:value="3000"/>
+        <meta-data android:name="io.sentry.release" android:value="2.40.51@2040051"/>
+        <meta-data android:name="app_unite_code" android:value="com.upuphone.star.launcher"/>
+        <meta-data android:name="share_unit_code" android:value="com.upuphone.star.launcher"/>
+        <meta-data android:name="BUGLY_APPID" android:value="c5e3588a1f"/>
+        <meta-data android:name="BUGLY_APP_CHANNEL" android:value="channel_01"/>
+        <meta-data android:name="BUGLY_ENABLE_DEBUG" android:value="false"/>
+        <provider android:name="com.upuphone.xr.sapp.fileprovider.MyFileProvider" android:exported="false" android:authorities="com.upuphone.star.launcher.intl.files" android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/my_file_provider"/>
+        </provider>
+        <service android:name="com.jstyle.nordic_otas.nordic_otas_plugin.DfuService" android:exported="false" android:foregroundServiceType="10"/>
+        <provider android:name="com.upuphone.xr.sapp.fileprovider.OtaFileProvider" android:exported="false" android:authorities="com.upuphone.star.launcher.intl.fileProvider" android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/ota_file_paths"/>
+        </provider>
+        <receiver android:name="com.upuphone.xr.sapp.receiver.AppUpdateReceiver"/>
+        <activity android:name="com.upuphone.xr.sapp.vu.ArSpaceStarterActivity" android:exported="false" android:process=":ar_space" android:taskAffinity="myvu.translate" android:excludeFromRecents="true" android:launchMode="singleTask" android:autoRemoveFromRecents="true"/>
+        <service android:name="com.upuphone.xr.sapp.vu.ArSpaceService" android:enabled="true" android:exported="false" android:foregroundServiceType="2">
+            <intent-filter>
+                <action android:name="com.upuphone.xr.sapp.AR_SPACE_SERVICE"/>
+            </intent-filter>
+        </service>
+        <activity android:theme="@style/Theme.Acticity.Main.Fullscreen" android:name="com.upuphone.xr.sapp.vu.VuTouchpadActivity" android:exported="false" android:taskAffinity="myvu.touchpad" android:launchMode="singleInstance" android:screenOrientation="portrait" android:resizeableActivity="false"/>
+        <service android:name="com.upuphone.xr.sapp.ring2.SportService" android:exported="false" android:foregroundServiceType="8"/>
+        <activity android:theme="@style/Theme.Flyme.AppCompat.Light.LitePopup.Color.Blue" android:name="com.upuphone.xr.sapp.view.StandbyComponentBottomSheet" android:exported="false"/>
+        <activity android:theme="@style/NaviTheme" android:name="com.upuphone.ar.navi.lite.NaviFragmentActivity" android:exported="true" android:launchMode="singleTask" android:screenOrientation="portrait"/>
+        <activity android:theme="@style/NaviTheme" android:name="com.upuphone.ar.navi.lite.MapLocationActivity" android:exported="false" android:screenOrientation="portrait"/>
+        <activity android:theme="@style/NaviTheme" android:name="com.upuphone.ar.navi.lite.AddressSettingActivity" android:exported="false" android:screenOrientation="portrait"/>
+        <activity android:theme="@style/NaviTheme" android:name="com.upuphone.ar.navi.lite.AddressActivity" android:exported="false" android:launchMode="singleTask" android:screenOrientation="portrait" android:windowSoftInputMode="adjustPan"/>
+        <activity android:theme="@style/NaviTheme" android:name="com.upuphone.ar.navi.lite.SettingActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustPan"/>
+        <activity android:theme="@style/NaviTheme" android:name="com.upuphone.ar.navi.lite.TestActivity" android:exported="false" android:windowSoftInputMode="adjustPan"/>
+        <activity android:theme="@style/Transparent" android:name="com.upuphone.ar.navi.lite.PermissionsActivity" android:exported="false" android:launchMode="singleTask" android:windowSoftInputMode="adjustPan"/>
+        <activity android:theme="@style/NaviTheme" android:name="com.upuphone.ar.navi.lite.NaviPoiMarkActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustPan"/>
+        <activity android:theme="@style/NaviTheme" android:name="com.upuphone.ar.navi.lite.NaviProtocoActivity" android:exported="true" android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="custom.intent.action.StarryNetApp"/>
+                <category android:name="custom.intent.category.StarryNetApp"/>
+            </intent-filter>
+            <meta-data android:name="starry_net_app_config" android:resource="@xml/navi_docker"/>
+        </activity>
+        <service android:name="com.upuphone.ar.navi.lite.service.NaviDocerService" android:enabled="true"/>
+        <service android:name="com.upuphone.ar.navi.lite.service.NaviService" android:enabled="true"/>
+        <service android:name="com.amap.api.location.APSService" android:foregroundServiceType="8"/>
+        <activity android:name="com.upuphone.ar.transcribe.phone.activity.TranscribeStartActivity" android:exported="false" android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="custom.intent.action.StarryNetApp"/>
+                <category android:name="custom.intent.category.StarryNetApp"/>
+            </intent-filter>
+            <meta-data android:name="starry_net_app_config" android:resource="@xml/transcribe_net_app_config"/>
+        </activity>
+        <activity android:name="com.upuphone.ar.transcribe.phone.activity.TranscribeDetailActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustUnspecified|stateHidden|adjustResize"/>
+        <activity android:name="com.upuphone.ar.transcribe.phone.activity.ShareActivity" android:exported="false" android:screenOrientation="portrait"/>
+        <activity android:name="com.upuphone.ar.transcribe.phone.activity.TranscribeSearchActivity" android:exported="false" android:screenOrientation="portrait"/>
+        <activity android:name="com.upuphone.ar.transcribe.phone.activity.TranscribeAIActivity" android:exported="false" android:screenOrientation="portrait"/>
+        <activity android:name="com.upuphone.ar.transcribe.phone.activity.TranscribeSettingActivity" android:exported="false" android:screenOrientation="portrait"/>
+        <service android:name="com.upuphone.ar.transcribe.phone.TranscribeService" android:enabled="true" android:exported="true" android:foregroundServiceType="11">
+            <intent-filter>
+                <action android:name="com.upuphone.ar.transcribe.action"/>
+            </intent-filter>
+        </service>
+        <provider android:name="com.upuphone.ar.transcribe.provider.TranscribeFileProvider" android:exported="false" android:authorities="com.upuphone.ar.transcribe.fileprovider" android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/transcribe_file_paths"/>
+        </provider>
+        <activity android:name="com.upuphone.ar.tici.phone.TiciMainActivity" android:exported="false" android:screenOrientation="portrait"/>
+        <activity android:name="com.upuphone.ar.tici.phone.TiciFileTipsActivity" android:exported="false" android:screenOrientation="portrait"/>
+        <activity android:name="com.upuphone.ar.tici.phone.TiciSettingActivity" android:exported="false" android:screenOrientation="portrait"/>
+        <activity android:name="com.upuphone.ar.tici.phone.TiciHistoryActivity" android:exported="false" android:screenOrientation="portrait"/>
+        <activity android:name="com.upuphone.ar.tici.phone.TiciNewFileActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustUnspecified|stateHidden|adjustResize"/>
+        <activity android:name="com.upuphone.ar.tici.phone.TiciImportFileActivity" android:exported="false" android:screenOrientation="portrait"/>
+        <activity android:name="com.upuphone.ar.tici.phone.TiciFileSearchActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustUnspecified|stateUnchanged|stateHidden|stateAlwaysHidden|adjustResize"/>
+        <activity android:name="com.upuphone.ar.fastrecord.phone.ui.activity.FastRecordMainActivity" android:exported="false" android:launchMode="singleTop" android:screenOrientation="portrait"/>
+        <activity android:name="com.upuphone.ar.fastrecord.phone.ui.activity.FastRecordSettingActivity" android:exported="false" android:launchMode="singleTop" android:screenOrientation="portrait"/>
+        <activity android:name="com.upuphone.ar.fastrecord.phone.ui.activity.FastRecordIngDetailActivity" android:exported="false" android:launchMode="singleTop" android:screenOrientation="portrait"/>
+        <activity android:name="com.upuphone.ar.fastrecord.phone.ui.activity.FastRecordHistoryDetailActivity" android:exported="false" android:launchMode="singleTop" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize"/>
+        <activity android:name="com.upuphone.ar.fastrecord.phone.ui.activity.FastRecordSearchActivity" android:exported="false" android:launchMode="singleTop" android:screenOrientation="portrait" android:windowSoftInputMode="adjustPan"/>
+        <activity android:name="com.upuphone.ar.fastrecord.phone.ui.activity.FastRecordExtractActivity" android:exported="false" android:launchMode="singleTop" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize"/>
+        <activity android:theme="@style/Theme.Flyme.AppCompat.Light.LitePopup.Color.Blue" android:label="" android:name="com.upuphone.ar.fastrecord.phone.ui.activity.FastRecordTagScheduleDialog" android:windowSoftInputMode="adjustResize"/>
+        <provider android:name="com.upuphone.ar.fastrecord.phone.utils.FastRecordFileProvider" android:exported="false" android:authorities="com.upuphone.ar.shorthand.phone.fileprovider" android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/feast_record_file_paths"/>
+        </provider>
+        <activity android:name="com.upuphone.ar.translation.phone.activity.TranslatorMainActivity" android:exported="true" android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="custom.intent.action.StarryNetApp"/>
+                <category android:name="custom.intent.category.StarryNetApp"/>
+            </intent-filter>
+            <meta-data android:name="starry_net_app_config" android:resource="@xml/translation_net_app_config"/>
+        </activity>
+        <activity android:name="com.upuphone.ar.translation.phone.activity.TranslatorStartActivity" android:exported="false" android:screenOrientation="portrait"/>
+        <activity android:name="com.upuphone.ar.translation.phone.activity.TranslatorRecordActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize"/>
+        <activity android:name="com.upuphone.ar.translation.phone.activity.TranslatorSettingActivity" android:exported="false" android:screenOrientation="portrait"/>
+        <activity android:name="com.upuphone.ar.translation.phone.activity.TranslatorIntelExtnActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustUnspecified|stateHidden|adjustResize"/>
+        <activity android:name="com.upuphone.ar.translation.phone.activity.TranslatorSearchActivity" android:exported="false" android:screenOrientation="portrait"/>
+        <activity android:name="com.upuphone.ar.translation.phone.activity.ShareImagePreviewActivity" android:exported="false" android:screenOrientation="portrait"/>
+        <service android:name="com.upuphone.ar.translation.phone.TranslationService" android:enabled="true" android:exported="true" android:foregroundServiceType="11">
+            <intent-filter>
+                <action android:name="com.upuphone.ar.translation.phone.action"/>
+            </intent-filter>
+        </service>
+        <provider android:name="com.upuphone.ar.translation.phone.provider.TranslatorFileProvider" android:exported="false" android:authorities="com.upuphone.ar.translation.phone.fileprovider" android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths"/>
+        </provider>
+        <activity android:theme="@style/Theme.Flyme.AppCompat.Light.LitePopup.Color.Blue" android:label="" android:name="com.upuphone.xr.audio.record.ui.widget.AudioFeedBackDialog" android:windowSoftInputMode="adjustResize"/>
+        <meta-data android:name="XR_CHANNEL" android:value="music"/>
+        <meta-data android:name="BYTEDANCE_LICENCE_NAME" android:value="xjsd_android_launcher"/>
+        <meta-data android:name="flutterProjectType" android:value="module"/>
+        <meta-data android:name="flutterEmbedding" android:value="2"/>
+        <service android:name="com.upuphone.xr.interconnect.CommonAggregateService" android:enabled="true" android:exported="true">
+            <intent-filter>
+                <action android:name="com.upuphone.xr.interconnect.CommonService"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </service>
+        <provider android:name="com.upuphone.xr.interconnect.main.InterconnectFileProvider" android:exported="false" android:authorities="com.upuphone.star.launcher.intl.InterconnectFileProvider" android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths"/>
+        </provider>
+        <activity android:theme="@style/Theme.HoneyAccount" android:label="" android:name="com.honey.account.view.PersonalInfoActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustUnspecified|stateUnchanged|stateHidden|stateAlwaysHidden|adjustResize"/>
+        <activity android:theme="@style/Theme.HoneyAccount" android:label="" android:name="com.honey.account.view.login.vcode.VCodeLoginActivity" android:exported="false" android:launchMode="singleTask" android:screenOrientation="portrait"/>
+        <activity android:theme="@style/Theme.HoneyAccount" android:label="" android:name="com.honey.account.view.login.validate.ValidateAccountActivity" android:exported="false" android:screenOrientation="portrait"/>
+        <activity android:theme="@style/Theme.HoneyAccount" android:label="" android:name="com.honey.account.view.login.pwd.PasswordLoginActivity" android:exported="false" android:launchMode="singleTask" android:screenOrientation="portrait"/>
+        <activity android:theme="@style/Theme.HoneyAccount" android:name="com.honey.account.view.web.WebActivity" android:exported="false" android:screenOrientation="portrait" android:configChanges="uiMode" android:windowSoftInputMode="adjustUnspecified|stateUnchanged|stateHidden|stateAlwaysHidden|adjustResize"/>
+        <activity android:theme="@style/Theme.HoneyAccount" android:label="" android:name="com.honey.account.view.home.AccountHomepageActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustUnspecified|stateUnchanged|stateHidden|stateAlwaysHidden|adjustResize"/>
+        <activity android:theme="@style/Theme.HoneyAccount" android:label="@string/about" android:name="com.honey.account.view.AccountAboutActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustUnspecified|stateUnchanged|stateHidden|stateAlwaysHidden|adjustResize"/>
+        <activity android:theme="@style/Theme.HoneyAccount" android:label="@string/country_and_region" android:name="com.honey.account.country.CountryActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustUnspecified|stateUnchanged|stateHidden|stateAlwaysHidden|adjustResize"/>
+        <activity android:theme="@style/Policy.AppTheme" android:name="com.meizu.flyme.policy.sdk.activity.PolicyWebViewActivity" android:screenOrientation="portrait" android:configChanges="uiMode" android:inheritShowWhenLocked="true"/>
+        <provider android:name="com.meizu.flyme.policy.sdk.util.PolicySdkFileProvider" android:exported="false" android:authorities="com.upuphone.star.launcher.intl.PolicySdk.FileProvider" android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/policy_sdk_file_paths"/>
+        </provider>
+        <activity android:theme="@style/Theme.Flyme.AppCompat.Light.WebViewActivity" android:name="flyme.support.v7.app.WebViewActivity" android:screenOrientation="portrait"/>
+        <activity android:theme="@style/Theme.Flyme.AppCompat.Light.LitePopup.Color.Blue" android:name="flyme.support.v7.app.palette.FlymePalettePopupActivity" android:excludeFromRecents="true" android:screenOrientation="portrait" android:finishOnCloseSystemDialogs="true" android:documentLaunchMode="never" android:relinquishTaskIdentity="true" android:visibleToInstantApps="true"/>
+        <provider android:name="com.meizu.common.app.LibraryInitProvider" android:enabled="true" android:exported="false" android:authorities="com.upuphone.star.launcher.intl.meizucommon"/>
+        <provider android:name="com.meizu.common.app.PAGReporterPreventProvider" android:enabled="true" android:exported="false" android:authorities="com.upuphone.star.launcher.intl.meizucommon.pag"/>
+        <service android:name="com.xjmz.glasses.ipc.server.GlassesHidService" android:enabled="true" android:exported="true" android:process=":glasses_channel">
+            <intent-filter>
+                <action android:name="com.xjmz.glasses.ipc.usb.hid.ACTION"/>
+            </intent-filter>
+        </service>
+        <service android:name="com.upuphone.starrynetsdk.RunAsOneService" android:enabled="true" android:exported="true"/>
+        <service android:name="com.upuphone.starrynetsdk.ability.lifecycle.service.LifecycleService" android:enabled="true" android:exported="true"/>
+        <activity android:theme="@style/Theme.Translucent.NoTitleBar" android:name="com.upuphone.starrynet.strategy.discovery.fastpair.localfastpair.FastPairPolicyActivity" android:exported="false" android:excludeFromRecents="true">
+            <meta-data android:name="android.app.lib_name" android:value=""/>
+        </activity>
+        <activity android:theme="@style/Theme.Translucent.NoTitleBar" android:name="com.upuphone.starrynet.strategy.discovery.fastpair.localfastpair.FastPairStarActivity" android:exported="false" android:excludeFromRecents="true" android:configChanges="keyboardHidden|orientation|screenSize">
+            <meta-data android:name="android.app.lib_name" android:value=""/>
+        </activity>
+        <activity android:theme="@style/Theme.AppCompat.Light.NoActionBar" android:name="com.yalantis.ucrop.UCropActivity" android:screenOrientation="portrait" android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:theme="@style/Theme.AppCompat.Light.NoActionBar" android:name="com.yalantis.ucrop.UCropMultipleActivity" android:screenOrientation="portrait" android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <service android:name="com.google.mlkit.common.internal.MlKitComponentDiscoveryService" android:exported="false" android:directBootAware="true">
+            <meta-data android:name="com.google.firebase.components:com.google.mlkit.nl.languageid.bundled.internal.ThickLanguageIdRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+            <meta-data android:name="com.google.firebase.components:com.google.mlkit.nl.languageid.internal.LanguageIdRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+            <meta-data android:name="com.google.firebase.components:com.google.mlkit.common.internal.CommonComponentRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+        </service>
+        <provider android:name="com.google.mlkit.common.internal.MlKitInitProvider" android:exported="false" android:authorities="com.upuphone.star.launcher.intl.mlkitinitprovider" android:initOrder="99"/>
+        <meta-data android:name="support_factor_authenticator" android:value="true"/>
+        <activity android:theme="@style/FactorActivity" android:label="" android:name="sdk.meizu.account.factor.authentication.sdk.FactorAuthenticationActivity" android:exported="true" android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="com.meizu.account.factor.authentication"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <service android:name="com.upuphone.datatrack.sdk.service.TrackJobService" android:permission="android.permission.BIND_JOB_SERVICE" android:enabled="true" android:exported="false"/>
+        <provider android:name="androidx.startup.InitializationProvider" android:exported="false" android:authorities="com.upuphone.star.launcher.intl.androidx-startup">
+            <meta-data android:name="androidx.work.WorkManagerInitializer" android:value="androidx.startup"/>
+            <meta-data android:name="androidx.emoji2.text.EmojiCompatInitializer" android:value="androidx.startup"/>
+            <meta-data android:name="androidx.lifecycle.ProcessLifecycleInitializer" android:value="androidx.startup"/>
+            <meta-data android:name="androidx.profileinstaller.ProfileInstallerInitializer" android:value="androidx.startup"/>
+        </provider>
+        <service android:name="androidx.work.impl.background.systemalarm.SystemAlarmService" android:enabled="@bool/enable_system_alarm_service_default" android:exported="false" android:directBootAware="false"/>
+        <service android:name="androidx.work.impl.background.systemjob.SystemJobService" android:permission="android.permission.BIND_JOB_SERVICE" android:enabled="@bool/enable_system_job_service_default" android:exported="true" android:directBootAware="false"/>
+        <service android:name="androidx.work.impl.foreground.SystemForegroundService" android:enabled="@bool/enable_system_foreground_service_default" android:exported="false" android:directBootAware="false"/>
+        <receiver android:name="androidx.work.impl.utils.ForceStopRunnable$BroadcastReceiver" android:enabled="true" android:exported="false" android:directBootAware="false"/>
+        <receiver android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryChargingProxy" android:enabled="false" android:exported="false" android:directBootAware="false">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryNotLowProxy" android:enabled="false" android:exported="false" android:directBootAware="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BATTERY_OKAY"/>
+                <action android:name="android.intent.action.BATTERY_LOW"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$StorageNotLowProxy" android:enabled="false" android:exported="false" android:directBootAware="false">
+            <intent-filter>
+                <action android:name="android.intent.action.DEVICE_STORAGE_LOW"/>
+                <action android:name="android.intent.action.DEVICE_STORAGE_OK"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$NetworkStateProxy" android:enabled="false" android:exported="false" android:directBootAware="false">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name="androidx.work.impl.background.systemalarm.RescheduleReceiver" android:enabled="false" android:exported="false" android:directBootAware="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.TIME_SET"/>
+                <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name="androidx.work.impl.background.systemalarm.ConstraintProxyUpdateReceiver" android:enabled="@bool/enable_system_alarm_service_default" android:exported="false" android:directBootAware="false">
+            <intent-filter>
+                <action android:name="androidx.work.impl.background.systemalarm.UpdateProxies"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name="androidx.work.impl.diagnostics.DiagnosticsReceiver" android:permission="android.permission.DUMP" android:enabled="true" android:exported="true" android:directBootAware="false">
+            <intent-filter>
+                <action android:name="androidx.work.diagnostics.REQUEST_DIAGNOSTICS"/>
+            </intent-filter>
+        </receiver>
+        <service android:name="androidx.room.MultiInstanceInvalidationService" android:exported="false" android:directBootAware="true"/>
+        <provider android:name="io.flutter.plugins.imagepicker.ImagePickerFileProvider" android:exported="false" android:authorities="com.upuphone.star.launcher.intl.flutter.image_provider" android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/flutter_image_picker_file_paths"/>
+        </provider>
+        <service android:name="com.google.android.gms.metadata.ModuleDependencies" android:enabled="false" android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES"/>
+            </intent-filter>
+            <meta-data android:name="photopicker_activity:0:required" android:value=""/>
+        </service>
+        <provider android:name="com.upuphone.myvu.myvu_share_plugin.fileprovider.ShareFileProvider" android:exported="false" android:authorities="com.upuphone.star.launcher.intl.shareFileProvider" android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/share_file_provider"/>
+        </provider>
+        <activity android:name="com.upuphone.myvu.myvu_share_plugin.SinaActivity" android:exported="true" android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity android:theme="@style/Theme.NoTitleBar.Fullscreen" android:name="io.flutter.plugins.urllauncher.WebViewActivity" android:exported="false"/>
+        <activity android:theme="@style/Theme.Translucent.NoTitleBar" android:name="com.google.android.gms.common.api.GoogleApiActivity" android:exported="false"/>
+        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
+        <uses-library android:name="androidx.window.extensions" android:required="false"/>
+        <uses-library android:name="androidx.window.sidecar" android:required="false"/>
+        <receiver android:name="androidx.profileinstaller.ProfileInstallReceiver" android:permission="android.permission.DUMP" android:enabled="true" android:exported="true" android:directBootAware="false">
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.SKIP_FILE"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION"/>
+            </intent-filter>
+        </receiver>
+        <service android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery" android:exported="false">
+            <meta-data android:name="backend:com.google.android.datatransport.cct.CctBackendFactory" android:value="cct"/>
+        </service>
+        <service android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService" android:permission="android.permission.BIND_JOB_SERVICE" android:exported="false"/>
+        <receiver android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver" android:exported="false"/>
+        <service android:name="com.upuphone.xr.sapp.vu.arspace.ArSpaceMockService" android:exported="false"/>
+        <activity android:name="com.ss.android.larksso.LarkSSOActivity" android:launchMode="singleTop"/>
+        <activity android:theme="@style/Theme.NoTitleBar" android:name="com.android.dingtalk.openauth.web.AuthWebviewActivity" android:exported="false" android:launchMode="standard" android:screenOrientation="behind" android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" android:alwaysRetainTaskState="true" android:windowSoftInputMode="adjustResize" android:uiOptions="none" android:windowTranslucentStatus="true"/>
+        <provider android:name="com.luck.picture.lib.basic.PictureFileProvider" android:exported="false" android:authorities="com.upuphone.star.launcher.intl.luckProvider" android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/ps_file_paths"/>
+        </provider>
+        <service android:name="com.luck.picture.lib.service.ForegroundService" android:enabled="true" android:foregroundServiceType="8"/>
+        <activity android:theme="@style/Base.Theme.NoActionBar" android:name="com.luck.picture.lib.basic.PictureSelectorSupporterActivity" android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:theme="@style/Picture.Theme.Translucent" android:name="com.luck.picture.lib.basic.PictureSelectorTransparentActivity" android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:theme="@style/Theme.Translucent.NoTitleBar.Fullscreen" android:name="com.here.sdk.consent.ConsentActivity"/>
+        <service android:name="com.here.services.internal.LocationService" android:enabled="true" android:exported="false"/>
+        <meta-data android:name="wbsdk_version_name" android:value="13.10.5"/>
+        <meta-data android:name="wbsdk_version_code" android:value="2310"/>
+        <activity android:name="com.sina.weibo.sdk.web.WebActivity" android:exported="false" android:configChanges="orientation|screenSize" android:windowSoftInputMode="adjustResize"/>
+        <activity android:theme="@style/Theme.Translucent.NoTitleBar" android:name="com.sina.weibo.sdk.share.ShareTransActivity" android:exported="true" android:launchMode="singleTask" android:configChanges="keyboardHidden|orientation|screenSize">
+            <intent-filter>
+                <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <provider android:name="com.sina.weibo.sdk.content.FileProviderV2" android:exported="false" android:authorities="com.upuphone.star.launcher.intl.fileprovider" android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/wbsdk_filepaths"/>
+        </provider>
+        <provider android:name="com.sina.weibo.sdk.content.WeiboSDKFileProvider" android:exported="false" android:authorities="com.upuphone.star.launcher.intl.wbsdk.fileprovider" android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/wbsdk_filepaths"/>
+        </provider>
+        <activity android:theme="@style/Theme.Translucent.NoTitleBar" android:name="com.xingin.xhssharesdk.core.XhsShareActivity" android:exported="true" android:launchMode="singleTask" android:screenOrientation="behind" android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <receiver android:name="com.ucar.vehiclesdk.MockActionReceiver" android:permission="com.ucar.permission.UCAR_NOTIFICATION_RECEIVER" android:enabled="true" android:exported="true">
+            <intent-filter>
+                <action android:name="ucar.intent.action.NOTIFICATION_MOCK_ACTION"/>
+            </intent-filter>
+        </receiver>
+        <service android:name="com.share.connect.ble.BluetoothLeService" android:exported="false"/>
+        <service android:name="com.share.connect.wifip2p.WifiP2pService" android:exported="false"/>
+        <service android:name="com.share.connect.wifiap.WifiApService" android:exported="false"/>
+        <service android:name="com.share.connect.ShareLinkService" android:exported="false"/>
+        <meta-data android:name="com.android.vending.splits.required" android:value="true"/>
+        <meta-data android:name="com.android.stamp.source" android:value="https://play.google.com/store"/>
+        <meta-data android:name="com.android.stamp.type" android:value="STAMP_TYPE_DISTRIBUTION_APK"/>
+        <meta-data android:name="com.android.vending.splits" android:resource="@xml/splits0"/>
+        <meta-data android:name="com.android.vending.derived.apk.id" android:value="2"/>
+    </application>
+</manifest>

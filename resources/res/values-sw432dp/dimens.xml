@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="mc_badge_border_small_height">38.4dp</dimen>
+    <dimen name="mc_badge_border_small_width">38.4dp</dimen>
+    <dimen name="mc_badge_contact_small_picture_height">38.4dp</dimen>
+    <dimen name="mc_badge_contact_small_picture_width">38.4dp</dimen>
+    <dimen name="mc_badge_small_textsize">24.8sp</dimen>
+    <dimen name="mc_empty_tips_text_size_light">16sp</dimen>
+    <dimen name="mc_enhancegallery_max_overscroll_distance">127dp</dimen>
+    <dimen name="mc_galleryflow_picture_size">116dp</dimen>
+    <dimen name="mc_seekbar_vertical_padding_bottom">16dp</dimen>
+    <dimen name="mc_seekbar_vertical_padding_top">16dp</dimen>
+</resources>

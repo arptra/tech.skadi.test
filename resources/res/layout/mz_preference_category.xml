@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:orientation="vertical" android:paddingTop="15dp" android:paddingBottom="8dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="18dp" android:paddingEnd="18dp">
+    <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="7dp" android:layout_marginStart="2dp">
+        <TextView android:textAppearance="@style/Widget.Flyme.List.Setting.SingleList.Title" android:id="@android:id/title" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <LinearLayout android:gravity="right|center_vertical|center_horizontal|center|end" android:orientation="vertical" android:id="@android:id/widget_frame" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"/>
+    </LinearLayout>
+    <View android:id="@+id/divider" android:background="@color/mz_divider_line_block" android:layout_width="match_parent" android:layout_height="1dp"/>
+</LinearLayout>

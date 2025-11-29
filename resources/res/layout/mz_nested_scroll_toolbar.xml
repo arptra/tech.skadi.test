@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<flyme.support.v7.widget.ActionBarCoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:id="@+id/decor_content_parent" android:fitsSystemWindows="true" android:clipChildren="false" android:layout_width="match_parent" android:layout_height="match_parent" app:statusBarBackground="@null">
+    <FrameLayout android:id="@+id/content_container" android:layout_width="match_parent" android:layout_height="match_parent" app:layout_behavior="@string/mz_appbar_scrolling_view_behavior">
+        <include layout="@layout/mz_screen_fits_bottom_content_include"/>
+    </FrameLayout>
+    <flyme.support.v7.widget.MzAppBarLayout android:id="@+id/app_bar_layout" android:fitsSystemWindows="true" android:clipChildren="false" android:layout_width="match_parent" android:layout_height="wrap_content" style="?attr/actionBarStyle">
+        <flyme.support.v7.widget.MzCollapsingToolbarLayout android:id="@+id/action_bar_container" android:layout_width="match_parent" android:layout_height="?attr/mzActionBarExpandedSize" app:contentScrim="@android:color/transparent" app:layout_scrollFlags="13" app:statusBarScrim="@android:color/transparent" app:toolbarId="@+id/action_bar">
+            <flyme.support.v7.widget.Toolbar android:id="@+id/action_bar" android:layout_width="match_parent" android:layout_height="?attr/actionBarSize" app:layout_collapseMode="1" style="?attr/mzToolbarStyleFullScreen"/>
+            <flyme.support.v7.widget.ActionBarContextView android:theme="?attr/actionBarTheme" android:id="@+id/action_context_bar" android:visibility="gone" android:layout_width="match_parent" android:layout_height="?attr/actionBarSize" app:layout_collapseMode="1" style="?attr/mzActionModeStyleFullScreen"/>
+        </flyme.support.v7.widget.MzCollapsingToolbarLayout>
+        <FrameLayout android:id="@+id/action_bar_spring_layout_middle" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <FrameLayout android:id="@+id/action_bar_spring_layout_quick" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    </flyme.support.v7.widget.MzAppBarLayout>
+    <ViewStub android:id="@+id/mz_action_bar_dropdown_stub" android:layout="@layout/mz_action_bar_drop_down_view" android:layout_width="match_parent" android:layout_height="match_parent"/>
+    <flyme.support.v7.widget.ActionBarContainer android:gravity="center" android:layout_gravity="bottom|right|center_vertical|center_horizontal|center|end" android:id="@+id/split_action_bar" android:visibility="gone" android:fitsSystemWindows="true" android:clipChildren="false" android:layout_width="match_parent" android:layout_height="wrap_content" style="?attr/actionBarSplitStyle"/>
+</flyme.support.v7.widget.ActionBarCoordinatorLayout>

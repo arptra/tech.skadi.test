@@ -1,0 +1,18 @@
+package com.honey.account.c9;
+
+import android.view.View;
+import com.upuphone.xr.sapp.vu.fragment.VuGlassesManagerFragment;
+
+public final /* synthetic */ class e0 implements View.OnClickListener {
+
+    /* renamed from: a  reason: collision with root package name */
+    public final /* synthetic */ VuGlassesManagerFragment f7167a;
+
+    public /* synthetic */ e0(VuGlassesManagerFragment vuGlassesManagerFragment) {
+        this.f7167a = vuGlassesManagerFragment;
+    }
+
+    public final void onClick(View view) {
+        VuGlassesManagerFragment.g1(this.f7167a, view);
+    }
+}

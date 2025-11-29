@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:oneshot="true">
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/r_connect_00000"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/r_connect_00001"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/r_connect_00002"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/r_connect_00003"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/r_connect_00004"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/r_connect_00005"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/r_connect_00006"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/r_connect_00007"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/r_connect_00008"/>
+    <item android:duration="@integer/guide_anim_time" android:drawable="@drawable/r_connect_00009"/>
+</animation-list>

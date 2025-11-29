@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:id="@+id/notification_main" android:layout_width="match_parent" android:layout_height="match_parent">
+    <ImageView android:id="@+id/notification_logo" android:layout_width="16dp" android:layout_height="16dp" android:src="@drawable/notification_logo" android:layout_alignTop="@+id/notification_title" android:layout_alignBottom="@+id/notification_title" android:layout_marginStart="6dp"/>
+    <TextView android:textSize="12sp" android:textColor="@color/notification_content" android:id="@+id/notification_title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="@string/guide_app_name" android:drawablePadding="4dp" android:alpha="0.35" android:layout_marginStart="4dp" android:layout_toEndOf="@+id/notification_logo" android:textFontWeight="400"/>
+    <RelativeLayout android:gravity="bottom|left|center_vertical|center_horizontal|center|start" android:id="@+id/delete" android:layout_width="22dp" android:layout_height="23dp" android:layout_alignParentEnd="true">
+        <ImageView android:layout_width="15dp" android:layout_height="15dp" android:src="@drawable/delete_notification"/>
+    </RelativeLayout>
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@+id/notify_content" android:layout_width="match_parent" android:layout_height="54dp" android:layout_below="@+id/notification_logo" android:layout_marginStart="6dp">
+        <TextView android:textSize="15sp" android:textColor="@color/notification_content" android:id="@+id/notification_content" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:lineHeight="22dp" android:textFontWeight="500"/>
+        <ImageView android:id="@+id/notification_split" android:background="@color/black_4" android:visibility="gone" android:layout_width="1dp" android:layout_height="20dp" android:layout_marginStart="20dp"/>
+        <ImageView android:id="@+id/notification_split2" android:background="@color/black_4" android:visibility="gone" android:layout_width="1dp" android:layout_height="42dp" android:layout_marginStart="20dp"/>
+        <RelativeLayout android:gravity="center" android:id="@+id/notification_touchpad" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="20dp" android:paddingHorizontal="6dp">
+            <ImageView android:visibility="visible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/notification_touchpad"/>
+        </RelativeLayout>
+        <LinearLayout android:orientation="horizontal" android:id="@+id/control_main" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="6dp">
+            <TextView android:textSize="15sp" android:textColor="@color/mz_theme_color_blue" android:gravity="center" android:id="@+id/notification_cancel" android:background="@null" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/cancel" android:paddingHorizontal="12dp" android:paddingVertical="6dp" android:lineHeight="22sp" android:textFontWeight="500"/>
+            <TextView android:textSize="15sp" android:textColor="@color/mz_theme_color_blue" android:gravity="center" android:id="@+id/notification_close" android:background="@null" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/word_close" android:paddingHorizontal="12dp" android:paddingVertical="6dp" android:lineHeight="22sp" android:textFontWeight="500"/>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

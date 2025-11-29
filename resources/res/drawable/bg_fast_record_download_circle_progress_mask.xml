@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rotate xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:fromDegrees="360" android:toDegrees="360" android:pivotX="50%" android:pivotY="50%">
+    <bitmap android:src="@mipmap/ic_fast_record_download_circle_mask"/>
+</rotate>

@@ -1,0 +1,1 @@
+{"styles": [{"id": "offscreen_background", "layer": "background", "technique": "polygon", "description": "offscreen-depth", "category": "offscreen-depth", "attr": {"enforce-ztest": true}}]}

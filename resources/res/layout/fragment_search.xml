@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:background="@color/theme_black_2_color" android:layout_width="match_parent" android:layout_height="match_parent">
+    <com.upuphone.ar.navi.lite.mapview.BaseMapView android:id="@+id/mapView" android:layout_width="match_parent" android:layout_height="match_parent"/>
+    <com.upuphone.ar.navi.lite.view.EmptyDataView android:id="@+id/netWorkNo" android:visibility="gone" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_marginTop="@dimen/size_dp_156"/>
+    <FrameLayout android:id="@+id/statusBarFrame" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <com.upuphone.ar.navi.lite.view.TitleView android:id="@+id/title_panel" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_below="@+id/statusBarFrame" android:layout_marginStart="@dimen/size_dp_10" android:layout_marginEnd="@dimen/size_dp_10" app:title_show_setting="true"/>
+    <ImageView android:id="@+id/trafficStatus" android:background="@drawable/position_location_bg" android:visibility="gone" android:layout_width="@dimen/navi_pop_btn_size" android:layout_height="@dimen/navi_pop_btn_size" android:layout_marginTop="@dimen/size_dp_104" android:src="@drawable/traffic_off" android:scaleType="centerInside" android:layout_alignParentTop="true" android:layout_alignWithParentIfMissing="true" android:layout_marginEnd="@dimen/size_dp_10" android:layout_alignParentEnd="true"/>
+    <ImageView android:id="@+id/my_location" android:background="@drawable/position_location_bg" android:layout_width="@dimen/navi_pop_btn_size" android:layout_height="@dimen/navi_pop_btn_size" android:layout_marginBottom="@dimen/size_dp_160" android:src="@drawable/position_location" android:scaleType="centerInside" android:layout_alignParentBottom="true" android:layout_alignWithParentIfMissing="true" android:layout_marginEnd="@dimen/size_dp_10" android:layout_alignParentEnd="true"/>
+    <include layout="@layout/search_bottom_panel_layout"/>
+    <include layout="@layout/search_scroll_layout"/>
+    <include layout="@layout/search_result_view_layout"/>
+    <include android:layout_width="match_parent" android:layout_height="match_parent" android:layout_marginTop="2dp" android:layout_below="@+id/title_panel" layout="@layout/search_result_scroll_layout"/>
+    <View android:id="@+id/search_fragement_mask" android:background="@color/theme_black_4_color" android:visibility="visible" android:layout_width="match_parent" android:layout_height="match_parent"/>
+    <com.upuphone.ar.navi.lite.view.NaviProgressView android:id="@+id/loadingProgress" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerInParent="true"/>
+    <View android:id="@+id/viewMask" android:background="@color/mask_color" android:visibility="gone" android:layout_width="match_parent" android:layout_height="match_parent"/>
+    <com.upuphone.ar.navi.lite.view.NoConnectedView android:id="@+id/not_connected_view" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+</RelativeLayout>

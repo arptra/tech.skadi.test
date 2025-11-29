@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:id="@+id/naviSpeedLayout" android:layout_width="@dimen/size_dp_64" android:layout_height="@dimen/size_dp_64">
+    <View android:background="@drawable/circular" android:layout_width="@dimen/size_dp_64" android:layout_height="@dimen/size_dp_64"/>
+    <View android:background="@drawable/speed_panel_bg" android:layout_width="@dimen/size_dp_56" android:layout_height="@dimen/size_dp_56" android:layout_margin="4dp"/>
+    <TextView android:textSize="@dimen/text_size_22" android:textStyle="bold" android:textColor="@color/theme_color_1" android:gravity="bottom|center_vertical|center_horizontal|center" android:id="@+id/naviSpeed" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="0dp" android:text="120" android:includeFontPadding="false" android:layout_above="@+id/naviSpeedUnit" android:layout_centerHorizontal="true"/>
+    <TextView android:textSize="@dimen/text_size_10" android:textColor="@color/theme_color_1" android:gravity="top|center_vertical|center_horizontal|center" android:id="@+id/naviSpeedUnit" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="10dp" android:text="km/h" android:includeFontPadding="false" android:layout_alignParentBottom="true" android:layout_centerHorizontal="true"/>
+</RelativeLayout>

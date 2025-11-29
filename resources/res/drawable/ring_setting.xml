@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:height="44dp" android:width="44dp" android:viewportWidth="44" android:viewportHeight="44">
+    <path android:fillColor="@drawable/$ring_setting__0" android:pathData="M22,22m-22,0a22,22 0,1 1,44 0a22,22 0,1 1,-44 0"/>
+    <path android:fillColor="@color/title_icon_color" android:pathData="M27.879,14.135C28.127,13.886 28.1,13.474 27.808,13.278C24.304,10.93 19.709,10.907 16.204,13.214C15.909,13.409 15.881,13.823 16.131,14.073L17.095,15.037C17.293,15.236 17.604,15.262 17.844,15.118C20.388,13.59 23.612,13.604 26.163,15.174C26.404,15.322 26.717,15.297 26.917,15.097L27.879,14.135Z"/>
+    <path android:fillColor="@color/title_icon_color" android:pathData="M28.957,17.171C28.759,17.369 28.733,17.679 28.876,17.919C30.725,21.008 30.321,25.051 27.686,27.686C24.573,30.799 19.498,30.799 16.35,27.65C13.677,24.977 13.273,20.915 15.118,17.844C15.262,17.604 15.236,17.293 15.037,17.095L14.073,16.131C13.823,15.881 13.409,15.909 13.214,16.204C10.535,20.273 10.998,25.811 14.593,29.407C18.704,33.517 25.352,33.533 29.442,29.442C33.011,25.874 33.454,20.36 30.781,16.282C30.587,15.986 30.172,15.957 29.922,16.207L28.957,17.171Z"/>
+</vector>

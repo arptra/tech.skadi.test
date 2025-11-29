@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:layout_width="match_parent" android:layout_height="wrap_content">
+    <LinearLayout android:orientation="vertical" android:background="@drawable/bg_notiice_permisson" android:padding="@dimen/size_dp_24" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="@dimen/size_dp_24">
+        <TextView android:gravity="center" android:id="@+id/title" android:layout_width="match_parent" android:layout_height="wrap_content" android:lineHeight="24sp" android:textFontWeight="@integer/medium" app:layout_constraintEnd_toEndOf="0" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toTopOf="0" style="@style/Theme.Upuphone.Dialog.Font.Title"/>
+        <FrameLayout android:id="@+id/root_content" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <ScrollView android:id="@+id/lay_scroll_content" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="22dp" app:layout_constrainedHeight="true" app:layout_constraintEnd_toEndOf="0" app:layout_constraintHeight_max="374dp" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toTopOf="0">
+                <TextView android:gravity="center_horizontal" android:id="@+id/content" android:layout_width="match_parent" android:layout_height="wrap_content" android:lineSpacingExtra="4dp" android:lineHeight="22sp" style="@style/Theme.Upuphone.Dialog.Font.content"/>
+            </ScrollView>
+        </FrameLayout>
+        <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/size_dp_24">
+            <com.meizu.common.widget.MzButton android:textColor="@color/confirm_text_color_selector" android:gravity="center" android:id="@+id/confirm" android:background="@drawable/bg_dialog_confirm_button" android:visibility="visible" android:layout_width="0dp" android:layout_height="48dp" android:text="@string/permission_confirm" android:layout_weight="1" android:textAllCaps="false" android:stateListAnimator="@null" style="@style/Theme.Upuphone.Font.Button"/>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

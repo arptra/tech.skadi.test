@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.meizu.common.animator.ImmersiveListItemDrawable xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" app:immersiveItemPadding="16dp" app:immersiveSolidColor="@color/fd_sys_color_surface_container_low_default" app:immersiveType="1" app:pressAlphaTo="1" app:tint="@color/fd_sys_color_state_pressed_default"/>

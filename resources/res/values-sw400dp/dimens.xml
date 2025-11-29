@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="mc_galleryflow_picture_size">105dp</dimen>
+</resources>

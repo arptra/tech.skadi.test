@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="poscon.consent.screen.no">Ne, hvala</string>
+    <string name="poscon.consent.screen.yes">Da, naravno</string>
+    <string name="poscon.consent.v3.screen.1">Ova aplikacija može prikupljati podatke o vašem okruženju, npr. o Wi-Fi mrežama i signalima mobilne mreže</string>
+    <string name="poscon.consent.v3.screen.2">Uz vaše se dopuštenje ti podaci šalju tvrtki HERE radi poboljšanja usluga te tvrtke. Ti se podaci ne koriste da bi vas se identificiralo, a HERE zadržava isključivo anonimne podatke.</string>
+    <string name="poscon.consent.v3.screen.3">Svoje dopuštenje možete povući u bilo kojem trenutku</string>
+    <string name="poscon.consent.v3.screen.learn.more">Saznajte više o pravilima zaštite privatnosti tvrtke HERE</string>
+    <string name="poscon.consent.v3.screen.turn.on">Jeste li voljni učiniti te podatke dostupnima tvrtki HERE?</string>
+</resources>

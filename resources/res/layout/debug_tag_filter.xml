@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:background="@color/white" android:padding="16dp" android:layout_width="wrap_content" android:layout_height="wrap_content">
+    <TextView android:textSize="16sp" android:gravity="center" android:id="@+id/filter_voice" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="VoiceManager" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toTopOf="0"/>
+    <CheckBox android:id="@+id/filter_voice_cb" android:layout_width="wrap_content" android:layout_height="wrap_content" app:layout_constraintBottom_toBottomOf="@+id/filter_voice" app:layout_constraintEnd_toEndOf="0" app:layout_constraintTop_toTopOf="@+id/filter_voice"/>
+    <TextView android:textSize="16sp" android:gravity="center" android:id="@+id/filter_tp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="TPManager" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toBottomOf="@+id/filter_voice"/>
+    <CheckBox android:id="@+id/filter_tp_cb" android:layout_width="wrap_content" android:layout_height="wrap_content" app:layout_constraintBottom_toBottomOf="@+id/filter_tp" app:layout_constraintEnd_toEndOf="0" app:layout_constraintTop_toTopOf="@+id/filter_tp"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

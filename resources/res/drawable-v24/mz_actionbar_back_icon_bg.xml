@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.meizu.common.animator.MzPressAnimationDrawable xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" app:bottomPadding="14dp" app:drawOffsetX="6dp" app:endPadding="16dp" app:pressAlphaTo="1" app:pressScaleFrom="1.1" app:pressScaleTo="1" app:radius="4dp" app:tint="@color/fd_sys_color_state_pressed_default" app:topPadding="14dp" app:useFullStyle="true"/>

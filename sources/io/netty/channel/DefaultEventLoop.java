@@ -1,0 +1,42 @@
+package io.netty.channel;
+
+import io.netty.util.concurrent.AbstractEventExecutor;
+import io.netty.util.concurrent.DefaultThreadFactory;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadFactory;
+
+public class DefaultEventLoop extends SingleThreadEventLoop {
+    public DefaultEventLoop() {
+        this((EventLoopGroup) null);
+    }
+
+    public void run() {
+        do {
+            Runnable takeTask = takeTask();
+            if (takeTask != null) {
+                AbstractEventExecutor.runTask(takeTask);
+                updateLastExecutionTime();
+            }
+        } while (!confirmShutdown());
+    }
+
+    public DefaultEventLoop(ThreadFactory threadFactory) {
+        this((EventLoopGroup) null, threadFactory);
+    }
+
+    public DefaultEventLoop(Executor executor) {
+        this((EventLoopGroup) null, executor);
+    }
+
+    public DefaultEventLoop(EventLoopGroup eventLoopGroup) {
+        this(eventLoopGroup, (ThreadFactory) new DefaultThreadFactory((Class<?>) DefaultEventLoop.class));
+    }
+
+    public DefaultEventLoop(EventLoopGroup eventLoopGroup, ThreadFactory threadFactory) {
+        super(eventLoopGroup, threadFactory, true);
+    }
+
+    public DefaultEventLoop(EventLoopGroup eventLoopGroup, Executor executor) {
+        super(eventLoopGroup, executor, true);
+    }
+}

@@ -1,0 +1,109 @@
+{
+  "open": [
+    "Intent_Sys_Open",
+    "Intent_AR_Card_Open",
+    "Intent_Nav_Open",
+    "Intent_Tiktok_Open",
+    "Intent_Phone_Open",
+    "Intent_Music_Open",
+    "Intent_Video_Open",
+    "Intent_App_Open"
+  ],
+  "close": [
+    "Intent_Sys_Close",
+    "Intent_Nav_ExitNav",
+    "Intent_Video_Exit",
+    "Intent_Nav_Close",
+    "Intent_Music_Close",
+    "Intent_App_Close"
+  ],
+  "play": [
+    "Intent_Video_Play",
+    "Intent_Video_PlayPre",
+    "Intent_Music_Select",
+    "Intent_Music_Play"
+  ],
+  "again": [
+    "Intent_Video_Reload",
+    "Intent_Sys_AgainPair",
+    "Intent_Reset_ViewPoint"
+  ],
+  "change_nav_pattern": [
+    "Intent_Nav_ChangeNav",
+    "Intent_Nav_Driver",
+    "Intent_Nav_FootRidingNav"
+  ],
+  "stop": [
+    "Intent_Video_Stop",
+    "Intent_Play_Pause"
+  ],
+  "little": [
+    "Intent_Sys_LightUp",
+    "Intent_Sys_Darker"
+  ],
+  "sound_larger": [
+    "Intent_Nav_SoundIncrease",
+    "Intent_Music_SoundIncrease",
+    "Intent_Assistant_SoundIncrease"
+  ],
+  "sound_smaller": [
+    "Intent_Nav_SoundReduce",
+    "Intent_Music_SoundReduce",
+    "Intent_Assistant_SoundReduce"
+  ],
+  "sound_increase": [
+    "Intent_Sys_SoundIncrease"
+  ],
+  "sound_reduce": [
+    "Intent_Sys_SoundReduce"
+  ],
+  "switch_tab": [
+    "Intent_Sys_SwitchTab",
+    "Intent_Global_ToHome"
+  ],
+  "set": [
+    "Intent_Sys_SetSound",
+    "Intent_Sys_SetLight"
+  ],
+  "close_tab": [
+    "Intent_Sys_ExitTask"
+  ],
+  "global_cancel": [
+    "Intent_Sys_FreeWakeCancel",
+    "Intent_Global_Cancel"
+  ],
+  "global_confirm": [
+    "Intent_Sys_FreeWakeSure",
+    "Intent_Global_Confirm"
+  ],
+  "global_know": [
+    "Intent_Sys_FreeWakeKnow"
+  ],
+  "global_agree": [
+    "Intent_Sys_FreeWakeAgree"
+  ],
+  "global_disagree": [
+    "Intent_Sys_FreeWakeDisagree"
+  ],
+  "increase": [
+    "Intent_Sys_SoundLager"
+  ],
+  "phone_answer": [
+    "Intent_Sys_PhoneAnswer"
+  ],
+  "phone_ring_off": [
+    "Intent_Sys_PhoneRingOff"
+  ],
+  "continue": [
+    "Intent_Play_Continue"
+  ],
+  "single_circulation": [
+    "Intent_Single_Circulation"
+  ],
+  "wechat_send": [
+    "Intent_Wechat_Send"
+  ],
+  "show_help": [
+    "Intent_Sys_ShowHelp"
+  ]
+}

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<StarryNetApp xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" app:appIcon="@drawable/ic_simple" app:appIconUrl="http://com.upuphone.xr" app:appId="com.upuphone.xr.simple" app:appName="Simple" app:appRemoteId="com.upuphone.xr@com.upuphone.xr.simple" app:launchType="0" app:needSync="false">
+    <DockMenu app:menuIcon="@drawable/ic_simple" app:menuIconUrl="http://www.baidu.com" app:menuId="menu01" app:menuName="按钮1"/>
+    <DockMenu app:menuIcon="@drawable/ic_simple" app:menuIconUrl="http://www.baidu.com" app:menuId="menu2" app:menuName="按钮2"/>
+</StarryNetApp>

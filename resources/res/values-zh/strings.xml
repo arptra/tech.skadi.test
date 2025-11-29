@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_cancel">取消</string>
+    <string name="auth_continue">确定</string>
+    <string name="auth_notification_error_ssl_cert_invalid">SSL证书不可用，是否继续访问？</string>
+    <string name="auth_notification_error_ssl_date_invalid">SSL数据不可用，是否继续访问？</string>
+    <string name="auth_notification_error_ssl_expired">SSL过期，是否继续访问？</string>
+    <string name="auth_notification_error_ssl_id_mismatch">SSL ID不匹配，是否继续访问？</string>
+    <string name="auth_notification_error_ssl_invalid">SSL不可用，是否继续访问？</string>
+    <string name="auth_notification_error_ssl_not_yet_valid">SSL尚未可用，是否继续访问？</string>
+    <string name="auth_notification_error_ssl_untrusted">非受信SSL，是否继续访问？</string>
+    <string name="gt3_geetest_analyzing">智能分析中...</string>
+    <string name="gt3_geetest_checking">智能验证检测中</string>
+    <string name="gt3_geetest_click">点击按钮进行验证</string>
+    <string name="gt3_geetest_closed">验证码已关闭</string>
+    <string name="gt3_geetest_http_error">网络连接失败</string>
+    <string name="gt3_geetest_http_timeout">网络超时</string>
+    <string name="gt3_geetest_pass">验证通过</string>
+    <string name="gt3_geetest_please_verify">请完成上方验证</string>
+    <string name="gt3_geetest_success">验证成功</string>
+    <string name="gt3_geetest_support">极验提供技术支持</string>
+    <string name="gt3_geetest_try_again">请点击重试</string>
+    <string name="srl_component_falsify">%s 虚假区域\10代表运行时拖动的高度【%.1fdp】 \10而不会显示任何东西</string>
+    <string name="srl_content_empty">SmartRefreshLayout中没有找到内容视图。您是否忘记在xml布局文件中添加？</string>
+    <string name="srl_footer_failed">加载失败</string>
+    <string name="srl_footer_finish">加载完成</string>
+    <string name="srl_footer_loading">正在加载…</string>
+    <string name="srl_footer_nothing">没有更多数据了</string>
+    <string name="srl_footer_pulling">上拉加载更多</string>
+    <string name="srl_footer_refreshing">等待头部刷新完成…</string>
+    <string name="srl_footer_release">释放立即加载</string>
+    <string name="srl_header_failed">刷新失败</string>
+    <string name="srl_header_finish">刷新完成</string>
+    <string name="srl_header_loading">等待底部加载完成…</string>
+    <string name="srl_header_pulling">下拉可以刷新</string>
+    <string name="srl_header_refreshing">正在刷新…</string>
+    <string name="srl_header_release">释放立即刷新</string>
+    <string name="srl_header_secondary">释放进入二楼</string>
+    <string name="srl_header_update">上次更新 M-d HH:mm</string>
+</resources>

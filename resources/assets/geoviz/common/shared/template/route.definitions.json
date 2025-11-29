@@ -1,0 +1,1 @@
+{"definitions": {"RouteStyle.1.Traveled.Color": ["ref", "RouteStyle.1.Color"], "RouteStyle.1.Traveled.Outline.Color": ["ref", "RouteStyle.1.Outline.Color"], "RouteStyle.1.Upcoming.Color": ["ref", "RouteStyle.1.Color"], "RouteStyle.1.Upcoming.Outline.Color": ["ref", "RouteStyle.1.Outline.Color"]}}

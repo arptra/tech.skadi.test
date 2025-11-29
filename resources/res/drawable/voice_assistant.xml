@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:height="28dp" android:width="28dp" android:autoMirrored="true" android:viewportWidth="28" android:viewportHeight="28">
+    <path android:fillColor="@drawable/$voice_assistant__0" android:pathData="M10,7L10,7A1,1 0,0 1,11 8L11,20A1,1 0,0 1,10 21L10,21A1,1 0,0 1,9 20L9,8A1,1 0,0 1,10 7z"/>
+    <path android:fillColor="@drawable/$voice_assistant__1" android:pathData="M18,7L18,7A1,1 0,0 1,19 8L19,20A1,1 0,0 1,18 21L18,21A1,1 0,0 1,17 20L17,8A1,1 0,0 1,18 7z"/>
+    <path android:fillColor="@drawable/$voice_assistant__2" android:pathData="M6,10L6,10A1,1 0,0 1,7 11L7,17A1,1 0,0 1,6 18L6,18A1,1 0,0 1,5 17L5,11A1,1 0,0 1,6 10z"/>
+    <path android:fillColor="@drawable/$voice_assistant__3" android:pathData="M14,4L14,4A1,1 0,0 1,15 5L15,23A1,1 0,0 1,14 24L14,24A1,1 0,0 1,13 23L13,5A1,1 0,0 1,14 4z"/>
+    <path android:fillColor="@drawable/$voice_assistant__4" android:pathData="M22,10L22,10A1,1 0,0 1,23 11L23,17A1,1 0,0 1,22 18L22,18A1,1 0,0 1,21 17L21,11A1,1 0,0 1,22 10z"/>
+</vector>
