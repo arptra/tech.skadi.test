@@ -101,3 +101,13 @@ Use `--chunk-size` to fit within your MTU (defaults to 180 bytes) and `--pause` 
    ```
 
 These steps mirror the on-device `StarryNetHelper` sequence: discover, connect, subscribe to notifications, and write payloads via the primary characteristic. All defaults are pre-filled with the glasses' GATT service and characteristic UUIDs so you can run the commands verbatim.
+
+## If your Mac cannot see the glasses but your phone can
+
+1. Make sure the glasses are **not already paired** to the phone (forget/disconnect them on the phone first).
+2. **Power-cycle the glasses** into pairing mode (long-press the power button until they re-advertise).
+3. Toggle Bluetooth **off/on on the Mac** to refresh CoreBluetooth and reopen the scan window.
+4. Re-run the scanner with a **longer discovery window**, e.g. `python -m ar.app.connect.scanner --scan-timeout 15`.
+5. If you renamed the glasses, pass the exact prefix: `python -m ar.app.connect.scanner --prefix "GLASSES"`.
+
+On macOS the scanner logs an extra hint when no glasses are detected; follow the steps above so the Mac can see the device once it is advertising again.

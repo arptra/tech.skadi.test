@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import sys
 from dataclasses import dataclass
 from typing import List, Optional
 
@@ -105,6 +106,13 @@ class BleDeviceScanner:
                 " mode, and adjust name prefixes (--prefix) or service UUID (--service) if"
                 " necessary."
             )
+            if sys.platform == "darwin":
+                logger.info(
+                    "macOS tip: if your phone sees the glasses but the Mac does not, forget/"
+                    "disconnect the glasses from the phone, toggle Bluetooth off/on on both"
+                    " devices, and power-cycle the glasses into pairing mode. Then rescan with"
+                    " a longer window (e.g., --scan-timeout 15)."
+                )
 
         return results
 
