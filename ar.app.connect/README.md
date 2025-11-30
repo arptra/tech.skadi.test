@@ -14,6 +14,12 @@ python -m ar.app.connect.connect_manager \
   --notify 00002001-0000-1000-8000-00805F9B34FB 00002002-0000-1000-8000-00805F9B34FB
 ```
 
+Scan the surrounding BLE devices and highlight any glasses matches:
+
+```bash
+python -m ar.app.connect.scanner
+```
+
 * Use `--prefix` to restrict the BLE scan to model name prefixes (defaults cover Air/AirPro/Star/MyVu/XR).
 * Add `--send` to push an initial payload once the link is ready.
 * `--tx` uses the primary write characteristic; `--notify` subscribes to both notify-capable UUIDs (00002001 and 00002002). An alternate no-response write path (OTA) is available on 00002001 if your payloads require it.
