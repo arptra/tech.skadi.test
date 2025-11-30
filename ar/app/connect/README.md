@@ -42,6 +42,24 @@ python -m ar.app.connect.myvu_wake
 
 The script scans for the `0000fee0-0000-1000-8000-00805f9b34fb` service (or the nearest unknown device), builds the WAKE frame with timestamp/nonce plus CRC16-IBM, and writes it to the `0000fee1-0000-1000-8000-00805f9b34fb` characteristic without response while printing the full packet in hex.
 
+### How to run the MYVU wake sender step-by-step
+
+1. Install dependencies once so the package imports resolve:
+   ```bash
+   pip install -e .
+   ```
+2. Make sure Bluetooth is enabled on macOS and the glasses are powered on/advertising.
+3. Run the wake sender from the repo root (the scan window defaults to 10s):
+   ```bash
+   python -m ar.app.connect.myvu_wake
+   ```
+   The script will:
+   * scan for the `0000fee0-0000-1000-8000-00805f9b34fb` service (or fall back to the strongest unknown device),
+   * build the WAKE packet with the required timestamp, nonce, and CRC16-IBM trailer,
+   * write it via `0000fee1-0000-1000-8000-00805f9b34fb` using **write without response**, and
+   * print the full packet bytes in hex before disconnecting.
+4. If you need a longer discovery window, rerun with `--scan-timeout 15`.
+
 The BLE client performs a filtered scan, connects with automatic retries, optionally subscribes to notifications, and exposes `send` for writing to the configured characteristic. The USB client opens a serial port at the configured baud rate and provides simple `send`/`receive` helpers for wired control.
 
 ## Send a test image/video payload
