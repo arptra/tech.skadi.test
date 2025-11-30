@@ -34,6 +34,14 @@ If Bluetooth is off or blocked, the scanner prints a clear message and exits ins
 * `--tx` uses the primary write characteristic; `--notify` subscribes to both notify-capable UUIDs (00002001 and 00002002). An alternate no-response write path (OTA) is available on 00002001 if your payloads require it.
 * Switch to USB with `--mode usb`; VID/PID filters can be set inside `config.py` if needed.
 
+Send the MYVU WAKE packet (FEE0/FEE1, CRC16) directly from the laptop once the glasses are advertising:
+
+```bash
+python -m ar.app.connect.myvu_wake
+```
+
+The script scans for the `0000fee0-0000-1000-8000-00805f9b34fb` service (or the nearest unknown device), builds the WAKE frame with timestamp/nonce plus CRC16-IBM, and writes it to the `0000fee1-0000-1000-8000-00805f9b34fb` characteristic without response while printing the full packet in hex.
+
 The BLE client performs a filtered scan, connects with automatic retries, optionally subscribes to notifications, and exposes `send` for writing to the configured characteristic. The USB client opens a serial port at the configured baud rate and provides simple `send`/`receive` helpers for wired control.
 
 ## Send a test image/video payload
