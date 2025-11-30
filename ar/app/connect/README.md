@@ -17,7 +17,7 @@ python -m ar.app.connect.connect_manager \
   --notify 00002001-0000-1000-8000-00805F9B34FB 00002002-0000-1000-8000-00805F9B34FB
 ```
 
-Scan the surrounding BLE devices and highlight any glasses matches:
+Scan the surrounding BLE devices, highlight any glasses matches, and print their full details (address, RSSI, advertised UUIDs, metadata):
 
 ```bash
 python -m ar.app.connect.scanner

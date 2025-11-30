@@ -15,6 +15,9 @@ class ScannedDevice:
     address: str
     name: str
     advertised_services: List[str]
+    rssi: Optional[int]
+    metadata: dict
+    details: Optional[object]
     is_glasses: bool
 
 
@@ -53,6 +56,7 @@ class BleDeviceScanner:
             else:
                 uuid_values = []
             advertised_services = [uuid.lower() for uuid in uuid_values]
+            rssi = getattr(device, "rssi", None)
             is_name_match = any(name.startswith(prefix) for prefix in self.config.device_name_prefixes)
             is_service_match = (
                 self.config.ble_service_uuid is not None
@@ -65,16 +69,36 @@ class BleDeviceScanner:
                     address=device.address,
                     name=name,
                     advertised_services=advertised_services,
+                    rssi=rssi,
+                    metadata=metadata if isinstance(metadata, dict) else {},
+                    details=getattr(device, "details", None),
                     is_glasses=is_glasses,
                 )
             )
 
             marker = "🌟 GLASSES" if is_glasses else "•"
-            logger.info("%s %s [%s] services=%s", marker, name, device.address, advertised_services or "[]")
+            logger.info(
+                "%s %s [%s] rssi=%s services=%s",
+                marker,
+                name,
+                device.address,
+                rssi,
+                advertised_services or "[]",
+            )
 
         matches = [d for d in results if d.is_glasses]
         if matches:
             logger.info("Found %d glasses candidate(s).", len(matches))
+            for candidate in matches:
+                logger.info(
+                    "→ %s [%s]\n   rssi=%s\n   services=%s\n   metadata=%s\n   details=%s",
+                    candidate.name,
+                    candidate.address,
+                    candidate.rssi,
+                    candidate.advertised_services or "[]",
+                    candidate.metadata,
+                    candidate.details,
+                )
         else:
             logger.info(
                 "No glasses candidates matched. Turn the glasses on, ensure they are in pairing"
