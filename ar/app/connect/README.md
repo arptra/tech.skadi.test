@@ -1,6 +1,6 @@
 # Laptop connector for the smart glasses
 
-This directory contains a lightweight Python client that mirrors the discovery, connection, and message exchange patterns used by the Android `StarryNetHelper` utilities. The Android app initializes the StarryNet stack once, registers discovery triggers, and starts BLE discovery whenever both network/login state are satisfied. For laptop control, you can run the same flow with BLE or fall back to USB serial.
+This directory (`ar/app/connect`) contains a lightweight Python client that mirrors the discovery, connection, and message exchange patterns used by the Android `StarryNetHelper` utilities. The Android app initializes the StarryNet stack once, registers discovery triggers, and starts BLE discovery whenever both network/login state are satisfied. For laptop control, you can run the same flow with BLE or fall back to USB serial. Run the commands below from the repository root (or export `PYTHONPATH=.`) so Python can resolve the `ar.app.connect` package.
 
 ## Quick start
 
