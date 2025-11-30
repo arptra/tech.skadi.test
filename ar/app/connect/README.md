@@ -1,11 +1,14 @@
 # Laptop connector for the smart glasses
 
-This directory (`ar/app/connect`) contains a lightweight Python client that mirrors the discovery, connection, and message exchange patterns used by the Android `StarryNetHelper` utilities. The Android app initializes the StarryNet stack once, registers discovery triggers, and starts BLE discovery whenever both network/login state are satisfied. For laptop control, you can run the same flow with BLE or fall back to USB serial. Run the commands below from the repository root (or export `PYTHONPATH=.`) so Python can resolve the `ar.app.connect` package.
+This directory (`ar/app/connect`) contains a lightweight Python client that mirrors the discovery, connection, and message exchange patterns used by the Android `StarryNetHelper` utilities. The Android app initializes the StarryNet stack once, registers discovery triggers, and starts BLE discovery whenever both network/login state are satisfied. For laptop control, you can run the same flow with BLE or fall back to USB serial. Install the package once (editable mode recommended) so the `ar.app.connect` modules resolve no matter where you invoke them:
+
+```bash
+pip install -e .
+```
 
 ## Quick start
 
 ```bash
-pip install bleak pyserial
 python -m ar.app.connect.connect_manager \
   --mode ble \
   --service 00002000-0000-1000-8000-00805F9B34FB \
@@ -19,6 +22,8 @@ Scan the surrounding BLE devices and highlight any glasses matches:
 ```bash
 python -m ar.app.connect.scanner
 ```
+
+If Bluetooth is off or blocked, the scanner prints a clear message and exits instead of crashing.
 
 * Use `--prefix` to restrict the BLE scan to model name prefixes (defaults cover Air/AirPro/Star/MyVu/XR).
 * Add `--send` to push an initial payload once the link is ready.
@@ -45,9 +50,9 @@ Use `--chunk-size` to fit within your MTU (defaults to 180 bytes) and `--pause` 
 
 ## How to use the toolkit end-to-end
 
-1. **Install dependencies** (once per environment):
+1. **Install the package** (once per environment so `python -m ar.app.connect.*` works from any folder):
    ```bash
-   pip install bleak pyserial
+   pip install -e .
    ```
 2. **Discover glasses nearby** (highlights names with the known prefixes and the `00002000` service):
    ```bash
@@ -72,19 +77,23 @@ Use `--chunk-size` to fit within your MTU (defaults to 180 bytes) and `--pause` 
    python -m ar.app.connect.connect_manager --mode usb --send "ping"
    ```
    Adjust USB VID/PID filters inside `config.py` if your adapter uses different IDs.
-6. **Reuse programmatically** by importing the helpers:
+6. **Reuse programmatically** by importing the helpers (remember to run inside an event loop for BLE):
    ```python
+   import asyncio
    from ar.app.connect import BleDeviceScanner, ConnectionManager, GlassMediaTester
 
-   scanner = BleDeviceScanner()
-   devices = scanner.scan()
+   async def main():
+       scanner = BleDeviceScanner()
+       await scanner.scan_and_print()
 
-   manager = ConnectionManager()
-   manager.connect()
-   manager.send(b"hello")
+       manager = ConnectionManager()
+       client = await manager.connect_ble()
+       await client.send(b"hello")
 
-   tester = GlassMediaTester()
-   tester.stream_file("demo.png")
+       tester = GlassMediaTester(manager)
+       await tester.play_ble("demo.png")
+
+   asyncio.run(main())
    ```
 
 These steps mirror the on-device `StarryNetHelper` sequence: discover, connect, subscribe to notifications, and write payloads via the primary characteristic. All defaults are pre-filled with the glasses' GATT service and characteristic UUIDs so you can run the commands verbatim.

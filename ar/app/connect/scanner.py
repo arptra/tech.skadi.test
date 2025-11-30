@@ -3,7 +3,7 @@ import logging
 from dataclasses import dataclass
 from typing import List, Optional
 
-from bleak import BleakScanner
+from bleak import BleakError, BleakScanner
 
 from .config import ConnectionConfig, DEFAULT_CONFIG
 
@@ -28,7 +28,14 @@ class BleDeviceScanner:
         self.loop = loop or asyncio.get_event_loop()
 
     async def scan_and_print(self) -> List[ScannedDevice]:
-        devices = await BleakScanner.discover(timeout=self.config.ble_scan_timeout)
+        try:
+            devices = await BleakScanner.discover(timeout=self.config.ble_scan_timeout)
+        except BleakError as exc:
+            logger.error(
+                "BLE scan failed: %s. Ensure Bluetooth is powered on and available, then retry.",
+                exc,
+            )
+            return []
         results: List[ScannedDevice] = []
         if not devices:
             logger.info("No BLE devices found")
