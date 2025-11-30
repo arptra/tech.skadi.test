@@ -72,6 +72,16 @@ class BleDeviceScanner:
             marker = "🌟 GLASSES" if is_glasses else "•"
             logger.info("%s %s [%s] services=%s", marker, name, device.address, advertised_services or "[]")
 
+        matches = [d for d in results if d.is_glasses]
+        if matches:
+            logger.info("Found %d glasses candidate(s).", len(matches))
+        else:
+            logger.info(
+                "No glasses candidates matched. Turn the glasses on, ensure they are in pairing"
+                " mode, and adjust name prefixes (--prefix) or service UUID (--service) if"
+                " necessary."
+            )
+
         return results
 
 

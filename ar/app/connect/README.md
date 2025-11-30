@@ -23,6 +23,10 @@ Scan the surrounding BLE devices and highlight any glasses matches:
 python -m ar.app.connect.scanner
 ```
 
+The scan output ends with a summary of how many glasses candidates were matched. If none are found, re-run with
+`--prefix` (to match your exact model name) or `--service` (to look for the 00002000 service) after powering the
+glasses on and putting them into pairing mode.
+
 If Bluetooth is off or blocked, the scanner prints a clear message and exits instead of crashing.
 
 * Use `--prefix` to restrict the BLE scan to model name prefixes (defaults cover Air/AirPro/Star/MyVu/XR).
