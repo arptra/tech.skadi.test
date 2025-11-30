@@ -43,7 +43,16 @@ class BleDeviceScanner:
 
         for device in devices:
             name = device.name or "(unknown)"
-            advertised_services = [uuid.lower() for uuid in (device.metadata.get("uuids") or [])]
+
+            # "metadata" is available on newer Bleak builds, but older versions may omit it
+            # entirely. Safely fall back to an empty list when the attribute is missing or not a
+            # mapping, and normalize the UUID values to lowercase for matching.
+            metadata = getattr(device, "metadata", {}) or {}
+            if isinstance(metadata, dict):
+                uuid_values = metadata.get("uuids") or []
+            else:
+                uuid_values = []
+            advertised_services = [uuid.lower() for uuid in uuid_values]
             is_name_match = any(name.startswith(prefix) for prefix in self.config.device_name_prefixes)
             is_service_match = (
                 self.config.ble_service_uuid is not None
