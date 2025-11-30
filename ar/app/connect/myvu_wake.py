@@ -134,13 +134,18 @@ async def send_wake_packet() -> None:
     logging.info("WAKE packet (%d bytes): %s", len(packet), packet.hex())
 
     async with BleakClient(device) as client:
-        services = await client.get_services()
-        characteristic = services.get_characteristic(CHARACTERISTIC_UUID)
+        services = None
+        if hasattr(client, "get_services") and callable(getattr(client, "get_services")):
+            services = await client.get_services()
+        else:
+            services = client.services
+
+        characteristic = services.get_characteristic(CHARACTERISTIC_UUID) if services else None
 
         if not characteristic:
             logging.error("Characteristic %s not found on device %s", CHARACTERISTIC_UUID, device.address)
             logging.info("Available services:")
-            for service in services:
+            for service in services or []:
                 logging.info("  %s -> %s", service.uuid, [c.uuid for c in service.characteristics])
             return
 
