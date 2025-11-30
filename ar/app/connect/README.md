@@ -42,6 +42,8 @@ python -m ar.app.connect.myvu_wake
 
 The script scans for the `0000fee0-0000-1000-8000-00805f9b34fb` service (or the nearest unknown device), builds the WAKE frame with timestamp/nonce plus CRC16-IBM, and writes it to the `0000fee1-0000-1000-8000-00805f9b34fb` characteristic without response while printing the full packet in hex.
 
+If the selected device does not expose the expected FEE1 characteristic after connecting, the script now prints every discovered service/characteristic pair so you can verify whether the glasses are advertising the correct GATT table (e.g., when they are paired only as a headset) before retrying.
+
 ### How to run the MYVU wake sender step-by-step
 
 1. Install dependencies once so the package imports resolve:
