@@ -32,6 +32,10 @@ class GlassBleClient:
             else None,
         )
         filtered: List[DiscoveredDevice] = []
+        if self.config.preferred_address:
+            return [
+                DiscoveredDevice(address=self.config.preferred_address, name="(preferred)")
+            ]
         for device in devices:
             name = device.name or ""
             if any(name.startswith(prefix) for prefix in self.config.device_name_prefixes):

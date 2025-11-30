@@ -102,6 +102,38 @@ Use `--chunk-size` to fit within your MTU (defaults to 180 bytes) and `--pause` 
 
 These steps mirror the on-device `StarryNetHelper` sequence: discover, connect, subscribe to notifications, and write payloads via the primary characteristic. All defaults are pre-filled with the glasses' GATT service and characteristic UUIDs so you can run the commands verbatim.
 
+## If you already paired them as a headset
+
+When macOS shows the glasses as a headset (HFP/A2DP), you still need the BLE data channel to push messages or media. Do the following:
+
+1. **Get the BLE address/UUID** using the scanner (match the name you see in Bluetooth settings, e.g., `DR-01`):
+   ```bash
+   python -m ar.app.connect.scanner --prefix "DR"
+   ```
+   Note the address shown in brackets (example: `5549FA62-DF3F-9F6A-5D13-7F760F63A12C`).
+2. **Connect directly by address** and open the data channel, even while the audio profile is connected:
+   ```bash
+   python -m ar.app.connect.connect_manager \
+     --mode ble \
+     --address 5549FA62-DF3F-9F6A-5D13-7F760F63A12C \
+     --service 00002000-0000-1000-8000-00805F9B34FB \
+     --tx 00002002-0000-1000-8000-00805F9B34FB \
+     --rx 00002001-0000-1000-8000-00805F9B34FB \
+     --notify 00002001-0000-1000-8000-00805F9B34FB 00002002-0000-1000-8000-00805F9B34FB \
+     --send "hello from mac"
+   ```
+3. **Stream an image or video** over the same BLE link once it connects:
+   ```bash
+   python -m ar.app.connect.media_test \
+     --file demo.png \
+     --mode ble \
+     --address 5549FA62-DF3F-9F6A-5D13-7F760F63A12C \
+     --chunk-size 180 \
+     --pause 0.05
+   ```
+
+If the address changes after re-pairing, rerun the scanner to grab the updated value. Keeping the glasses powered on and in pairing/advertising mode ensures the BLE side stays visible even when the audio profile is already connected.
+
 ## If your Mac cannot see the glasses but your phone can
 
 1. Make sure the glasses are **not already paired** to the phone (forget/disconnect them on the phone first).

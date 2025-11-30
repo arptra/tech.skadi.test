@@ -29,6 +29,7 @@ class ConnectionConfig:
     usb_baudrate: int = 115200
     usb_vendor_ids: Optional[List[int]] = None
     usb_product_ids: Optional[List[int]] = None
+    preferred_address: Optional[str] = None
 
 
 DEFAULT_CONFIG = ConnectionConfig()

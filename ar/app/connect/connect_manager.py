@@ -20,7 +20,10 @@ class ConnectionManager:
         candidates = await self.ble_client.discover()
         if not candidates:
             raise RuntimeError("No BLE glasses found. Make sure the device is in pairing mode.")
-        await self.ble_client.connect(candidates[0].address)
+        chosen = candidates[0]
+        if self.config.preferred_address:
+            logger.info("Using preferred address %s", self.config.preferred_address)
+        await self.ble_client.connect(chosen.address)
         return self.ble_client
 
     def connect_usb(self) -> GlassUsbClient:
@@ -42,6 +45,7 @@ def _build_config(args: argparse.Namespace) -> ConnectionConfig:
         reconnect=not args.no_reconnect,
         max_reconnect_attempts=args.retries,
         usb_baudrate=args.usb_baudrate,
+        preferred_address=args.address,
     )
 
 
@@ -49,6 +53,7 @@ def main(argv: Optional[list] = None) -> None:
     parser = argparse.ArgumentParser(description="Connect to the glasses over BLE or USB")
     parser.add_argument("--mode", choices=["ble", "usb"], default="ble", help="Transport to use")
     parser.add_argument("--prefix", nargs="+", default=DEFAULT_CONFIG.device_name_prefixes, help="Name prefixes to match during BLE scan")
+    parser.add_argument("--address", help="Preferred BLE MAC/UUID to connect to when already paired")
     parser.add_argument("--service", help="BLE service UUID for data channel")
     parser.add_argument("--tx", help="BLE TX characteristic UUID")
     parser.add_argument("--rx", help="BLE RX characteristic UUID")
