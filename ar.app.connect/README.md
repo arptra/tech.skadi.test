@@ -42,3 +42,49 @@ python -m ar.app.connect.media_test \
 ```
 
 Use `--chunk-size` to fit within your MTU (defaults to 180 bytes) and `--pause` to throttle between writes so the glasses can render the incoming stream.
+
+## How to use the toolkit end-to-end
+
+1. **Install dependencies** (once per environment):
+   ```bash
+   pip install bleak pyserial
+   ```
+2. **Discover glasses nearby** (highlights names with the known prefixes and the `00002000` service):
+   ```bash
+   python -m ar.app.connect.scanner
+   ```
+3. **Pair and open a session** (BLE example with the provided service/characteristic UUIDs):
+   ```bash
+   python -m ar.app.connect.connect_manager \
+     --mode ble \
+     --service 00002000-0000-1000-8000-00805F9B34FB \
+     --tx 00002002-0000-1000-8000-00805F9B34FB \
+     --rx 00002001-0000-1000-8000-00805F9B34FB \
+     --notify 00002001-0000-1000-8000-00805F9B34FB 00002002-0000-1000-8000-00805F9B34FB
+   ```
+   The CLI performs a filtered scan, connects, subscribes to both notify characteristics, and prints incoming notifications. Use `--send "payload"` to push an initial message after the link comes up.
+4. **Send media for validation** (image/video stream with pacing controls):
+   ```bash
+   python -m ar.app.connect.media_test --file demo.png --chunk-size 180 --pause 0.05
+   ```
+5. **Prefer USB when wired** (stable during development):
+   ```bash
+   python -m ar.app.connect.connect_manager --mode usb --send "ping"
+   ```
+   Adjust USB VID/PID filters inside `config.py` if your adapter uses different IDs.
+6. **Reuse programmatically** by importing the helpers:
+   ```python
+   from ar.app.connect import BleDeviceScanner, ConnectionManager, GlassMediaTester
+
+   scanner = BleDeviceScanner()
+   devices = scanner.scan()
+
+   manager = ConnectionManager()
+   manager.connect()
+   manager.send(b"hello")
+
+   tester = GlassMediaTester()
+   tester.stream_file("demo.png")
+   ```
+
+These steps mirror the on-device `StarryNetHelper` sequence: discover, connect, subscribe to notifications, and write payloads via the primary characteristic. All defaults are pre-filled with the glasses' GATT service and characteristic UUIDs so you can run the commands verbatim.
