@@ -1,0 +1,127 @@
+import asyncio
+import logging
+import sys
+from dataclasses import dataclass
+from typing import List, Optional
+
+from bleak import BleakError, BleakScanner
+
+from .config import ConnectionConfig, DEFAULT_CONFIG
+
+logger = logging.getLogger(__name__)
+
+
+@dataclass
+class ScannedDevice:
+    address: str
+    name: str
+    advertised_services: List[str]
+    rssi: Optional[int]
+    metadata: dict
+    details: Optional[object]
+    is_glasses: bool
+
+
+class BleDeviceScanner:
+    """Scan for nearby BLE devices and highlight the glasses candidates."""
+
+    def __init__(
+        self, config: ConnectionConfig = DEFAULT_CONFIG, loop: Optional[asyncio.AbstractEventLoop] = None
+    ) -> None:
+        self.config = config
+        self.loop = loop or asyncio.get_event_loop()
+
+    async def scan_and_print(self) -> List[ScannedDevice]:
+        try:
+            devices = await BleakScanner.discover(timeout=self.config.ble_scan_timeout)
+        except BleakError as exc:
+            logger.error(
+                "BLE scan failed: %s. Ensure Bluetooth is powered on and available, then retry.",
+                exc,
+            )
+            return []
+        results: List[ScannedDevice] = []
+        if not devices:
+            logger.info("No BLE devices found")
+            return results
+
+        for device in devices:
+            name = device.name or "(unknown)"
+
+            # "metadata" is available on newer Bleak builds, but older versions may omit it
+            # entirely. Safely fall back to an empty list when the attribute is missing or not a
+            # mapping, and normalize the UUID values to lowercase for matching.
+            metadata = getattr(device, "metadata", {}) or {}
+            if isinstance(metadata, dict):
+                uuid_values = metadata.get("uuids") or []
+            else:
+                uuid_values = []
+            advertised_services = [uuid.lower() for uuid in uuid_values]
+            rssi = getattr(device, "rssi", None)
+            is_name_match = any(name.startswith(prefix) for prefix in self.config.device_name_prefixes)
+            is_service_match = (
+                self.config.ble_service_uuid is not None
+                and self.config.ble_service_uuid.lower() in advertised_services
+            )
+            is_glasses = is_name_match or is_service_match
+
+            results.append(
+                ScannedDevice(
+                    address=device.address,
+                    name=name,
+                    advertised_services=advertised_services,
+                    rssi=rssi,
+                    metadata=metadata if isinstance(metadata, dict) else {},
+                    details=getattr(device, "details", None),
+                    is_glasses=is_glasses,
+                )
+            )
+
+            marker = "🌟 GLASSES" if is_glasses else "•"
+            logger.info(
+                "%s %s [%s] rssi=%s services=%s",
+                marker,
+                name,
+                device.address,
+                rssi,
+                advertised_services or "[]",
+            )
+
+        matches = [d for d in results if d.is_glasses]
+        if matches:
+            logger.info("Found %d glasses candidate(s).", len(matches))
+            for candidate in matches:
+                logger.info(
+                    "→ %s [%s]\n   rssi=%s\n   services=%s\n   metadata=%s\n   details=%s",
+                    candidate.name,
+                    candidate.address,
+                    candidate.rssi,
+                    candidate.advertised_services or "[]",
+                    candidate.metadata,
+                    candidate.details,
+                )
+        else:
+            logger.info(
+                "No glasses candidates matched. Turn the glasses on, ensure they are in pairing"
+                " mode, and adjust name prefixes (--prefix) or service UUID (--service) if"
+                " necessary."
+            )
+            if sys.platform == "darwin":
+                logger.info(
+                    "macOS tip: if your phone sees the glasses but the Mac does not, forget/"
+                    "disconnect the glasses from the phone, toggle Bluetooth off/on on both"
+                    " devices, and power-cycle the glasses into pairing mode. Then rescan with"
+                    " a longer window (e.g., --scan-timeout 15)."
+                )
+
+        return results
+
+
+async def _main() -> None:
+    logging.basicConfig(level=logging.INFO)
+    scanner = BleDeviceScanner()
+    await scanner.scan_and_print()
+
+
+if __name__ == "__main__":
+    asyncio.run(_main())
