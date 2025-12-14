@@ -24,6 +24,17 @@ def format_manufacturer_data(data: dict) -> str:
 
 
 def _extract_fields(device, adv_data=None):
+    """Normalize Bleak discovery outputs.
+
+    On macOS with ``return_adv=True`` Bleak may return ``(address, AdvertisementData)``
+    where the first element is already a string address (e.g. Swift.__StringStorage).
+    This helper accepts both the legacy Device object and the string form.
+    """
+
+    address = getattr(device, "address", None)
+    if address is None and isinstance(device, str):
+        address = device
+
     metadata = getattr(device, "metadata", {}) or {}
     uuids = metadata.get("uuids", []) or []
     manufacturer_data = metadata.get("manufacturer_data", {}) or {}
@@ -33,11 +44,12 @@ def _extract_fields(device, adv_data=None):
     if adv_data is not None:
         uuids = adv_data.service_uuids or uuids
         manufacturer_data = adv_data.manufacturer_data or manufacturer_data
-        rssi = getattr(adv_data, "rssi", None) if getattr(adv_data, "rssi", None) is not None else rssi
+        adv_rssi = getattr(adv_data, "rssi", None)
+        rssi = adv_rssi if adv_rssi is not None else rssi
         name = getattr(adv_data, "local_name", None) or name
 
     return (
-        device.address,
+        address or "",
         name or "",
         rssi if rssi is not None else 0,
         uuids,
