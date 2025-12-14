@@ -1,0 +1,19 @@
+{
+  "transport": "ble_gatt",
+  "classic": {
+    "uuid": null,
+    "connect_steps": []
+  },
+  "ble": {
+    "service_uuid": "0000fff0-0000-1000-8000-00805f9b34fb",
+    "write_char_uuid": "0000fff6-0000-1000-8000-00805f9b34fb",
+    "notify_char_uuid": "0000fff7-0000-1000-8000-00805f9b34fb",
+    "steps": []
+  },
+  "success_condition": {
+    "ble_services_appear": true,
+    "expected_service_uuid": "0000fff0-0000-1000-8000-00805f9b34fb",
+    "or_expected_manufacturer": null,
+    "or_expected_notify_pattern": null
+  }
+}
