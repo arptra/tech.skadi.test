@@ -1,6 +1,26 @@
 {
   "transport": "classic_or_hidden_ble",
-  "expected_ble_service": "0000fee0-0000-1000-8000-00805f9b34fb",
+  "device_filter": {
+    "manufacturer_ids": [3025, 3026, 3027, 3028],
+    "manufacturer_prefix_hex": [],
+    "name_prefixes": ["myvu", "starry", "glasses"],
+    "service_uuids": [],
+    "avoid_manufacturer_ids": [76]
+  },
+  "ble": {
+    "write_char_uuid": null,
+    "notify_char_uuid": null,
+    "steps": []
+  },
+  "success_condition": {
+    "expected_ble_service": "0000fee0-0000-1000-8000-00805f9b34fb",
+    "expected_services_after_handshake": [
+      "0000fee0-0000-1000-8000-00805f9b34fb",
+      "0000fee1-0000-1000-8000-00805f9b34fb"
+    ],
+    "expected_characteristics_after_handshake": [],
+    "require_service_discovery_after_handshake": true
+  },
   "state_machine": [
     "S0_SLEEP",
     "S1_WAKE_SIGNAL_SENT",
@@ -11,6 +31,7 @@
     "ble_services_hidden": true,
     "start_gatt_only_after_services": true,
     "manufacturer_ids_observed": [3025, 3026, 3027, 3028],
-    "apk_handover_location": "com.upuphone.starrynet.strategy.discovery and usb.hid stack"
+    "apk_handover_location": "com.upuphone.starrynet.strategy.discovery and usb.hid stack",
+    "populate_steps_from_reverse_engineering": true
   }
 }
