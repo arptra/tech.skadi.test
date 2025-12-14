@@ -2,7 +2,7 @@ import argparse
 import asyncio
 import json
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 from myvu_ble_scan import scan_once
 
@@ -13,7 +13,7 @@ def load_protocol(protocol_path: Path) -> Dict[str, Any]:
 
 
 async def verify(protocol: Dict[str, Any], timeout: float = 20.0) -> bool:
-    expected_service = (protocol.get("success_condition") or {}).get("expected_service_uuid")
+    expected_service = protocol.get("expected_ble_service")
     results = await scan_once(timeout=timeout)
     found = False
     for address, name, rssi, uuids, manufacturer_data in results:

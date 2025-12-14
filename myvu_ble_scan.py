@@ -1,6 +1,8 @@
 import argparse
 import asyncio
-from typing import List, Tuple
+import json
+from pathlib import Path
+from typing import Dict, List, Tuple
 
 from bleak import BleakScanner
 
@@ -41,12 +43,34 @@ def print_results(results: List[Tuple[str, str, int, List[str], dict]]) -> None:
         print()
 
 
+def save_manufacturer_payloads(results: List[Tuple[str, str, int, List[str], dict]], output: Path) -> None:
+    payloads: List[Dict[str, object]] = []
+    for address, name, rssi, uuids, manufacturer_data in results:
+        if not manufacturer_data:
+            continue
+        for m_id, payload in manufacturer_data.items():
+            entry: Dict[str, object] = {
+                "address": address,
+                "name": name,
+                "rssi": rssi,
+                "manufacturer_id": m_id,
+                "payload_hex": payload.hex() if isinstance(payload, (bytes, bytearray)) else str(payload),
+                "service_uuids": uuids,
+            }
+            payloads.append(entry)
+    output.write_text(json.dumps(payloads, indent=2), encoding="utf-8")
+    print(f"Saved {len(payloads)} manufacturer payloads to {output}")
+
+
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Scan for Myvu BLE devices")
+    parser = argparse.ArgumentParser(description="Scan for BLE devices and capture advertising")
     parser.add_argument("--timeout", type=float, default=10.0, help="Scan duration in seconds")
+    parser.add_argument("--save-manufacturer", type=Path, help="Optional path to save manufacturer payloads as JSON")
     args = parser.parse_args()
     results = asyncio.run(scan_once(timeout=args.timeout))
     print_results(results)
+    if args.save_manufacturer:
+        save_manufacturer_payloads(results, args.save_manufacturer)
 
 
 if __name__ == "__main__":
