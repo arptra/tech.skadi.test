@@ -32,6 +32,6 @@
         <service
             android:name=".service.BleServerService"
             android:exported="false"
-            android:foregroundServiceType="connectedDevice|dataSync" />
+            android:foregroundServiceType="connectedDevice" />
     </application>
 </manifest>

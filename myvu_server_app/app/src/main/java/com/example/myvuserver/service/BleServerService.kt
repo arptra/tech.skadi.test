@@ -8,6 +8,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.Build
 import android.os.Handler
@@ -39,7 +40,7 @@ class BleServerService : Service() {
         val missing = requiredPermissions().filter { !hasPermission(it) }
         createChannel()
         try {
-            startForeground(NOTIFICATION_ID, buildNotification("Idle"))
+            startForegroundSafe("Idle")
         } catch (se: SecurityException) {
             logger.log("Failed to enter foreground: ${se.message}")
             stopSelf()
@@ -139,13 +140,13 @@ class BleServerService : Service() {
         controller.updateServiceUuid(serviceUuid)
         controller.start()
         pushDiagnostics()
-        startForeground(NOTIFICATION_ID, buildNotification("Running"))
+        startForegroundSafe("Running")
     }
 
     fun stopServer() {
         controller.stop()
         pushDiagnostics()
-        startForeground(NOTIFICATION_ID, buildNotification("Stopped"))
+        startForegroundSafe("Stopped")
     }
 
     fun startAdvertising() {
@@ -160,6 +161,19 @@ class BleServerService : Service() {
 
     fun sendNotify(payload: ByteArray, preferredUuid: UUID?) {
         controller.sendNotify(payload, preferredUuid)
+    }
+
+    private fun startForegroundSafe(state: String) {
+        val notification = buildNotification(state)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(
+                NOTIFICATION_ID,
+                notification,
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE
+            )
+        } else {
+            startForeground(NOTIFICATION_ID, notification)
+        }
     }
 
     data class DeviceSnapshot(
