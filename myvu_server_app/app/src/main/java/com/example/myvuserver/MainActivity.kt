@@ -70,9 +70,7 @@ class MainActivity : AppCompatActivity() {
         binding.startServer.setOnClickListener {
             if (!ensurePermissions()) return@setOnClickListener
             val serviceUuid = uuidFromInput(binding.serviceUuidInput.text.toString(), BleGattDefaults.SERVICE)
-            val charUuid = uuidFromInput(binding.charUuidInput.text.toString(), BleGattDefaults.CHAR)
-            bleService?.startServer(serviceUuid, charUuid)
-            bleService?.startAdvertising()
+            bleService?.startServer(serviceUuid)
         }
 
         binding.stopServer.setOnClickListener {
@@ -80,18 +78,18 @@ class MainActivity : AppCompatActivity() {
             bleService?.stopServer()
         }
 
-        binding.advertiseSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                if (ensurePermissions()) bleService?.startAdvertising() else binding.advertiseSwitch.isChecked = false
-            } else {
-                bleService?.stopAdvertising()
-            }
+        binding.startAdvertising.setOnClickListener {
+            if (!ensurePermissions()) return@setOnClickListener
+            bleService?.startAdvertising(binding.includeMfgData.isChecked)
         }
+
+        binding.stopAdvertising.setOnClickListener { bleService?.stopAdvertising() }
 
         binding.sendNotify.setOnClickListener {
             val hex = binding.notifyPayload.text.toString().trim()
             val payload = hexToBytes(hex)
-            bleService?.sendNotify(payload)
+            val preferred = uuidFromInput(binding.charUuidInput.text.toString(), BleGattDefaults.CHAR)
+            bleService?.sendNotify(payload, preferred)
         }
 
         binding.exportLogs.setOnClickListener {
@@ -122,10 +120,17 @@ class MainActivity : AppCompatActivity() {
             sb.appendLine("Bluetooth ON: ${diag.bluetoothOn}")
             sb.appendLine("Advertising: ${diag.advertising}")
             sb.appendLine("GATT server open: ${diag.serverOpen}")
-            sb.appendLine("Last device: ${diag.lastDevice} (${diag.lastDeviceName})")
-            sb.appendLine("MTU: ${diag.mtu}")
-            sb.appendLine("Notify enabled: ${diag.notifyEnabled}")
-            sb.appendLine("Last seen: ${diag.lastSeen}")
+            if (diag.sessions.isEmpty()) {
+                sb.appendLine("No connected devices")
+                binding.connectedDevices.text = "Devices: none"
+            } else {
+                val statusLines = diag.sessions.joinToString("\n") {
+                    "${it.address} (${it.name}) mtu=${it.mtu} valid=${it.validConnected} notifies=${it.enabledNotifies.joinToString()}"
+                }
+                binding.connectedDevices.text = statusLines
+                sb.appendLine("Devices: ${diag.sessions.size}")
+                sb.append(statusLines)
+            }
             binding.diagnosticsText.text = sb.toString()
         }
     }
@@ -206,7 +211,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     object BleGattDefaults {
-        val SERVICE: UUID = UUID.fromString("0000FEE0-0000-1000-8000-00805F9B34FB")
-        val CHAR: UUID = UUID.fromString("0000FEE1-0000-1000-8000-00805F9B34FB")
+        val SERVICE: UUID = UUID.fromString("00000BD1-0000-1000-8000-00805F9B34FB")
+        val CHAR: UUID = UUID.fromString("00002002-0000-1000-8000-00805F9B34FB")
     }
 }

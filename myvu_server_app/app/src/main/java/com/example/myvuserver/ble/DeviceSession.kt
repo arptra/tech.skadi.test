@@ -12,5 +12,6 @@ data class DeviceSession(
     var connectedAt: Long = System.currentTimeMillis(),
     var lastSeen: Long = System.currentTimeMillis(),
     var mtu: Int = 23,
-    var notifyEnabled: Boolean = false
+    var validConnected: Boolean = false,
+    val enabledNotifies: MutableSet<java.util.UUID> = mutableSetOf()
 )

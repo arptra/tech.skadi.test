@@ -1,6 +1,7 @@
 package com.example.myvuserver.logging
 
 import android.content.Context
+import android.os.Environment
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -27,6 +28,10 @@ class PacketLogger(private val context: Context) {
         val line = "${dateFormat.format(Date())} | $message"
         Log.d(TAG, line)
         entries.add(line)
+        if (entries.size > 200) {
+            // keep memory bounded for UI rendering
+            repeat(entries.size - 200) { entries.removeAt(0) }
+        }
         liveData.postValue(entries.toList())
     }
 
@@ -36,7 +41,7 @@ class PacketLogger(private val context: Context) {
     }
 
     fun exportToFile(): File {
-        val dir = context.getExternalFilesDir(null) ?: context.filesDir
+        val dir = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) ?: context.filesDir
         val outFile = File(dir, "myvu_server_log_${System.currentTimeMillis()}.txt")
         outFile.writeText(entries.joinToString(separator = "\n"))
         return outFile

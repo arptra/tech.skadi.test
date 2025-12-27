@@ -33,15 +33,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Service UUID"
-            android:text="0000FEE0-0000-1000-8000-00805F9B34FB"
+            android:text="00000BD1-0000-1000-8000-00805F9B34FB"
             android:inputType="text" />
 
         <EditText
             android:id="@+id/charUuidInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Characteristic UUID"
-            android:text="0000FEE1-0000-1000-8000-00805F9B34FB"
+            android:hint="Notify characteristic (default 0x2002)"
+            android:text="00002002-0000-1000-8000-00805F9B34FB"
             android:inputType="text" />
 
         <LinearLayout
@@ -56,21 +56,42 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Start Server" />
+                android:text="Start GATT" />
 
             <Button
                 android:id="@+id/stopServer"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Stop Server" />
+                android:text="Stop GATT" />
         </LinearLayout>
-
-        <Switch
-            android:id="@+id/advertiseSwitch"
+        
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Advertise ON/OFF" />
+            android:orientation="horizontal"
+            android:paddingTop="8dp">
+
+            <Button
+                android:id="@+id/startAdvertising"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Start Adv" />
+
+            <Button
+                android:id="@+id/stopAdvertising"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Stop Adv" />
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/includeMfgData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Include manufacturer data (0x0BD1)" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -92,11 +113,18 @@
                 android:text="Send Notify" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/exportLogs"
+            <Button
+                android:id="@+id/exportLogs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Export logs" />
+
+        <TextView
+            android:id="@+id/connectedDevices"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Export logs" />
+            android:paddingTop="8dp"
+            android:text="Devices: none" />
 
         <TextView
             android:id="@+id/diagnosticsTitle"

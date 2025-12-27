@@ -15,6 +15,7 @@ import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.myvuserver.ble.BleGattServerController
+import com.example.myvuserver.ble.DeviceSession
 import com.example.myvuserver.ble.ProtocolHooks
 import com.example.myvuserver.logging.PacketLogger
 import java.util.UUID
@@ -81,17 +82,13 @@ class BleServerService : Service() {
 
     private fun pushDiagnostics() {
         val adapter = (getSystemService(Context.BLUETOOTH_SERVICE) as? android.bluetooth.BluetoothManager)?.adapter
-        val session = controller.currentSession()
+        val sessions = controller.currentSessions()
         diagLive.postValue(
             ServerDiagnostics(
                 bluetoothOn = adapter?.isEnabled == true,
                 advertising = controller.isAdvertising(),
                 serverOpen = controller.serverOpen,
-                lastDevice = session?.device?.address,
-                lastDeviceName = session?.device?.name,
-                mtu = session?.mtu,
-                notifyEnabled = session?.notifyEnabled == true,
-                lastSeen = session?.lastSeen
+                sessions = sessions.map { DeviceSnapshot.from(it) }
             )
         )
     }
@@ -104,8 +101,8 @@ class BleServerService : Service() {
 
     fun diagnostics(): LiveData<ServerDiagnostics> = diagLive
 
-    fun startServer(serviceUuid: UUID, charUuid: UUID) {
-        controller.updateUuids(serviceUuid, charUuid)
+    fun startServer(serviceUuid: UUID) {
+        controller.updateServiceUuid(serviceUuid)
         controller.start()
         pushDiagnostics()
         startForeground(NOTIFICATION_ID, buildNotification("Running"))
@@ -117,8 +114,8 @@ class BleServerService : Service() {
         startForeground(NOTIFICATION_ID, buildNotification("Stopped"))
     }
 
-    fun startAdvertising() {
-        controller.startAdvertising()
+    fun startAdvertising(includeManufacturerData: Boolean) {
+        controller.startAdvertising(includeManufacturerData)
         pushDiagnostics()
     }
 
@@ -127,19 +124,37 @@ class BleServerService : Service() {
         pushDiagnostics()
     }
 
-    fun sendNotify(payload: ByteArray) {
-        controller.sendNotify(payload)
+    fun sendNotify(payload: ByteArray, preferredUuid: UUID?) {
+        controller.sendNotify(payload, preferredUuid)
+    }
+
+    data class DeviceSnapshot(
+        val address: String?,
+        val name: String?,
+        val mtu: Int?,
+        val validConnected: Boolean,
+        val enabledNotifies: Set<UUID>,
+        val lastSeen: Long?,
+        val connectedAt: Long?
+    ) {
+        companion object {
+            fun from(session: DeviceSession): DeviceSnapshot = DeviceSnapshot(
+                address = session.device.address,
+                name = session.device.name,
+                mtu = session.mtu,
+                validConnected = session.validConnected,
+                enabledNotifies = session.enabledNotifies.toSet(),
+                lastSeen = session.lastSeen,
+                connectedAt = session.connectedAt
+            )
+        }
     }
 
     data class ServerDiagnostics(
         val bluetoothOn: Boolean,
         val advertising: Boolean,
         val serverOpen: Boolean,
-        val lastDevice: String?,
-        val lastDeviceName: String?,
-        val mtu: Int?,
-        val notifyEnabled: Boolean,
-        val lastSeen: Long?
+        val sessions: List<DeviceSnapshot>
     )
 
     companion object {

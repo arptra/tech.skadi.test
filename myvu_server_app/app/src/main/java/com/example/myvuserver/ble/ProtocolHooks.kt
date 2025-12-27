@@ -7,7 +7,9 @@ package com.example.myvuserver.ble
  * inbound payloads so testers can see the bytes in the UI/logs.
  */
 class ProtocolHooks {
-    fun onInboundPayload(bytes: ByteArray): String {
+    fun onInboundPayload(bytes: ByteArray): String = toHex(bytes)
+
+    fun toHex(bytes: ByteArray): String {
         return bytes.joinToString(separator = " ") { String.format("%02X", it) }
     }
 }
