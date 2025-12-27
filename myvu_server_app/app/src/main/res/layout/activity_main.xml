@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/permissionStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Permissions: unknown" />
+
+        <TextView
+            android:id="@+id/bluetoothState"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Bluetooth: unknown"
+            android:paddingTop="8dp" />
+
+        <Button
+            android:id="@+id/openBtSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Open Bluetooth settings" />
+
+        <EditText
+            android:id="@+id/serviceUuidInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Service UUID"
+            android:text="0000FEE0-0000-1000-8000-00805F9B34FB"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/charUuidInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Characteristic UUID"
+            android:text="0000FEE1-0000-1000-8000-00805F9B34FB"
+            android:inputType="text" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:paddingTop="8dp">
+
+            <Button
+                android:id="@+id/startServer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Start Server" />
+
+            <Button
+                android:id="@+id/stopServer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Stop Server" />
+        </LinearLayout>
+
+        <Switch
+            android:id="@+id/advertiseSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Advertise ON/OFF" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="8dp">
+
+            <EditText
+                android:id="@+id/notifyPayload"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Hex payload for notify" />
+
+            <Button
+                android:id="@+id/sendNotify"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Send Notify" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/exportLogs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Export logs" />
+
+        <TextView
+            android:id="@+id/diagnosticsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="12dp"
+            android:text="Diagnostics"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/diagnosticsText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="State" />
+
+        <TextView
+            android:id="@+id/logTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="12dp"
+            android:text="Log stream"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/logRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:overScrollMode="always" />
+
+    </LinearLayout>
+</ScrollView>

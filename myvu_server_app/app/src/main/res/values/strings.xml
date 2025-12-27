@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">MyVU Server</string>
+    <string name="permission_missing">Разрешения отсутствуют</string>
+</resources>
