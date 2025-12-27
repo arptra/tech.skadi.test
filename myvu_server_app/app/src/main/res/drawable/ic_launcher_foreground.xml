@@ -1,0 +1,31 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    <!-- Stylized block letters "SKADI" in white over the SKADI blue background -->
+    <path
+        android:fillColor="@color/white"
+        android:pathData="M6,32 H22 V40 H12 V48 H22 V64 H6 V56 H16 V48 H6 Z"/>
+    <path
+        android:fillColor="@color/white"
+        android:pathData="M28,32 H36 V64 H28 Z"/>
+    <path
+        android:fillColor="@color/white"
+        android:pathData="M36,48 L50,32 H58 L44,48 Z"/>
+    <path
+        android:fillColor="@color/white"
+        android:pathData="M36,52 L44,64 H54 L44,52 Z"/>
+    <path
+        android:fillColor="@color/white"
+        android:pathData="M62,64 L70,32 H78 L86,64 H76 L74,56 H66 L64,64 Z"/>
+    <path
+        android:fillColor="@color/white"
+        android:pathData="M68,52 H76 V56 H68 Z"/>
+    <path
+        android:fillColor="@color/white"
+        android:pathData="M86,32 H98 C108,32 108,72 98,72 H86 Z"/>
+    <path
+        android:fillColor="@color/white"
+        android:pathData="M104,32 H112 V72 H104 Z"/>
+</vector>

@@ -1,0 +1,332 @@
+package com.example.myvuserver.ble
+
+import android.annotation.SuppressLint
+import android.Manifest
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothGatt
+import android.bluetooth.BluetoothGattCharacteristic
+import android.bluetooth.BluetoothGattDescriptor
+import android.bluetooth.BluetoothGattServer
+import android.bluetooth.BluetoothGattServerCallback
+import android.bluetooth.BluetoothManager
+import android.bluetooth.BluetoothProfile
+import android.bluetooth.le.AdvertiseCallback
+import android.bluetooth.le.AdvertiseData
+import android.bluetooth.le.AdvertiseSettings
+import android.bluetooth.le.BluetoothLeAdvertiser
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import android.os.Handler
+import android.os.HandlerThread
+import android.os.ParcelUuid
+import androidx.core.content.ContextCompat
+import com.example.myvuserver.logging.PacketLogger
+import java.util.UUID
+import java.util.concurrent.atomic.AtomicBoolean
+
+class BleGattServerController(
+    private val context: Context,
+    private val logger: PacketLogger,
+    private val hooks: ProtocolHooks
+) {
+    private val bluetoothManager: BluetoothManager =
+        context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+    private val adapter: BluetoothAdapter? = bluetoothManager.adapter
+    private val handlerThread = HandlerThread("myvu-ble-server")
+    private lateinit var handler: Handler
+
+    private fun ensureHandler(): Handler {
+        if (!handlerThread.isAlive) {
+            handlerThread.start()
+        }
+        if (!::handler.isInitialized) {
+            handler = Handler(handlerThread.looper)
+        }
+        return handler
+    }
+
+    private var gattServer: BluetoothGattServer? = null
+    private var advertiser: BluetoothLeAdvertiser? = null
+    private var advertiseCallback: AdvertiseCallback? = null
+
+    private var currentServiceUuid: UUID = StarryNetUuids.SERVICE
+    private var gattProfile: StarryNetGattProfile.Profile = StarryNetGattProfile.build()
+
+    private val sessionLock = Any()
+    private val sessions: MutableMap<String, DeviceSession> = mutableMapOf()
+    private val advertising = AtomicBoolean(false)
+
+    @Volatile
+    var serverOpen: Boolean = false
+        private set
+
+    private fun hasPermission(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun ensureConnectPermission(): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return true
+        val ok = hasPermission(Manifest.permission.BLUETOOTH_CONNECT)
+        if (!ok) {
+            logger.log("Missing BLUETOOTH_CONNECT permission; cannot open/notify GATT")
+        }
+        return ok
+    }
+
+    private fun ensureAdvertisePermission(): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return true
+        val ok = hasPermission(Manifest.permission.BLUETOOTH_ADVERTISE)
+        if (!ok) {
+            logger.log("Missing BLUETOOTH_ADVERTISE permission; cannot start advertising")
+        }
+        return ok
+    }
+
+    fun start() {
+        ensureHandler().post { openGattServer() }
+    }
+
+    fun stop() {
+        ensureHandler().post {
+            stopAdvertisingInternal()
+            gattServer?.close()
+            gattServer = null
+            serverOpen = false
+            sessions.clear()
+            logger.log("GATT server closed")
+        }
+    }
+
+    fun updateServiceUuid(serviceUuid: UUID) {
+        ensureHandler().post {
+            this.currentServiceUuid = serviceUuid
+            logger.log("Service UUID updated to $serviceUuid; rebuilding GATT profile")
+            rebuildServer()
+        }
+    }
+
+    fun startAdvertising() {
+        ensureHandler().post {
+            if (advertising.get()) return@post
+            if (!ensureAdvertisePermission()) return@post
+            ensureAdvertiser()
+            val settings = AdvertiseSettings.Builder()
+                .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY)
+                .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH)
+                .setConnectable(true)
+                .build()
+            val dataBuilder = AdvertiseData.Builder()
+                .setIncludeDeviceName(true)
+                .addServiceUuid(ParcelUuid(currentServiceUuid))
+            val data = dataBuilder.build()
+            advertiseCallback = object : AdvertiseCallback() {
+                override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
+                    advertising.set(true)
+                    logger.log("Advertising STARTED with service $currentServiceUuid")
+                }
+
+                override fun onStartFailure(errorCode: Int) {
+                    advertising.set(false)
+                    logger.log("Advertising FAILED code=$errorCode")
+                }
+            }
+            advertiser?.startAdvertising(settings, data, advertiseCallback)
+        }
+    }
+
+    fun stopAdvertising() {
+        ensureHandler().post { stopAdvertisingInternal() }
+    }
+
+    fun isAdvertising(): Boolean = advertising.get()
+
+    fun sendNotify(payload: ByteArray, preferredNotifyUuid: UUID? = StarryNetUuids.CHAR_INTERNAL_NOTIFY) {
+        ensureHandler().post {
+            if (gattServer == null) {
+                logger.log("Cannot send notify: GATT server is null")
+                return@post
+            }
+            if (!ensureConnectPermission()) return@post
+            val sessionsSnapshot = synchronized(sessionLock) { sessions.values.toList() }
+            if (sessionsSnapshot.isEmpty()) {
+                logger.log("Cannot send notify: no sessions")
+                return@post
+            }
+            sessionsSnapshot.forEach { session ->
+                val target = pickNotifyTarget(session, preferredNotifyUuid)
+                if (target == null) {
+                    logger.log("Notify not enabled for ${session.device.address}; prefer=${preferredNotifyUuid}")
+                } else {
+                    notifyDevice(session.device, target, payload)
+                }
+            }
+        }
+    }
+
+    fun currentSessions(): List<DeviceSession> = synchronized(sessionLock) { sessions.values.toList() }
+
+    @SuppressLint("MissingPermission")
+    private fun ensureAdvertiser() {
+        if (advertiser == null) {
+            advertiser = adapter?.bluetoothLeAdvertiser
+            if (advertiser == null) {
+                logger.log("No advertiser available (maybe BT off or hardware missing)")
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun openGattServer() {
+        if (gattServer != null) return
+        if (!ensureConnectPermission()) return
+        gattServer = bluetoothManager.openGattServer(context, callback)
+        serverOpen = gattServer != null
+        if (gattServer == null) {
+            logger.log("Failed to open GATT server")
+            return
+        }
+        logger.log("GATT server opened")
+        rebuildServer()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun rebuildServer() {
+        gattServer?.clearServices()
+        gattProfile = StarryNetGattProfile.build(currentServiceUuid)
+        val added = gattServer?.addService(gattProfile.service)
+        logger.log("Rebuilt GATT profile with service=$currentServiceUuid result=$added")
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun stopAdvertisingInternal() {
+        if (advertiseCallback != null) {
+            advertiser?.stopAdvertising(advertiseCallback)
+            logger.log("Advertising STOPPED")
+            advertising.set(false)
+            advertiseCallback = null
+        }
+    }
+
+    private fun pickNotifyTarget(session: DeviceSession, preferred: UUID?): BluetoothGattCharacteristic? {
+        val enabled = session.enabledNotifies()
+        val preferredChar = preferred?.let { gattProfile.characteristics[it] }
+        if (preferredChar != null && enabled.contains(preferredChar.uuid)) return preferredChar
+        // fallback to the other XR notify channel
+        StarryNetUuids.XR_NOTIFY_UUIDS.forEach { uuid ->
+            if (enabled.contains(uuid)) {
+                val c = gattProfile.characteristics[uuid]
+                if (c != null) return c
+            }
+        }
+        return null
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun notifyDevice(device: BluetoothDevice, characteristic: BluetoothGattCharacteristic, payload: ByteArray) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val status = gattServer?.notifyCharacteristicChanged(device, characteristic, false, payload)
+            logger.log("Notify(${characteristic.uuid}) -> ${device.address} status=$status bytes=${hooks.toHex(payload)}")
+        } else {
+            characteristic.value = payload
+            val ok = gattServer?.notifyCharacteristicChanged(device, characteristic, false) ?: false
+            logger.log("Notify(${characteristic.uuid}) -> ${device.address} status=$ok bytes=${hooks.toHex(payload)}")
+        }
+    }
+
+    private val callback = object : BluetoothGattServerCallback() {
+        override fun onConnectionStateChange(device: BluetoothDevice, status: Int, newState: Int) {
+            handler.post {
+                synchronized(sessionLock) {
+                    if (newState == BluetoothProfile.STATE_CONNECTED) {
+                        val session = DeviceSession(device = device)
+                        sessions[device.address] = session
+                        logger.log("CONNECTED ${device.address} name=${device.name} bond=${device.bondState}")
+                    } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                        sessions.remove(device.address)
+                        logger.log("DISCONNECTED ${device.address}")
+                    }
+                }
+            }
+        }
+
+        override fun onMtuChanged(device: BluetoothDevice, mtu: Int) {
+            handler.post {
+                synchronized(sessionLock) {
+                    sessions[device.address]?.let {
+                        it.mtu = mtu
+                        it.lastSeen = System.currentTimeMillis()
+                        logger.log("MTU updated to $mtu for ${device.address}")
+                    }
+                }
+            }
+        }
+
+        override fun onDescriptorWriteRequest(
+            device: BluetoothDevice,
+            requestId: Int,
+            descriptor: BluetoothGattDescriptor,
+            preparedWrite: Boolean,
+            responseNeeded: Boolean,
+            offset: Int,
+            value: ByteArray
+        ) {
+            handler.post {
+                val charUuid = descriptor.characteristic.uuid
+                val enable = value.contentEquals(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE) ||
+                        value.contentEquals(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE)
+                synchronized(sessionLock) {
+                    val session = sessions[device.address]
+                    if (session != null && descriptor.uuid == Uuid16.CCC) {
+                        when (charUuid) {
+                            StarryNetUuids.CHAR_INTERNAL_NOTIFY -> session.notifyEnabledInternal = enable
+                            StarryNetUuids.CHAR_VERSION_NOTIFY -> session.notifyEnabledVersion = enable
+                        }
+                        session.lastSeen = System.currentTimeMillis()
+                        val wasValid = session.validConnected
+                        session.updateValid()
+                        if (!wasValid && session.validConnected && StarryNetUuids.XR_NOTIFY_UUIDS.contains(charUuid)) {
+                            logger.log("VALID CONNECTED: notify enabled for $charUuid from ${device.address}")
+                        } else if (wasValid && !session.validConnected) {
+                            logger.log("XR validity revoked (CCC disabled) from ${device.address}")
+                        } else {
+                            logger.log("CCC change char=$charUuid enable=$enable from ${device.address}")
+                        }
+                    }
+                }
+                if (responseNeeded) {
+                    gattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, value)
+                }
+            }
+        }
+
+        override fun onCharacteristicWriteRequest(
+            device: BluetoothDevice,
+            requestId: Int,
+            characteristic: BluetoothGattCharacteristic,
+            preparedWrite: Boolean,
+            responseNeeded: Boolean,
+            offset: Int,
+            value: ByteArray
+        ) {
+            handler.post {
+                val hex = hooks.toHex(value)
+                if (characteristic.uuid == StarryNetUuids.CHAR_WRITE) {
+                    logger.log("WRITE ${characteristic.uuid} from ${device.address} len=${value.size} offset=$offset prepared=$preparedWrite payload=$hex")
+                } else {
+                    logger.log("WRITE (unexpected) ${characteristic.uuid} from ${device.address} len=${value.size} offset=$offset prepared=$preparedWrite payload=$hex")
+                }
+                synchronized(sessionLock) { sessions[device.address]?.lastSeen = System.currentTimeMillis() }
+                if (responseNeeded) {
+                    gattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, value)
+                }
+            }
+        }
+
+        override fun onNotificationSent(device: BluetoothDevice, status: Int) {
+            handler.post { logger.log("Notification sent status=$status to ${device.address}") }
+        }
+    }
+
+}

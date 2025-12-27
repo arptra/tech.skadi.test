@@ -1,0 +1,8 @@
+# Gradle wrapper binary jar removed from repo
+myvu_server_app/gradle/wrapper/gradle-wrapper.jar
+# Build outputs
+**/build/
+# IDE/OS artifacts
+.idea/
+*.iml
+.DS_Store
