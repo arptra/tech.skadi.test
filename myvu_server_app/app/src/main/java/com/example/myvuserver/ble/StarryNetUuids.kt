@@ -7,19 +7,13 @@ import java.util.UUID
  * can faithfully present the same advertising and GATT surface to the XR glasses.
  */
 object StarryNetUuids {
-    const val MANUFACTURER_ID = 0x0BD1
-
     val SERVICE: UUID = Uuid16.SERVICE_0BD1
-    val WRITE_UUID: UUID = Uuid16.CHAR_2000
-    val MULTI_WRITE_UUID: UUID = Uuid16.CHAR_2001
-    val WRITE_MESSAGE_UUID: UUID = Uuid16.CHAR_2002
-    val AIR_INTERNAL_MESSAGE_UUID: UUID = Uuid16.CHAR_2020
-    val AIR_EXTERNAL_MESSAGE_UUID: UUID = Uuid16.CHAR_2021
-    val AIR_URGENT_EXTERNAL_MESSAGE_UUID: UUID = Uuid16.CHAR_2022
-    val GLASS_WRITE_UUID: UUID = Uuid16.CHAR_2023
+    val CHAR_INTERNAL_NOTIFY: UUID = Uuid16.CHAR_INTERNAL_NOTIFY
+    val CHAR_VERSION_NOTIFY: UUID = Uuid16.CHAR_VERSION_NOTIFY
+    val CHAR_WRITE: UUID = Uuid16.CHAR_WRITE
 
     val XR_NOTIFY_UUIDS: Set<UUID> = setOf(
-        MULTI_WRITE_UUID,
-        WRITE_MESSAGE_UUID
+        CHAR_INTERNAL_NOTIFY,
+        CHAR_VERSION_NOTIFY
     )
 }

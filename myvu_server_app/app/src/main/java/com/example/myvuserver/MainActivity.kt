@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.startAdvertising.setOnClickListener {
             if (!ensurePermissions()) return@setOnClickListener
-            bleService?.startAdvertising(binding.includeMfgData.isChecked)
+            bleService?.startAdvertising()
         }
 
         binding.stopAdvertising.setOnClickListener { bleService?.stopAdvertising() }
@@ -212,6 +212,6 @@ class MainActivity : AppCompatActivity() {
 
     object BleGattDefaults {
         val SERVICE: UUID = UUID.fromString("00000BD1-0000-1000-8000-00805F9B34FB")
-        val CHAR: UUID = UUID.fromString("00002002-0000-1000-8000-00805F9B34FB")
+        val CHAR: UUID = UUID.fromString("000003E8-0000-1000-8000-00805F9B34FB")
     }
 }

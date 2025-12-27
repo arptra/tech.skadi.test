@@ -20,7 +20,6 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.ParcelUuid
 import com.example.myvuserver.logging.PacketLogger
-import java.security.SecureRandom
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -77,7 +76,7 @@ class BleGattServerController(
         }
     }
 
-    fun startAdvertising(includeManufacturerData: Boolean) {
+    fun startAdvertising() {
         handler.post {
             if (advertising.get()) return@post
             ensureAdvertiser()
@@ -89,17 +88,11 @@ class BleGattServerController(
             val dataBuilder = AdvertiseData.Builder()
                 .setIncludeDeviceName(true)
                 .addServiceUuid(ParcelUuid(currentServiceUuid))
-            if (includeManufacturerData) {
-                val payload = ByteArray(4)
-                SecureRandom().nextBytes(payload)
-                dataBuilder.addManufacturerData(StarryNetUuids.MANUFACTURER_ID, payload)
-                logger.log("Advertising manufacturer data id=0x${StarryNetUuids.MANUFACTURER_ID.toString(16)} payload=${hooks.toHex(payload)}")
-            }
             val data = dataBuilder.build()
             advertiseCallback = object : AdvertiseCallback() {
                 override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
                     advertising.set(true)
-                    logger.log("Advertising STARTED with service $currentServiceUuid includeMfg=$includeManufacturerData")
+                    logger.log("Advertising STARTED with service $currentServiceUuid")
                 }
 
                 override fun onStartFailure(errorCode: Int) {
@@ -117,7 +110,7 @@ class BleGattServerController(
 
     fun isAdvertising(): Boolean = advertising.get()
 
-    fun sendNotify(payload: ByteArray, preferredNotifyUuid: UUID? = StarryNetUuids.WRITE_MESSAGE_UUID) {
+    fun sendNotify(payload: ByteArray, preferredNotifyUuid: UUID? = StarryNetUuids.CHAR_INTERNAL_NOTIFY) {
         handler.post {
             if (gattServer == null) {
                 logger.log("Cannot send notify: GATT server is null")
@@ -183,7 +176,7 @@ class BleGattServerController(
     }
 
     private fun pickNotifyTarget(session: DeviceSession, preferred: UUID?): BluetoothGattCharacteristic? {
-        val enabled = session.enabledNotifies
+        val enabled = session.enabledNotifies()
         val preferredChar = preferred?.let { gattProfile.characteristics[it] }
         if (preferredChar != null && enabled.contains(preferredChar.uuid)) return preferredChar
         // fallback to the other XR notify channel
@@ -252,16 +245,15 @@ class BleGattServerController(
                 synchronized(sessionLock) {
                     val session = sessions[device.address]
                     if (session != null && descriptor.uuid == Uuid16.CCC) {
-                        if (enable) {
-                            session.enabledNotifies.add(charUuid)
-                        } else {
-                            session.enabledNotifies.remove(charUuid)
+                        when (charUuid) {
+                            StarryNetUuids.CHAR_INTERNAL_NOTIFY -> session.notifyEnabledInternal = enable
+                            StarryNetUuids.CHAR_VERSION_NOTIFY -> session.notifyEnabledVersion = enable
                         }
                         session.lastSeen = System.currentTimeMillis()
                         val wasValid = session.validConnected
-                        session.validConnected = StarryNetUuids.XR_NOTIFY_UUIDS.any { session.enabledNotifies.contains(it) }
-                        if (!wasValid && session.validConnected) {
-                            logger.log("VALID_XR_CONNECTED after CCC enable on $charUuid from ${device.address}")
+                        session.updateValid()
+                        if (!wasValid && session.validConnected && StarryNetUuids.XR_NOTIFY_UUIDS.contains(charUuid)) {
+                            logger.log("VALID CONNECTED: notify enabled for $charUuid from ${device.address}")
                         } else if (wasValid && !session.validConnected) {
                             logger.log("XR validity revoked (CCC disabled) from ${device.address}")
                         } else {
@@ -286,9 +278,12 @@ class BleGattServerController(
         ) {
             handler.post {
                 val hex = hooks.toHex(value)
-                logger.log("WRITE ${characteristic.uuid} from ${device.address} len=${value.size} offset=$offset prepared=$preparedWrite payload=$hex")
+                if (characteristic.uuid == StarryNetUuids.CHAR_WRITE) {
+                    logger.log("WRITE ${characteristic.uuid} from ${device.address} len=${value.size} offset=$offset prepared=$preparedWrite payload=$hex")
+                } else {
+                    logger.log("WRITE (unexpected) ${characteristic.uuid} from ${device.address} len=${value.size} offset=$offset prepared=$preparedWrite payload=$hex")
+                }
                 synchronized(sessionLock) { sessions[device.address]?.lastSeen = System.currentTimeMillis() }
-                handleProtocolWrite(device, characteristic.uuid, value)
                 if (responseNeeded) {
                     gattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, value)
                 }
@@ -300,21 +295,4 @@ class BleGattServerController(
         }
     }
 
-    private fun handleProtocolWrite(device: BluetoothDevice, uuid: UUID, payload: ByteArray) {
-        // Only echo on the expected write pipes.
-        if (uuid != StarryNetUuids.WRITE_UUID && uuid != StarryNetUuids.GLASS_WRITE_UUID) return
-        val header = byteArrayOf(0xAA.toByte(), 0x55.toByte())
-        val length = payload.size
-        val lenBytes = byteArrayOf((length and 0xFF).toByte(), ((length ushr 8) and 0xFF).toByte())
-        val response = header + lenBytes + payload
-        // TODO: add CRC16 if we learn the exact polynomial used by the glasses
-        val session = synchronized(sessionLock) { sessions[device.address] }
-        val target = session?.let { pickNotifyTarget(it, StarryNetUuids.WRITE_MESSAGE_UUID) }
-            ?: session?.let { pickNotifyTarget(it, StarryNetUuids.MULTI_WRITE_UUID) }
-        if (target == null) {
-            logger.log("Notify not enabled for ${device.address}; cannot echo write")
-            return
-        }
-        notifyDevice(device, target, response)
-    }
 }

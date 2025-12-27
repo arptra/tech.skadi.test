@@ -20,12 +20,8 @@ object Uuid16 {
     }
 
     val SERVICE_0BD1: UUID = from16(0x0BD1)
-    val CHAR_2000: UUID = from16(0x2000)
-    val CHAR_2001: UUID = from16(0x2001)
-    val CHAR_2002: UUID = from16(0x2002)
-    val CHAR_2020: UUID = from16(0x2020)
-    val CHAR_2021: UUID = from16(0x2021)
-    val CHAR_2022: UUID = from16(0x2022)
-    val CHAR_2023: UUID = from16(0x2023)
-    val CCC: UUID = Uuid16.from16(0x2902)
+    val CHAR_INTERNAL_NOTIFY: UUID = from16(0x03E8)
+    val CHAR_VERSION_NOTIFY: UUID = from16(0x03E9)
+    val CHAR_WRITE: UUID = from16(0x07D0)
+    val CCC: UUID = from16(0x2902)
 }

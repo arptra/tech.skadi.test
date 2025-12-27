@@ -47,21 +47,9 @@ object StarryNetGattProfile {
             return c
         }
 
-        // Mandatory write entry point for glasses → phone messages.
-        addWrite(StarryNetUuids.WRITE_UUID)
-
-        // Notify channels that mark the connection as XR-valid once CCC is enabled.
-        addNotify(StarryNetUuids.MULTI_WRITE_UUID)
-        addNotify(StarryNetUuids.WRITE_MESSAGE_UUID)
-
-        // Internal/External message pipes. Properties are inferred from StarryNet
-        // behavior (notify downstream), but protocol specifics can be filled later.
-        addNotify(StarryNetUuids.AIR_INTERNAL_MESSAGE_UUID)
-        addNotify(StarryNetUuids.AIR_EXTERNAL_MESSAGE_UUID)
-        addNotify(StarryNetUuids.AIR_URGENT_EXTERNAL_MESSAGE_UUID)
-
-        // Glasses → phone write pipe.
-        addWrite(StarryNetUuids.GLASS_WRITE_UUID)
+        addNotify(StarryNetUuids.CHAR_INTERNAL_NOTIFY)
+        addNotify(StarryNetUuids.CHAR_VERSION_NOTIFY)
+        addWrite(StarryNetUuids.CHAR_WRITE)
 
         return Profile(service, characteristics)
     }

@@ -114,8 +114,8 @@ class BleServerService : Service() {
         startForeground(NOTIFICATION_ID, buildNotification("Stopped"))
     }
 
-    fun startAdvertising(includeManufacturerData: Boolean) {
-        controller.startAdvertising(includeManufacturerData)
+    fun startAdvertising() {
+        controller.startAdvertising()
         pushDiagnostics()
     }
 
@@ -143,7 +143,7 @@ class BleServerService : Service() {
                 name = session.device.name,
                 mtu = session.mtu,
                 validConnected = session.validConnected,
-                enabledNotifies = session.enabledNotifies.toSet(),
+                enabledNotifies = session.enabledNotifies(),
                 lastSeen = session.lastSeen,
                 connectedAt = session.connectedAt
             )

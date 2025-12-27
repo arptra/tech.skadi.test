@@ -9,9 +9,22 @@ import android.bluetooth.BluetoothDevice
  */
 data class DeviceSession(
     val device: BluetoothDevice,
+    var connected: Boolean = true,
     var connectedAt: Long = System.currentTimeMillis(),
     var lastSeen: Long = System.currentTimeMillis(),
     var mtu: Int = 23,
-    var validConnected: Boolean = false,
-    val enabledNotifies: MutableSet<java.util.UUID> = mutableSetOf()
-)
+    var notifyEnabledInternal: Boolean = false,
+    var notifyEnabledVersion: Boolean = false,
+    var validConnected: Boolean = false
+) {
+    fun updateValid() {
+        validConnected = connected && (notifyEnabledInternal || notifyEnabledVersion)
+    }
+
+    fun enabledNotifies(): Set<java.util.UUID> {
+        val set = mutableSetOf<java.util.UUID>()
+        if (notifyEnabledInternal) set.add(StarryNetUuids.CHAR_INTERNAL_NOTIFY)
+        if (notifyEnabledVersion) set.add(StarryNetUuids.CHAR_VERSION_NOTIFY)
+        return set
+    }
+}

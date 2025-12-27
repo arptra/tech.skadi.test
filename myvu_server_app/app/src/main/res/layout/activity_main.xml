@@ -40,8 +40,8 @@
             android:id="@+id/charUuidInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Notify characteristic (default 0x2002)"
-            android:text="00002002-0000-1000-8000-00805F9B34FB"
+            android:hint="Notify characteristic (default 0x03E8)"
+            android:text="000003E8-0000-1000-8000-00805F9B34FB"
             android:inputType="text" />
 
         <LinearLayout
@@ -86,12 +86,6 @@
                 android:layout_weight="1"
                 android:text="Stop Adv" />
         </LinearLayout>
-
-        <CheckBox
-            android:id="@+id/includeMfgData"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Include manufacturer data (0x0BD1)" />
 
         <LinearLayout
             android:layout_width="match_parent"
