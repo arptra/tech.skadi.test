@@ -37,6 +37,16 @@ class BleGattServerController(
     private val handlerThread = HandlerThread("myvu-ble-server")
     private lateinit var handler: Handler
 
+    private fun ensureHandler(): Handler {
+        if (!handlerThread.isAlive) {
+            handlerThread.start()
+        }
+        if (!::handler.isInitialized) {
+            handler = Handler(handlerThread.looper)
+        }
+        return handler
+    }
+
     private var gattServer: BluetoothGattServer? = null
     private var advertiser: BluetoothLeAdvertiser? = null
     private var advertiseCallback: AdvertiseCallback? = null
@@ -75,15 +85,11 @@ class BleGattServerController(
     }
 
     fun start() {
-        if (!handlerThread.isAlive) {
-            handlerThread.start()
-        }
-        handler = Handler(handlerThread.looper)
-        handler.post { openGattServer() }
+        ensureHandler().post { openGattServer() }
     }
 
     fun stop() {
-        handler.post {
+        ensureHandler().post {
             stopAdvertisingInternal()
             gattServer?.close()
             gattServer = null
@@ -94,7 +100,7 @@ class BleGattServerController(
     }
 
     fun updateServiceUuid(serviceUuid: UUID) {
-        handler.post {
+        ensureHandler().post {
             this.currentServiceUuid = serviceUuid
             logger.log("Service UUID updated to $serviceUuid; rebuilding GATT profile")
             rebuildServer()
@@ -102,7 +108,7 @@ class BleGattServerController(
     }
 
     fun startAdvertising() {
-        handler.post {
+        ensureHandler().post {
             if (advertising.get()) return@post
             if (!ensureAdvertisePermission()) return@post
             ensureAdvertiser()
@@ -131,13 +137,13 @@ class BleGattServerController(
     }
 
     fun stopAdvertising() {
-        handler.post { stopAdvertisingInternal() }
+        ensureHandler().post { stopAdvertisingInternal() }
     }
 
     fun isAdvertising(): Boolean = advertising.get()
 
     fun sendNotify(payload: ByteArray, preferredNotifyUuid: UUID? = StarryNetUuids.CHAR_INTERNAL_NOTIFY) {
-        handler.post {
+        ensureHandler().post {
             if (gattServer == null) {
                 logger.log("Cannot send notify: GATT server is null")
                 return@post
