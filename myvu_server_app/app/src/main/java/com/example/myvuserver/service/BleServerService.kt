@@ -1,17 +1,20 @@
 package com.example.myvuserver.service
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Binder
 import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.myvuserver.ble.BleGattServerController
@@ -33,9 +36,20 @@ class BleServerService : Service() {
         super.onCreate()
         logger = PacketLogger(this)
         controller = BleGattServerController(this, logger, hooks)
-        controller.start()
+        val missing = requiredPermissions().filter { !hasPermission(it) }
         createChannel()
-        startForeground(NOTIFICATION_ID, buildNotification("Idle"))
+        try {
+            startForeground(NOTIFICATION_ID, buildNotification("Idle"))
+        } catch (se: SecurityException) {
+            logger.log("Failed to enter foreground: ${se.message}")
+            stopSelf()
+            return
+        }
+        if (missing.isEmpty()) {
+            controller.start()
+        } else {
+            logger.log("Service missing permissions: ${missing.joinToString()} — GATT server not started")
+        }
         diagThread.start()
         diagHandler = Handler(diagThread.looper)
         scheduleDiagnostics()
@@ -95,6 +109,26 @@ class BleServerService : Service() {
 
     inner class LocalBinder : Binder() {
         fun getService(): BleServerService = this@BleServerService
+    }
+
+    private fun requiredPermissions(): List<String> {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            listOf(
+                Manifest.permission.BLUETOOTH_CONNECT,
+                Manifest.permission.BLUETOOTH_ADVERTISE,
+                Manifest.permission.BLUETOOTH_SCAN,
+                Manifest.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE
+            )
+        } else {
+            listOf(
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN
+            )
+        }
+    }
+
+    private fun hasPermission(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
     }
 
     fun logger(): PacketLogger = logger

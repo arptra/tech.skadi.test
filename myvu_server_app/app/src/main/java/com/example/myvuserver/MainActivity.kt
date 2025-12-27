@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private var bleService: BleServerService? = null
     private var logger: PacketLogger? = null
     private var bound = false
+    private var serviceStartRequested = false
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -41,19 +42,22 @@ class MainActivity : AppCompatActivity() {
             bleService = null
             logger = null
             bound = false
+            serviceStartRequested = false
         }
     }
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
-    ) { updatePermissionState() }
+    ) {
+        updatePermissionState()
+        maybeStartService()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupUi()
-        startAndBindService()
     }
 
     override fun onDestroy() {
@@ -69,6 +73,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.startServer.setOnClickListener {
             if (!ensurePermissions()) return@setOnClickListener
+            maybeStartService()
             val serviceUuid = uuidFromInput(binding.serviceUuidInput.text.toString(), BleGattDefaults.SERVICE)
             bleService?.startServer(serviceUuid)
         }
@@ -80,6 +85,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.startAdvertising.setOnClickListener {
             if (!ensurePermissions()) return@setOnClickListener
+            maybeStartService()
             bleService?.startAdvertising()
         }
 
@@ -105,12 +111,24 @@ class MainActivity : AppCompatActivity() {
 
         updatePermissionState()
         refreshBluetoothState()
+        maybeStartService()
     }
 
     private fun startAndBindService() {
+        if (serviceStartRequested) return
+        serviceStartRequested = true
         val intent = Intent(this, BleServerService::class.java)
         ContextCompat.startForegroundService(this, intent)
         bindService(intent, connection, Context.BIND_AUTO_CREATE)
+    }
+
+    private fun maybeStartService() {
+        val missing = requiredPermissions().filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        }
+        if (missing.isEmpty() && !bound) {
+            startAndBindService()
+        }
     }
 
     private fun hookObservers() {

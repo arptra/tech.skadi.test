@@ -68,6 +68,8 @@
 
 ## Типичные проблемы
 - **Нет advertising permission**: статус «Missing: ...»; выдайте разрешения вручную.
+- **Нет BLUETOOTH_CONNECT/ADVERTISE**: на Android 12+ сервис не стартует (SecurityException при FGS/GATT). Выдайте runtime-разрешения
+  до нажатия Start GATT/Start Adv.
 - **Bluetooth выключен**: строка «Bluetooth: OFF (enable in settings)»; включите модуль BT.
 - **Нет peripheral поддержки**: лог `No advertiser available` — устройство не умеет BLE Peripheral.
 - **Notify не включён**: без CCCD на 0x03E8/0x03E9 соединение не считается валидным и уведомления не шлются.

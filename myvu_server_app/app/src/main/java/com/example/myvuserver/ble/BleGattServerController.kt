@@ -1,6 +1,7 @@
 package com.example.myvuserver.ble
 
 import android.annotation.SuppressLint
+import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
@@ -19,6 +20,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.ParcelUuid
+import androidx.core.content.ContextCompat
 import com.example.myvuserver.logging.PacketLogger
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
@@ -48,6 +50,28 @@ class BleGattServerController(
     @Volatile
     var serverOpen: Boolean = false
         private set
+
+    private fun hasPermission(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun ensureConnectPermission(): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return true
+        val ok = hasPermission(Manifest.permission.BLUETOOTH_CONNECT)
+        if (!ok) {
+            logger.log("Missing BLUETOOTH_CONNECT permission; cannot open/notify GATT")
+        }
+        return ok
+    }
+
+    private fun ensureAdvertisePermission(): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return true
+        val ok = hasPermission(Manifest.permission.BLUETOOTH_ADVERTISE)
+        if (!ok) {
+            logger.log("Missing BLUETOOTH_ADVERTISE permission; cannot start advertising")
+        }
+        return ok
+    }
 
     fun start() {
         if (!handlerThread.isAlive) {
@@ -79,6 +103,7 @@ class BleGattServerController(
     fun startAdvertising() {
         handler.post {
             if (advertising.get()) return@post
+            if (!ensureAdvertisePermission()) return@post
             ensureAdvertiser()
             val settings = AdvertiseSettings.Builder()
                 .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY)
@@ -116,6 +141,7 @@ class BleGattServerController(
                 logger.log("Cannot send notify: GATT server is null")
                 return@post
             }
+            if (!ensureConnectPermission()) return@post
             val sessionsSnapshot = synchronized(sessionLock) { sessions.values.toList() }
             if (sessionsSnapshot.isEmpty()) {
                 logger.log("Cannot send notify: no sessions")
@@ -147,6 +173,7 @@ class BleGattServerController(
     @SuppressLint("MissingPermission")
     private fun openGattServer() {
         if (gattServer != null) return
+        if (!ensureConnectPermission()) return
         gattServer = bluetoothManager.openGattServer(context, callback)
         serverOpen = gattServer != null
         if (gattServer == null) {
