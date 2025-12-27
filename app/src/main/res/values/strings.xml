@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Myvu BLE Client</string>
+    <string name="scan_connect">Scan &amp; Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="send_test">Send Test Command</string>
+</resources>
