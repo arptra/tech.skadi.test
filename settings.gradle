@@ -1,5 +1,23 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    plugins {
+        id 'com.android.application' version '8.13.2'
+        id 'org.jetbrains.kotlin.android' version '1.9.23'
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
 rootProject.name = "BleClient"
-include(":app")
+include ':app'
 
 // Auto-generate a local.properties with a usable Android SDK path when missing to
 // avoid configuration failures like "SDK location not found" on fresh clones.
