@@ -1,0 +1,9 @@
+<resources>
+    <color name="purple_500">#14213D</color>
+    <color name="purple_700">#0E162B</color>
+    <color name="teal_200">#03DAC5</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="log_background">#111111</color>
+    <color name="log_text">#E0E0E0</color>
+</resources>

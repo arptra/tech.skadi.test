@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">MYVU BLE Client</string>
+    <string name="find_glasses">Найти очки</string>
+    <string name="connect">Подключиться</string>
+    <string name="create_pair">Создать пару</string>
+    <string name="disconnect">Отключиться</string>
+    <string name="state_label">Состояние:</string>
+    <string name="device_label">Целевой MAC:</string>
+    <string name="rssi_label">Последний RSSI:</string>
+    <string name="logs_title">Логи</string>
+</resources>
