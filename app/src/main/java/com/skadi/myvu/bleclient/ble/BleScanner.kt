@@ -8,7 +8,6 @@ import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import java.util.Locale
 
 class BleScanner(
     private val context: Context,
@@ -19,7 +18,6 @@ class BleScanner(
     private val handler = Handler(Looper.getMainLooper())
     private var scanner: BluetoothLeScanner? = null
     private var callback: ScanCallback? = null
-    private var fallbackResult: ScanResult? = null
 
     fun startScan(durationMs: Long = 10_000L) {
         stopScan()
@@ -32,17 +30,17 @@ class BleScanner(
         val settings = ScanSettings.Builder()
             .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
             .build()
-        fallbackResult = null
         callback = object : ScanCallback() {
             override fun onScanResult(callbackType: Int, result: ScanResult) {
-                val name = result.device.name ?: "(unknown)"
-                logger.logInfo(TAG, "ScanResult: $name ${result.device.address} rssi=${result.rssi}")
-                if (isPreferred(name)) {
-                    logger.logInfo(TAG, "Preferred device found: $name")
+                val record = result.scanRecord ?: return
+                logger.logInfo(
+                    TAG,
+                    "ScanResult: ${result.device.address} rssi=${result.rssi} hasManufacturer=${record.manufacturerSpecificData.size() > 0}"
+                )
+                if (isMyvuAdvert(record.manufacturerSpecificData)) {
+                    logger.logInfo(TAG, "MYVU manufacturer payload detected; selecting device ${result.device.address}")
                     stopScan()
                     onDeviceFound(result)
-                } else if (fallbackResult == null) {
-                    fallbackResult = result
                 }
             }
 
@@ -56,7 +54,7 @@ class BleScanner(
         handler.postDelayed({
             logger.logInfo(TAG, "Scan timeout")
             stopScan()
-            fallbackResult?.let { onDeviceFound(it) } ?: onTimeout()
+            onTimeout()
         }, durationMs)
     }
 
@@ -66,13 +64,30 @@ class BleScanner(
         callback = null
     }
 
-    private fun isPreferred(name: String?): Boolean {
-        if (name == null) return false
-        val upper = name.uppercase(Locale.US)
-        return upper.contains("MYVU") || upper.contains("DCB1")
+    private fun isMyvuAdvert(manufacturerData: android.util.SparseArray<ByteArray>): Boolean {
+        if (manufacturerData.size() == 0) return false
+        for (index in 0 until manufacturerData.size()) {
+            val id = manufacturerData.keyAt(index)
+            val payload = manufacturerData.valueAt(index) ?: continue
+            if (id == HUBEI_MANUFACTURER_ID && isHubeiPayload(payload)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    /**
+     * Simple validation of the Hubei manufacturer payload: first byte encodes payload length.
+     * Adjust validation if the proprietary frame format changes.
+     */
+    private fun isHubeiPayload(payload: ByteArray): Boolean {
+        if (payload.isEmpty()) return false
+        val declaredLength = payload[0].toInt() and 0xFF
+        return declaredLength == payload.size - 1 && payload.size >= 3
     }
 
     companion object {
         private const val TAG = "BleScanner"
+        private const val HUBEI_MANUFACTURER_ID = 0x02E1 // Assigned to Hubei vendor
     }
 }

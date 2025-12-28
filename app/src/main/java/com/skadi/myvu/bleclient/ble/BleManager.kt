@@ -1,10 +1,7 @@
 package com.skadi.myvu.bleclient.ble
 
 import android.bluetooth.*
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Handler
 import android.os.Looper
 import com.skadi.myvu.bleclient.util.BluetoothUtils
@@ -30,8 +27,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var protocol: BleProtocol = BleProtocol(this, logger)
     private var state: BleState = BleState.Idle
     private var connectRetries = 0
-
-    private var bondReceiverRegistered = false
+    private var pairingCommandPending = false
 
     fun setListener(listener: Listener) {
         this.listener = listener
@@ -51,7 +47,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             device = result.device
             listener?.onDeviceUpdated(result.device.name, result.device.address)
             setState(BleState.DeviceFound)
-            handleBondingOrConnect(result.device)
+            connect(result.device)
         }, onTimeout = {
             if (state is BleState.Scanning) {
                 setState(BleState.Error("Scan timeout"))
@@ -67,12 +63,12 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             setState(BleState.Disconnecting)
         }
         scanner?.stopScan()
-        unregisterBondReceiver()
         clearQueue()
         gatt?.disconnect()
         gatt?.close()
         gatt = null
         protocol.clear()
+        pairingCommandPending = false
         stopTimeouts()
         setState(BleState.Disconnected)
     }
@@ -80,17 +76,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     fun destroy() {
         disconnect()
         removeListener()
-    }
-
-    private fun handleBondingOrConnect(device: BluetoothDevice) {
-        if (device.bondState != BluetoothDevice.BOND_BONDED) {
-            logger.logInfo(TAG, "Initiating bond")
-            registerBondReceiver()
-            setState(BleState.Bonding)
-            device.createBond()
-        } else {
-            connect(device)
-        }
     }
 
     private fun connect(device: BluetoothDevice) {
@@ -158,19 +143,30 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
         logGattDump(services)
         setState(BleState.ServicesDiscovered)
-
-        setState(BleState.NegotiatingMtu)
-        val mtuRequested = if (!gatt.requestMtu(517)) {
-            gatt.requestMtu(247)
-        } else true
-        if (!mtuRequested) {
-            logger.logError(TAG, "MTU request failed to enqueue")
-        }
+        if (!sendEnterPairingMode(gatt)) return
     }
 
     fun handleMtuChanged(gatt: BluetoothGatt, mtu: Int, status: Int) {
         setState(BleState.MtuReady)
         enableNotifications(gatt)
+    }
+
+    private fun sendEnterPairingMode(gatt: BluetoothGatt): Boolean {
+        val writeChar = protocol.writeCharacteristic
+        if (writeChar == null) {
+            setState(BleState.Error("No write characteristic for pairing"))
+            disconnect()
+            return false
+        }
+        pairingCommandPending = true
+        logger.logInfo(TAG, "Sending enter pairing mode command")
+        val queued = enqueueCharacteristicWrite(gatt, writeChar, ENTER_PAIRING_COMMAND, true)
+        if (!queued) {
+            pairingCommandPending = false
+            setState(BleState.Error("Failed to enqueue pairing command"))
+            disconnect()
+        }
+        return queued
     }
 
     private fun enableNotifications(gatt: BluetoothGatt) {
@@ -208,7 +204,21 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     }
 
     fun handleCharacteristicWrite(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
-        if (status != BluetoothGatt.GATT_SUCCESS) {
+        if (pairingCommandPending && characteristic.uuid == protocol.writeCharacteristic?.uuid) {
+            pairingCommandPending = false
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                setState(BleState.NegotiatingMtu)
+                val mtuRequested = if (!gatt.requestMtu(517)) {
+                    gatt.requestMtu(247)
+                } else true
+                if (!mtuRequested) {
+                    logger.logError(TAG, "MTU request failed to enqueue")
+                }
+            } else {
+                setState(BleState.Error("Enter pairing command failed ($status)"))
+                disconnect()
+            }
+        } else if (status != BluetoothGatt.GATT_SUCCESS) {
             logger.logError(TAG, "Characteristic write failed ($status)")
         }
         onOperationComplete()
@@ -277,56 +287,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         processNextOperation()
     }
 
-    private fun registerBondReceiver() {
-        if (bondReceiverRegistered) return
-        val filter = IntentFilter().apply {
-            addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
-            addAction(BluetoothDevice.ACTION_PAIRING_REQUEST)
-        }
-        context.registerReceiver(bondReceiver, filter)
-        bondReceiverRegistered = true
-    }
-
-    private fun unregisterBondReceiver() {
-        if (bondReceiverRegistered) {
-            try {
-                context.unregisterReceiver(bondReceiver)
-            } catch (_: Exception) {
-            }
-            bondReceiverRegistered = false
-        }
-    }
-
-    private val bondReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            val action = intent?.action ?: return
-            val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE) ?: return
-            if (device.address != this@BleManager.device?.address) return
-            when (action) {
-                BluetoothDevice.ACTION_PAIRING_REQUEST -> {
-                    logger.logInfo(TAG, "Pairing requested")
-                }
-                BluetoothDevice.ACTION_BOND_STATE_CHANGED -> {
-                    val bondState = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR)
-                    val prev = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR)
-                    logger.logInfo(TAG, "Bond state changed $prev -> $bondState")
-                    when (bondState) {
-                        BluetoothDevice.BOND_BONDED -> {
-                            unregisterBondReceiver()
-                            connect(device)
-                        }
-                        BluetoothDevice.BOND_NONE -> {
-                            setState(BleState.Error("Bond failed"))
-                            disconnect()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     private fun cleanupAfterDisconnect() {
-        unregisterBondReceiver()
         clearQueue()
         stopTimeouts()
         gatt?.close()
@@ -339,11 +300,11 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         stopTimeouts()
         clearQueue()
         scanner?.stopScan()
-        unregisterBondReceiver()
         gatt?.close()
         gatt = null
         protocol.clear()
         connectRetries = 0
+        pairingCommandPending = false
         setState(BleState.Idle)
     }
 
@@ -416,6 +377,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val TIMEOUT_DISCOVERY = "timeout_discovery"
         private const val TIMEOUT_CCCD = "timeout_cccd"
         private const val TIMEOUT_CONNECT = "timeout_connect"
+        private val ENTER_PAIRING_COMMAND = byteArrayOf(0x01, 0x00) // placeholder frame to trigger system bond
     }
 
     private sealed class Operation {
