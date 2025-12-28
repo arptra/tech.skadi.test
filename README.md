@@ -2,6 +2,8 @@
 
 Android Kotlin app that performs BLE advertising scan, identifies MYVU glasses strictly by advertising payload, connects with a deterministic GATT state machine, executes the vendor handshake writes, and then lets Android drive Classic Bluetooth pairing.
 
+[Документация: модуль подключения к очкам](documents/module_podklyucheniya_k_ochkam.md)
+
 ## Key terms
 - **BLE Advertising**: broadcast packets sent without a connection.
 - **BLE Scan**: listening for advertising packets.
