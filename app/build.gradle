@@ -48,3 +48,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 }
+
+// Compatibility task for IDEs that still request the legacy Kotlin build script model.
+// Safe no-op to keep Gradle invocations from failing when the task is queried.
+tasks.register("prepareKotlinBuildScriptModel") {}
