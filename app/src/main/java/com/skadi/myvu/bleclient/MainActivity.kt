@@ -38,7 +38,6 @@ class MainActivity : AppCompatActivity(), BleManager.Listener {
         logger = BleLogger()
         bleManager = BleManager(this, logger)
         bleManager.setListener(this)
-        logger.addListener(logListener)
 
         scanButton = findViewById(R.id.scanConnectButton)
         disconnectButton = findViewById(R.id.disconnectButton)
@@ -47,6 +46,9 @@ class MainActivity : AppCompatActivity(), BleManager.Listener {
         deviceValue = findViewById(R.id.deviceValue)
         logsView = findViewById(R.id.logsView)
         logScroll = findViewById(R.id.logScroll)
+
+        // Attach log listener only after views are ready to avoid lateinit access before init
+        logger.addListener(logListener)
 
         scanButton.setOnClickListener {
             PermissionUtils.ensureBlePermissions(this) { granted ->
