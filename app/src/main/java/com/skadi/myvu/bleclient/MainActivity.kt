@@ -38,10 +38,6 @@ class MainActivity : AppCompatActivity(), BleManager.Listener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        logger = BleLogger()
-        bleManager = BleManager(this, logger)
-        bleManager.setListener(this)
-
         scanButton = findViewById(R.id.scanButton)
         connectButton = findViewById(R.id.connectButton)
         bondButton = findViewById(R.id.bondButton)
@@ -51,6 +47,10 @@ class MainActivity : AppCompatActivity(), BleManager.Listener {
         rssiValue = findViewById(R.id.rssiValue)
         logsView = findViewById(R.id.logsView)
         logScroll = findViewById(R.id.logScroll)
+
+        logger = BleLogger()
+        bleManager = BleManager(this, logger)
+        bleManager.setListener(this)
 
         logger.addListener(logListener)
 
