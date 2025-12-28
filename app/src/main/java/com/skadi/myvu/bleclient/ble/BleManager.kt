@@ -413,6 +413,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val CCCD_TIMEOUT_MS = 8_000L
         private const val RETRY_DELAY_MS = 800L
         private const val MAX_RETRIES = 3
+        private const val TIMEOUT_DISCOVERY = "timeout_discovery"
+        private const val TIMEOUT_CCCD = "timeout_cccd"
+        private const val TIMEOUT_CONNECT = "timeout_connect"
     }
 
     private sealed class Operation {

@@ -37,4 +37,8 @@ class BleGattCallback(private val manager: BleManager, private val logger: BleLo
         logger.logInfo(TAG, "onCharacteristicWrite ${characteristic.uuid} status=$status")
         manager.handleCharacteristicWrite(gatt, characteristic, status)
     }
+
+    private companion object {
+        private const val TAG = "BleGattCallback"
+    }
 }
