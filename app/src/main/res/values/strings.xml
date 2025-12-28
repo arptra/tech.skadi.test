@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">BLE Client</string>
+    <string name="scan_connect">Scan &amp; Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="send_test_command">Send Test Command</string>
+    <string name="state_label">State:</string>
+    <string name="device_label">Device:</string>
+</resources>
