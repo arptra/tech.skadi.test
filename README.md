@@ -6,9 +6,10 @@ This project is an Android BLE client for AR glasses that scans, bonds, connects
 
 ### How to run
 1. Open this repository in Android Studio.
-2. Let Gradle sync; build the `app` module targeting Android 12+.
-3. Install on a device with BLE support (min SDK 26).
-4. Launch the app and grant Bluetooth permissions when prompted.
+2. Gradle will auto-generate `local.properties` if missing, using `ANDROID_SDK_ROOT`/`ANDROID_HOME` or the default OS path (e.g., `~/Library/Android/sdk`). Update that file if your SDK lives elsewhere.
+3. Let Gradle sync; build the `app` module targeting Android 12+.
+4. Install on a device with BLE support (min SDK 26).
+5. Launch the app and grant Bluetooth permissions when prompted.
 
 ### Using the app
 1. Turn on the glasses and ensure they are not paired with another app.

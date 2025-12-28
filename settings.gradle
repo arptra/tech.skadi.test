@@ -1,2 +1,14 @@
 rootProject.name = "BleClient"
 include(":app")
+
+// Auto-generate a local.properties with a usable Android SDK path when missing to
+// avoid configuration failures like "SDK location not found" on fresh clones.
+def localProps = file("local.properties")
+if (!localProps.exists()) {
+    def envSdk = System.getenv("ANDROID_SDK_ROOT") ?: System.getenv("ANDROID_HOME")
+    def defaultMac = "${System.properties['user.home']}/Library/Android/sdk"
+    def defaultLinux = "${System.properties['user.home']}/Android/Sdk"
+    def chosen = envSdk ?: (org.gradle.internal.os.OperatingSystem.current().isMacOsX() ? defaultMac : defaultLinux)
+    localProps.text = "sdk.dir=${chosen.replace('\\', '\\\\')}\n"
+    println("[settings.gradle] Generated local.properties pointing to ${chosen}")
+}
