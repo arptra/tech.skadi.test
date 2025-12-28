@@ -4,7 +4,34 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+
+    <!-- Background badge -->
     <path
-        android:fillColor="@color/white"
-        android:pathData="M54,12c-23.091,0 -42,18.909 -42,42s18.909,42 42,42 42,-18.909 42,-42 -18.909,-42 -42,-42zm0,12c16.569,0 30,13.431 30,30 0,16.569 -13.431,30 -30,30 -16.569,0 -30,-13.431 -30,-30 0,-16.569 13.431,-30 30,-30zm0,13c-9.389,0 -17,7.611 -17,17 0,9.389 7.611,17 17,17 9.389,0 17,-7.611 17,-17 0,-9.389 -7.611,-17 -17,-17zm0,10c3.866,0 7,3.134 7,7 0,3.866 -3.134,7 -7,7 -3.866,0 -7,-3.134 -7,-7 0,-3.866 3.134,-7 7,-7z" />
+        android:fillColor="#14213D"
+        android:pathData="M8,8h92a8,8 0 0 1 8,8v76a8,8 0 0 1 -8,8h-92a8,8 0 0 1 -8,-8v-76a8,8 0 0 1 8,-8z" />
+
+    <!-- S -->
+    <path android:fillColor="#FFFFFF" android:pathData="M8,30h16v6h-16z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M8,30v18h6v-18z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M8,48h16v6h-16z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M18,54v18h6v-18z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M8,72h16v6h-16z" />
+
+    <!-- K -->
+    <path android:fillColor="#FFFFFF" android:pathData="M28,30h6v48h-6z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M34,54L50,30H56L40,54z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M34,54L50,78H56L40,54z" />
+
+    <!-- A -->
+    <path android:fillColor="#FFFFFF" android:pathData="M54,78L62,30H70L78,78H72L68,58H62L58,78z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M60,56H72V62H60z" />
+
+    <!-- D -->
+    <path android:fillColor="#FFFFFF" android:pathData="M74,30h6v48h-6z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M80,30H90Q98,54 90,78H80z" />
+
+    <!-- I -->
+    <path android:fillColor="#FFFFFF" android:pathData="M92,30h14v6h-14z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M96,30h6v48h-6z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M92,72h14v6h-14z" />
 </vector>
