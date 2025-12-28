@@ -1,8 +1,11 @@
 <resources>
-    <string name="app_name">BLE Client</string>
-    <string name="scan_connect">Scan &amp; Connect</string>
-    <string name="disconnect">Disconnect</string>
-    <string name="send_test_command">Send Test Command</string>
-    <string name="state_label">State:</string>
-    <string name="device_label">Device:</string>
+    <string name="app_name">MYVU BLE Client</string>
+    <string name="find_glasses">Найти очки</string>
+    <string name="connect">Подключиться</string>
+    <string name="create_pair">Создать пару</string>
+    <string name="disconnect">Отключиться</string>
+    <string name="state_label">Состояние:</string>
+    <string name="device_label">Целевой MAC:</string>
+    <string name="rssi_label">Последний RSSI:</string>
+    <string name="logs_title">Логи</string>
 </resources>

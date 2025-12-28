@@ -6,6 +6,7 @@ import android.widget.Button
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.skadi.myvu.bleclient.ble.BleErrorReason
 import com.skadi.myvu.bleclient.ble.BleLogger
 import com.skadi.myvu.bleclient.ble.BleManager
 import com.skadi.myvu.bleclient.ble.BleState
@@ -17,10 +18,12 @@ class MainActivity : AppCompatActivity(), BleManager.Listener {
     private lateinit var bleManager: BleManager
 
     private lateinit var scanButton: Button
+    private lateinit var connectButton: Button
+    private lateinit var bondButton: Button
     private lateinit var disconnectButton: Button
-    private lateinit var sendButton: Button
     private lateinit var stateValue: TextView
     private lateinit var deviceValue: TextView
+    private lateinit var rssiValue: TextView
     private lateinit var logsView: TextView
     private lateinit var logScroll: ScrollView
 
@@ -39,40 +42,43 @@ class MainActivity : AppCompatActivity(), BleManager.Listener {
         bleManager = BleManager(this, logger)
         bleManager.setListener(this)
 
-        scanButton = findViewById(R.id.scanConnectButton)
+        scanButton = findViewById(R.id.scanButton)
+        connectButton = findViewById(R.id.connectButton)
+        bondButton = findViewById(R.id.bondButton)
         disconnectButton = findViewById(R.id.disconnectButton)
-        sendButton = findViewById(R.id.sendCommandButton)
         stateValue = findViewById(R.id.stateValue)
         deviceValue = findViewById(R.id.deviceValue)
+        rssiValue = findViewById(R.id.rssiValue)
         logsView = findViewById(R.id.logsView)
         logScroll = findViewById(R.id.logScroll)
 
-        // Attach log listener only after views are ready to avoid lateinit access before init
         logger.addListener(logListener)
 
         scanButton.setOnClickListener {
             PermissionUtils.ensureBlePermissions(this) { granted ->
                 if (granted) {
-                    if (!BluetoothUtils.supportsLe(this) || !BluetoothUtils.isBluetoothEnabled(this)) {
-                        logger.logError(TAG, "Bluetooth not available or disabled")
+                    if (!BluetoothUtils.supportsLe(this)) {
+                        logger.logError(TAG, "Device does not support BLE")
                         return@ensureBlePermissions
                     }
-                    bleManager.startScanAndConnect()
+                    if (!BluetoothUtils.isBluetoothEnabled(this)) {
+                        logger.logError(TAG, "Bluetooth is disabled")
+                        return@ensureBlePermissions
+                    }
+                    if (!BluetoothUtils.isLocationEnabled(this)) {
+                        logger.logError(TAG, "Включите геолокацию: некоторые прошивки скрывают скан без нее")
+                        return@ensureBlePermissions
+                    }
+                    bleManager.startScan()
                 } else {
                     logger.logError(TAG, "Permissions not granted")
                 }
             }
         }
 
+        connectButton.setOnClickListener { bleManager.connectToTarget() }
+        bondButton.setOnClickListener { bleManager.requestBond() }
         disconnectButton.setOnClickListener { bleManager.disconnect() }
-        sendButton.setOnClickListener {
-            val payload = byteArrayOf(0x01, 0x00)
-            val success = bleManager.currentState() is BleState.Ready &&
-                bleManager.send(payload, false)
-            if (!success) {
-                logger.logError(TAG, "Cannot send command; not ready")
-            }
-        }
 
         onStateChanged(bleManager.currentState())
     }
@@ -91,12 +97,20 @@ class MainActivity : AppCompatActivity(), BleManager.Listener {
     override fun onStateChanged(state: BleState) {
         runOnUiThread {
             stateValue.text = state.label
+            connectButton.isEnabled = state is BleState.DeviceFound
+            bondButton.isEnabled = state is BleState.HandshakeDone || state is BleState.WaitingForSystemPairing || state is BleState.Bonded
+            disconnectButton.isEnabled = state is BleState.BleConnected || state is BleState.ServicesDiscovering || state is BleState.HandshakeWriting || state is BleState.HandshakeDone || state is BleState.WaitingForSystemPairing || state is BleState.Bonded || state is BleState.Connected
+            if (state is BleState.Error && state.reason == BleErrorReason.NO_MATCHING_ADVERTISING) {
+                connectButton.isEnabled = false
+            }
         }
     }
 
-    override fun onDeviceUpdated(name: String?, address: String?) {
+    override fun onTargetUpdated(address: String?, rssi: Int?, reason: String?) {
         runOnUiThread {
-            deviceValue.text = "${name ?: "(unknown)"} / ${address ?: "-"}"
+            deviceValue.text = address ?: "-"
+            rssiValue.text = rssi?.toString() ?: "-"
+            reason?.let { logger.logInfo(TAG, "Selected target $address reason=$it rssi=$rssi") }
         }
     }
 

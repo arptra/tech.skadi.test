@@ -1,20 +1,30 @@
 package com.skadi.myvu.bleclient.ble
 
+/**
+ * Explicit BLE + bonding state machine dedicated to the MYVU glasses flow.
+ */
 sealed class BleState(val label: String) {
     object Idle : BleState("IDLE")
     object Scanning : BleState("SCANNING")
     object DeviceFound : BleState("DEVICE_FOUND")
-    object Bonding : BleState("BONDING")
-    object Connecting : BleState("CONNECTING")
+    object BleConnecting : BleState("BLE_CONNECTING")
+    object BleConnected : BleState("BLE_CONNECTED")
+    object ServicesDiscovering : BleState("SERVICES_DISCOVERING")
+    object HandshakeWriting : BleState("HANDSHAKE_WRITING")
+    object HandshakeDone : BleState("HANDSHAKE_DONE")
+    object WaitingForSystemPairing : BleState("WAITING_FOR_SYSTEM_PAIRING")
+    object Bonded : BleState("BONDED")
     object Connected : BleState("CONNECTED")
-    object DiscoveringServices : BleState("DISCOVERING_SERVICES")
-    object ServicesDiscovered : BleState("SERVICES_DISCOVERED")
-    object NegotiatingMtu : BleState("NEGOTIATING_MTU")
-    object MtuReady : BleState("MTU_READY")
-    object EnablingNotifications : BleState("ENABLING_NOTIFICATIONS")
-    object NotificationsEnabled : BleState("NOTIFICATIONS_ENABLED")
-    object Ready : BleState("READY")
-    object Disconnecting : BleState("DISCONNECTING")
     object Disconnected : BleState("DISCONNECTED")
-    data class Error(val reason: String) : BleState("ERROR: $reason")
+    data class Error(val reason: BleErrorReason) : BleState("ERROR: ${reason.name}")
+}
+
+enum class BleErrorReason {
+    SCAN_TIMEOUT,
+    NO_MATCHING_ADVERTISING,
+    GATT_CONNECT_FAILED,
+    SERVICE_DISCOVERY_FAILED,
+    HANDSHAKE_WRITE_FAILED,
+    BONDING_FAILED,
+    BONDING_TIMEOUT
 }
