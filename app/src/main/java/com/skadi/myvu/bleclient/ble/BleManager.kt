@@ -40,6 +40,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var connectRetries = 0
     private var pendingCccdWrites = 0
     private var handshakeCommandSent = false
+    private var awaitingFirstNotify = false
     private var operationInProgress = false
     private var bondReceiverRegistered = false
     private var bondTimeoutArmed = false
@@ -166,6 +167,12 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
         override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, value: ByteArray) {
             logger.logInfo(TAG, "RX (${characteristic.uuid} len=${value.size}): ${HexUtils.toHex(value)}")
+            if (awaitingFirstNotify) {
+                awaitingFirstNotify = false
+                stopTimeout(TIMEOUT_HANDSHAKE)
+                setState(BleState.HandshakeDone)
+                setState(BleState.WaitingForSystemPairing)
+            }
         }
 
         override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
@@ -252,10 +259,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         enqueueCccdWrite(gatt, descNotify)
         enqueueCccdWrite(gatt, descControl)
         setState(BleState.HandshakeWriting)
-        startTimeout(TIMEOUT_HANDSHAKE, HANDSHAKE_TIMEOUT_MS) {
-            setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
-            disconnect()
-        }
     }
 
     private fun enqueueCccdWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor) {
@@ -284,9 +287,19 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         if (pendingCccdWrites == 0 && !handshakeCommandSent) {
             val controlChar = protocol.writeCharacteristic
             if (controlChar != null) {
+                val writeType = selectWriteType(controlChar, withResponse = false)
+                logger.logInfo(
+                    TAG,
+                    "Sending start command to ${controlChar.uuid} props=${propString(controlChar.properties)} " +
+                        "writeType=$writeType payload=${HexUtils.toHex(START_COMMAND)}"
+                )
                 handshakeCommandSent = true
-                logger.logInfo(TAG, "Writing start command to ${controlChar.uuid} payload=${HexUtils.toHex(START_COMMAND)}")
-                enqueueCharacteristicWrite(gatt, controlChar, START_COMMAND, true)
+                awaitingFirstNotify = true
+                enqueueCharacteristicWrite(gatt, controlChar, START_COMMAND, withResponse = false, forcedWriteType = writeType)
+                startTimeout(TIMEOUT_HANDSHAKE, HANDSHAKE_TIMEOUT_MS) {
+                    awaitingFirstNotify = false
+                    setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
+                }
             }
         }
         onOperationComplete()
@@ -294,13 +307,19 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
     private fun handleCharacteristicWrite(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
         if (handshakeCommandSent && characteristic.uuid == protocol.writeCharacteristic?.uuid) {
+            if (characteristic.writeType == BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE) {
+                logger.logInfo(TAG, "Ignoring onCharacteristicWrite for WRITE_NR (status=$status)")
+                onOperationComplete()
+                return
+            }
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 stopTimeout(TIMEOUT_HANDSHAKE)
+                awaitingFirstNotify = false
                 setState(BleState.HandshakeDone)
                 setState(BleState.WaitingForSystemPairing)
             } else {
+                stopTimeout(TIMEOUT_HANDSHAKE)
                 setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
-                disconnect()
             }
         }
         onOperationComplete()
@@ -316,13 +335,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         gatt: BluetoothGatt,
         characteristic: BluetoothGattCharacteristic,
         payload: ByteArray,
-        withResponse: Boolean
+        withResponse: Boolean,
+        forcedWriteType: Int? = null
     ): Boolean {
-        val type = if (!withResponse && characteristic.properties and BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE != 0) {
-            BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
-        } else {
-            BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
-        }
+        val type = forcedWriteType ?: selectWriteType(characteristic, withResponse)
         operationQueue.add(Operation.CharacteristicWrite(gatt, characteristic, payload, type))
         processNextOperation()
         return true
@@ -345,8 +361,27 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 op.characteristic.writeType = op.writeType
                 op.characteristic.value = op.payload
                 val started = op.gatt.writeCharacteristic(op.characteristic)
+                if (handshakeCommandSent && op.characteristic.uuid == protocol.writeCharacteristic?.uuid && op.payload.contentEquals(START_COMMAND)) {
+                    logger.logInfo(
+                        TAG,
+                        "Start command write initiated started=$started writeType=${op.writeType}"
+                    )
+                    if (!started) {
+                        logger.logError(TAG, "Failed to start start-command write")
+                        stopTimeout(TIMEOUT_HANDSHAKE)
+                        setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
+                        awaitingFirstNotify = false
+                    } else if (op.writeType == BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE) {
+                        stopTimeout(TIMEOUT_HANDSHAKE)
+                        setState(BleState.HandshakeDone)
+                        setState(BleState.WaitingForSystemPairing)
+                        startTimeout(TIMEOUT_HANDSHAKE, HANDSHAKE_TIMEOUT_MS) {
+                            awaitingFirstNotify = false
+                            setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
+                        }
+                    }
+                }
                 if (!started) {
-                    logger.logError(TAG, "Failed to start characteristic write")
                     operationInProgress = false
                     processNextOperation()
                 }
@@ -367,6 +402,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         protocol.clear()
         pendingCccdWrites = 0
         handshakeCommandSent = false
+        awaitingFirstNotify = false
     }
 
     private fun resetConnection() {
@@ -379,6 +415,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         connectRetries = 0
         pendingCccdWrites = 0
         handshakeCommandSent = false
+        awaitingFirstNotify = false
         bondTimeoutArmed = false
         setState(BleState.Idle)
         unregisterBondReceiver()
@@ -514,5 +551,23 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             val payload: ByteArray,
             val writeType: Int
         ) : Operation()
+    }
+
+    private fun selectWriteType(characteristic: BluetoothGattCharacteristic, withResponse: Boolean): Int {
+        return if (!withResponse && characteristic.properties and BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE != 0) {
+            BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
+        } else {
+            BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+        }
+    }
+
+    private fun propString(props: Int): String {
+        val parts = mutableListOf<String>()
+        if (props and BluetoothGattCharacteristic.PROPERTY_READ != 0) parts += "READ"
+        if (props and BluetoothGattCharacteristic.PROPERTY_WRITE != 0) parts += "WRITE"
+        if (props and BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE != 0) parts += "WRITE_NR"
+        if (props and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0) parts += "NOTIFY"
+        if (props and BluetoothGattCharacteristic.PROPERTY_INDICATE != 0) parts += "INDICATE"
+        return parts.joinToString(",")
     }
 }
