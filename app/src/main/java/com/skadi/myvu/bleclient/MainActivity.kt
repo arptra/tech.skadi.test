@@ -104,7 +104,10 @@ class MainActivity : AppCompatActivity(), BleManager.Listener {
     override fun onStateChanged(state: BleState) {
         runOnUiThread {
             stateValue.text = state.label
-            val readyState = state is BleState.ConnectedReady || state is BleState.ProtocolSessionInit || state is BleState.ReadyForCommands
+            val readyState = state is BleState.ConnectedReady ||
+                state is BleState.WaitAckAfterFirstVendor ||
+                state is BleState.ProtocolSessionInit ||
+                state is BleState.ReadyForCommands
             connectButton.isEnabled = state is BleState.Idle || state is BleState.Scanning || readyState || (state is BleState.Error && state.reason != BleErrorReason.NO_MATCHING_ADVERTISING)
             bondButton.isEnabled = false
             disconnectButton.isEnabled = state is BleState.Connecting || state is BleState.ServicesDiscovering || state is BleState.EnablingNotifications || state is BleState.MtuNegotiation || state is BleState.HandshakeSent || readyState
