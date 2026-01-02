@@ -83,6 +83,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var clientReadyRunnable: Runnable? = null
     private var heartbeatRunnable: Runnable? = null
     private var heartbeatActive = false
+    private var readyForCommandsReached = false
     private var awaitingClassicHandover = false
     private var lastTx: PacketLog? = null
     private var lastRx: PacketLog? = null
@@ -711,7 +712,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         logger.logInfo(TAG, "Protocol session init complete ($reason); channel ready for commands")
         setState(BleState.ReadyForCommands)
         awaitingClassicHandover = true
-        startHeartbeatLoop()
+        readyForCommandsReached = true
+        stopHeartbeatLoop()
         if (AUTO_ENABLE_STAGE2_CCCD) {
             scheduleStageTwoCccd(gatt)
         } else {
@@ -789,8 +791,26 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         characteristic: BluetoothGattCharacteristic,
         payload: ByteArray,
         withResponse: Boolean,
-        forcedWriteType: Int? = null
+        forcedWriteType: Int? = null,
+        sender: String = "unspecified"
     ): Boolean {
+        val isSessionFrame = payload.size >= 4 &&
+            payload[2] == 0x02.toByte() && payload[3] == 0x10.toByte()
+        if (isSessionFrame) {
+            val stack = Throwable("session_frame_send_stack")
+            logger.logInfo(
+                TAG,
+                "Attempting to send 0x0210 frame len=${payload.size} state=${state.label} sender=$sender"
+            )
+            logger.logError(TAG, "0x0210 frame call stack", stack)
+            if (readyForCommandsReached) {
+                logger.logInfo(
+                    TAG,
+                    "Dropping 0x0210 frame because protocol is READY_FOR_COMMANDS; sender=$sender state=${state.label}"
+                )
+                return false
+            }
+        }
         val type = forcedWriteType ?: selectWriteType(characteristic, withResponse)
         operationQueue.add(Operation.CharacteristicWrite(gatt, characteristic, payload, type))
         processNextOperation()
@@ -920,6 +940,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         lastDisconnectRequestedReason = null
         lastDisconnectStack = null
         awaitingClassicHandover = false
+        readyForCommandsReached = false
     }
 
     private fun resetConnection() {
@@ -954,6 +975,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         lastDisconnectRequestedReason = null
         lastDisconnectStack = null
         awaitingClassicHandover = false
+        readyForCommandsReached = false
         setState(BleState.Idle)
     }
 
