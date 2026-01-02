@@ -165,19 +165,12 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             val utf8 = runCatching { String(value, Charsets.UTF_8) }.getOrNull()
             val isIndicate = characteristic.properties and BluetoothGattCharacteristic.PROPERTY_INDICATE != 0
             val packetType = if (isIndicate) "INDICATE" else "NOTIFY"
+            val timestamp = System.currentTimeMillis()
             logger.logInfo(
                 TAG,
-                "RX $packetType (${characteristic.uuid} len=${value.size}): ${HexUtils.toHex(value)} utf8=$utf8"
+                "RX $packetType (${characteristic.uuid} len=${value.size} @${timestamp}): ${HexUtils.toHex(value)} utf8=$utf8"
             )
-            if (awaitingFirstNotify || state is BleState.HandshakeSent || state is BleState.WaitFirstNotify) {
-                awaitingFirstNotify = false
-                stopTimeout(TIMEOUT_FIRST_NOTIFY)
-                logger.logInfo(
-                    TAG,
-                    "First packet received via $packetType from UUID=${characteristic.uuid}; finishing handshake"
-                )
-                setState(BleState.Ready)
-            }
+            handleFirstPacketIfWaiting(characteristic.uuid, packetType)
             protocol.onRx(value, characteristic.uuid)
         }
 
@@ -512,6 +505,18 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         processNextOperation()
     }
 
+    private fun handleFirstPacketIfWaiting(uuid: UUID, packetType: String) {
+        if (state is BleState.HandshakeSent || state is BleState.WaitFirstNotify) {
+            awaitingFirstNotify = false
+            stopTimeout(TIMEOUT_FIRST_NOTIFY)
+            logger.logInfo(
+                TAG,
+                "First packet received via $packetType from UUID=$uuid; marking session READY"
+            )
+            setState(BleState.Ready)
+        }
+    }
+
     private fun cleanupAfterDisconnect() {
         clearQueue()
         stopTimeouts()
@@ -600,12 +605,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
      */
     fun onProtocolMessage(json: JSONObject, source: UUID) {
         logger.logInfo(TAG, "Protocol message from $source: $json")
-        if (awaitingFirstNotify || state is BleState.HandshakeSent || state is BleState.WaitFirstNotify) {
-            awaitingFirstNotify = false
-            stopTimeout(TIMEOUT_FIRST_NOTIFY)
-            logger.logInfo(TAG, "First notify (parsed) received from $source; finishing handshake")
-            setState(BleState.Ready)
-        }
+        handleFirstPacketIfWaiting(source, "PARSED_JSON")
     }
 
     companion object {
