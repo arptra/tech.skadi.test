@@ -58,6 +58,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var operationInProgress = false
     private var totalNotifyCharacteristics = 0
     private var firstNotifyReceived = false
+    private var postHandshakeCommandSent = false
 
     fun setListener(listener: Listener) {
         this.listener = listener
@@ -213,7 +214,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                     BluetoothDevice.BOND_BONDED -> {
                         logger.logInfo(TAG, "System bonding completed; keeping session alive")
                         if (firstNotifyReceived) {
-                            setState(BleState.ConnectedReady)
+                            onHandshakeCompleteAndReady()
                         }
                     }
                     BluetoothDevice.BOND_NONE -> logger.logInfo(TAG, "Bond removed or failed")
@@ -449,6 +450,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 "writeType=$writeType payload=${HexUtils.toHex(START_COMMAND)}"
         )
         firstNotifyReceived = false
+        postHandshakeCommandSent = false
         handshakeCommandSent = true
         startCommandPending = true
         setState(BleState.HandshakeSent)
@@ -458,25 +460,25 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private fun handleCharacteristicWrite(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
         if (startCommandPending && characteristic.uuid == protocol.writeCharacteristic?.uuid) {
             startCommandPending = false
-            if (status == BluetoothGatt.GATT_SUCCESS) {
-                logger.logInfo(TAG, "Handshake write acknowledged status=$status")
-                val device = gatt.device
-                val bondState = device.bondState
-                when (bondState) {
-                    BluetoothDevice.BOND_NONE -> {
-                        logger.logInfo(TAG, "Requesting system bond after start command ack")
-                        val started = device.createBond()
-                        logger.logInfo(TAG, "createBond() started=$started currentState=${device.bondState}")
-                    }
-                    BluetoothDevice.BOND_BONDING -> logger.logInfo(TAG, "Bonding already in progress; waiting for completion")
-                    BluetoothDevice.BOND_BONDED -> {
-                        logger.logInfo(TAG, "Device already bonded; waiting for first vendor notify to mark ready")
-                        if (firstNotifyReceived) {
-                            setState(BleState.ConnectedReady)
+                if (status == BluetoothGatt.GATT_SUCCESS) {
+                    logger.logInfo(TAG, "Handshake write acknowledged status=$status")
+                    val device = gatt.device
+                    val bondState = device.bondState
+                    when (bondState) {
+                        BluetoothDevice.BOND_NONE -> {
+                            logger.logInfo(TAG, "Requesting system bond after start command ack")
+                            val started = device.createBond()
+                            logger.logInfo(TAG, "createBond() started=$started currentState=${device.bondState}")
                         }
+                        BluetoothDevice.BOND_BONDING -> logger.logInfo(TAG, "Bonding already in progress; waiting for completion")
+                        BluetoothDevice.BOND_BONDED -> {
+                            logger.logInfo(TAG, "Device already bonded; waiting for first vendor notify to mark ready")
+                            if (firstNotifyReceived) {
+                                onHandshakeCompleteAndReady()
+                            }
+                        }
+                        else -> logger.logInfo(TAG, "Unhandled bond state=$bondState after start command")
                     }
-                    else -> logger.logInfo(TAG, "Unhandled bond state=$bondState after start command")
-                }
             } else {
                 handshakeCommandSent = false
                 setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
@@ -499,11 +501,16 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             TAG,
             "First vendor packet after start command (${characteristic.uuid} len=${payload.size}): ${HexUtils.toHex(payload)}"
         )
-        logger.logInfo(TAG, "bonding + handshake completed, BLE channel ready")
-        if (state !is BleState.ConnectedReady) {
-            setState(BleState.ConnectedReady)
+        val bondState = gatt?.device?.bondState
+        if (bondState == BluetoothDevice.BOND_BONDED) {
+            logger.logInfo(TAG, "bonding + handshake completed, BLE channel ready")
+            onHandshakeCompleteAndReady()
+        } else {
+            logger.logInfo(
+                TAG,
+                "First packet received; deferring ready state until bonding finishes (bondState=$bondState)"
+            )
         }
-        sendPostHandshakeKeepAlive()
     }
 
     private fun isVendorNotifyCharacteristic(characteristic: BluetoothGattCharacteristic): Boolean {
@@ -515,6 +522,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     }
 
     private fun sendPostHandshakeKeepAlive() {
+        if (postHandshakeCommandSent) return
         val gattInstance = gatt
         val writeChar = protocol.writeCharacteristic
         if (gattInstance == null || writeChar == null) {
@@ -527,6 +535,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             "Sending post-handshake keep-alive to ${writeChar.uuid} len=${POST_HANDSHAKE_PING.size}" +
                 " payload=${HexUtils.toHex(POST_HANDSHAKE_PING)}"
         )
+        postHandshakeCommandSent = true
         enqueueCharacteristicWrite(
             gattInstance,
             writeChar,
@@ -534,6 +543,13 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             withResponse = false,
             forcedWriteType = writeType
         )
+    }
+
+    private fun onHandshakeCompleteAndReady() {
+        if (state !is BleState.ConnectedReady) {
+            setState(BleState.ConnectedReady)
+        }
+        sendPostHandshakeKeepAlive()
     }
 
     fun enqueueDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor): Boolean {
@@ -609,6 +625,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         mtuRequested = false
         mtuReady = false
         firstNotifyReceived = false
+        postHandshakeCommandSent = false
         enableCccdQueue.clear()
         totalNotifyCharacteristics = 0
     }
@@ -627,6 +644,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         mtuRequested = false
         mtuReady = false
         firstNotifyReceived = false
+        postHandshakeCommandSent = false
         enableCccdQueue.clear()
         totalNotifyCharacteristics = 0
         setState(BleState.Idle)
