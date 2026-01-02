@@ -527,7 +527,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             logger.logInfo(TAG, "Start command already scheduled/sent; skipping duplicate reason=$reason")
             return
         }
-        val writeType = selectWriteType(controlChar, withResponse = true)
+        val writeType = selectWriteType(controlChar, withResponse = false)
         logger.logInfo(
             TAG,
             "Sending start command reason=$reason to ${controlChar.uuid} props=${propString(controlChar.properties)} " +
@@ -968,7 +968,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val RX_UUID = "00002001-0000-1000-8000-00805f9b34fb"
         private const val RX_ALT_UUID = "00002002-0000-1000-8000-00805f9b34fb"
         private const val NOTIFY_UUID = "00002021-0000-1000-8000-00805f9b34fb"
-        private const val CONTROL_UUID = "00002000-0000-1000-8000-00805f9b34fb"
+        private const val CONTROL_UUID = "00002020-0000-1000-8000-00805f9b34fb"
         private const val EXTRA_NOTIFY_UUID = "00002022-0000-1000-8000-00805f9b34fb"
         private const val SYS_NOTIFY_UUID = "00001001-0000-1000-8000-00805f9b34fb"
         private const val GATT_SERVICE_UUID = "00001801-0000-1000-8000-00805f9b34fb"
