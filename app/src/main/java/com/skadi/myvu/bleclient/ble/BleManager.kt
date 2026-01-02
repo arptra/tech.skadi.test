@@ -56,6 +56,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var targetReason: String? = null
     private var gatt: BluetoothGatt? = null
     private var protocol: BleProtocol = BleProtocol(this, logger)
+    private val classicConnectionManager = ClassicConnectionManager(context, logger)
     private var state: BleState = BleState.Idle
     private var connectRetries = 0
     private var vendorService: BluetoothGattService? = null
@@ -82,6 +83,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var clientReadyRunnable: Runnable? = null
     private var heartbeatRunnable: Runnable? = null
     private var heartbeatActive = false
+    private var awaitingClassicHandover = false
     private var lastTx: PacketLog? = null
     private var lastRx: PacketLog? = null
     private var lastDisconnectRequestedReason: String? = null
@@ -167,6 +169,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         val stack = Throwable("disconnect stack")
         lastDisconnectStack = stack
         stopHeartbeatLoop()
+        classicConnectionManager.cancel()
         val now = SystemClock.elapsedRealtime()
         val bondState = gatt?.device?.bondState
         val lastTxAge = lastTx?.let { now - it.timestamp }?.toString() ?: "n/a"
@@ -331,6 +334,39 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 "Disconnected status=$status requested=$lastDisconnectRequestedReason lastTxAgeMs=${lastTxAgeMs ?: "n/a"} lastRxAgeMs=${lastRxAgeMs ?: "n/a"}"
             )
             lastDisconnectStack?.let { logger.logError(TAG, "Last disconnect request stack", it) }
+            if (status == STATUS_TERMINATE_LOCAL_HOST && awaitingClassicHandover) {
+                logger.logInfo(TAG, "BLE closed by peer – expected classic handover")
+                awaitingClassicHandover = false
+                stopHeartbeatLoop()
+                stopTimeouts()
+                clearQueue()
+                val mac = gatt.device?.address
+                if (mac != null) {
+                    classicConnectionManager.startConnection(
+                        mac,
+                        onConnected = {
+                            logger.logInfo(TAG, "Classic Bluetooth connection established to $mac")
+                        },
+                        onFailed = { throwable ->
+                            logger.logError(TAG, "Classic handover failed", throwable)
+                            cleanupAfterDisconnect()
+                            setState(BleState.Disconnected)
+                        }
+                    )
+                } else {
+                    logger.logError(TAG, "Missing device MAC for classic handover")
+                    cleanupAfterDisconnect()
+                    setState(BleState.Disconnected)
+                }
+                val gattInstance = gatt
+                mainHandler.postDelayed({
+                    gattInstance?.let { scheduleGattClose(it) }
+                    if (this.gatt == gattInstance) {
+                        this.gatt = null
+                    }
+                }, 1_200)
+                return
+            }
             val readyPhase = state is BleState.ConnectedReady ||
                 state is BleState.ProtocolSessionInit ||
                 state is BleState.ReadyForCommands
@@ -674,6 +710,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         quietHoldActive = false
         logger.logInfo(TAG, "Protocol session init complete ($reason); channel ready for commands")
         setState(BleState.ReadyForCommands)
+        awaitingClassicHandover = true
         startHeartbeatLoop()
         if (AUTO_ENABLE_STAGE2_CCCD) {
             scheduleStageTwoCccd(gatt)
@@ -859,6 +896,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         gatt?.let { scheduleGattClose(it) }
         gatt = null
         protocol.clear()
+        classicConnectionManager.cancel()
         pendingCccdWrites = 0
         handshakeCommandSent = false
         startCommandPending = false
@@ -881,6 +919,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         totalNotifyCharacteristics = 0
         lastDisconnectRequestedReason = null
         lastDisconnectStack = null
+        awaitingClassicHandover = false
     }
 
     private fun resetConnection() {
@@ -890,6 +929,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         gatt?.let { scheduleGattClose(it) }
         gatt = null
         protocol.clear()
+        classicConnectionManager.cancel()
         connectRetries = 0
         pendingCccdWrites = 0
         handshakeCommandSent = false
@@ -913,6 +953,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         totalNotifyCharacteristics = 0
         lastDisconnectRequestedReason = null
         lastDisconnectStack = null
+        awaitingClassicHandover = false
         setState(BleState.Idle)
     }
 
