@@ -1,0 +1,1611 @@
+[
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:35.610074000Z",
+          "frame.time_utc": "2025-12-28T04:22:35.610074000Z",
+          "frame.time_epoch": "2025-12-28T04:22:35.610074000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.003259000",
+          "frame.time_relative": "88603.380225000",
+          "frame.number": "12214",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "0",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "",
+          "bthci_acl.dst.role": "0",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x08",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x08"
+          },
+          "btatt.starting_handle": "0x0001",
+          "btatt.ending_handle": "0xffff",
+          "btatt.uuid16": "0x2a00"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:35.703864000Z",
+          "frame.time_utc": "2025-12-28T04:22:35.703864000Z",
+          "frame.time_epoch": "2025-12-28T04:22:35.703864000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.001292000",
+          "frame.time_delta_displayed": "0.093790000",
+          "frame.time_relative": "88603.474015000",
+          "frame.number": "12222",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "0",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "",
+          "bthci_acl.dst.role": "0",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x08",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x08"
+          },
+          "btatt.starting_handle": "0x0001",
+          "btatt.ending_handle": "0xffff",
+          "btatt.uuid16": "0x2b2a"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:35.799111000Z",
+          "frame.time_utc": "2025-12-28T04:22:35.799111000Z",
+          "frame.time_epoch": "2025-12-28T04:22:35.799111000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.001557000",
+          "frame.time_delta_displayed": "0.095247000",
+          "frame.time_relative": "88603.569262000",
+          "frame.number": "12227",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "0",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "",
+          "bthci_acl.dst.role": "0",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x08",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x08"
+          },
+          "btatt.starting_handle": "0x0001",
+          "btatt.ending_handle": "0xffff",
+          "btatt.uuid16": "0x2a01"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:35.895779000Z",
+          "frame.time_utc": "2025-12-28T04:22:35.895779000Z",
+          "frame.time_epoch": "2025-12-28T04:22:35.895779000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.001113000",
+          "frame.time_delta_displayed": "0.096668000",
+          "frame.time_relative": "88603.665930000",
+          "frame.number": "12231",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "0",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "",
+          "bthci_acl.dst.role": "0",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x10",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x10"
+          },
+          "btatt.starting_handle": "0x0001",
+          "btatt.ending_handle": "0xffff",
+          "btatt.uuid16": "0x2800"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:35.993122000Z",
+          "frame.time_utc": "2025-12-28T04:22:35.993122000Z",
+          "frame.time_epoch": "2025-12-28T04:22:35.993122000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.001029000",
+          "frame.time_delta_displayed": "0.097343000",
+          "frame.time_relative": "88603.763273000",
+          "frame.number": "12234",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "0",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "",
+          "bthci_acl.dst.role": "0",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x10",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x10"
+          },
+          "btatt.starting_handle": "0x002d",
+          "btatt.ending_handle": "0xffff",
+          "btatt.uuid16": "0x2800"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:36.091002000Z",
+          "frame.time_utc": "2025-12-28T04:22:36.091002000Z",
+          "frame.time_epoch": "2025-12-28T04:22:36.091002000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.001236000",
+          "frame.time_delta_displayed": "0.097880000",
+          "frame.time_relative": "88603.861153000",
+          "frame.number": "12237",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "0",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "",
+          "bthci_acl.dst.role": "0",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x10",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x10"
+          },
+          "btatt.starting_handle": "0x0031",
+          "btatt.ending_handle": "0xffff",
+          "btatt.uuid16": "0x2800"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:36.206600000Z",
+          "frame.time_utc": "2025-12-28T04:22:36.206600000Z",
+          "frame.time_epoch": "2025-12-28T04:22:36.206600000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.001683000",
+          "frame.time_delta_displayed": "0.115598000",
+          "frame.time_relative": "88603.976751000",
+          "frame.number": "12241",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "0",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "",
+          "bthci_acl.dst.role": "0",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x08",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x08"
+          },
+          "btatt.starting_handle": "0x0001",
+          "btatt.ending_handle": "0x0007",
+          "btatt.uuid16": "0x2802"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:36.302541000Z",
+          "frame.time_utc": "2025-12-28T04:22:36.302541000Z",
+          "frame.time_epoch": "2025-12-28T04:22:36.302541000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.002123000",
+          "frame.time_delta_displayed": "0.095941000",
+          "frame.time_relative": "88604.072692000",
+          "frame.number": "12244",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "0",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "",
+          "bthci_acl.dst.role": "0",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x08",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x08"
+          },
+          "btatt.starting_handle": "0x0001",
+          "btatt.ending_handle": "0x0007",
+          "btatt.uuid16": "0x2803"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:36.397868000Z",
+          "frame.time_utc": "2025-12-28T04:22:36.397868000Z",
+          "frame.time_epoch": "2025-12-28T04:22:36.397868000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.002020000",
+          "frame.time_delta_displayed": "0.095327000",
+          "frame.time_relative": "88604.168019000",
+          "frame.number": "12247",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "0",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "",
+          "bthci_acl.dst.role": "0",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x08",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x08"
+          },
+          "btatt.starting_handle": "0x0007",
+          "btatt.ending_handle": "0x0007",
+          "btatt.uuid16": "0x2803"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:36.492040000Z",
+          "frame.time_utc": "2025-12-28T04:22:36.492040000Z",
+          "frame.time_epoch": "2025-12-28T04:22:36.492040000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.002044000",
+          "frame.time_delta_displayed": "0.094172000",
+          "frame.time_relative": "88604.262191000",
+          "frame.number": "12250",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "0",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "",
+          "bthci_acl.dst.role": "0",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x08",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x08"
+          },
+          "btatt.starting_handle": "0x000c",
+          "btatt.ending_handle": "0x0013",
+          "btatt.uuid16": "0x2802"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:36.587058000Z",
+          "frame.time_utc": "2025-12-28T04:22:36.587058000Z",
+          "frame.time_epoch": "2025-12-28T04:22:36.587058000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.002039000",
+          "frame.time_delta_displayed": "0.095018000",
+          "frame.time_relative": "88604.357209000",
+          "frame.number": "12253",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "0",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "",
+          "bthci_acl.dst.role": "0",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x08",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x08"
+          },
+          "btatt.starting_handle": "0x000c",
+          "btatt.ending_handle": "0x0013",
+          "btatt.uuid16": "0x2803"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:36.658360000Z",
+          "frame.time_utc": "2025-12-28T04:22:36.658360000Z",
+          "frame.time_epoch": "2025-12-28T04:22:36.658360000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.001608000",
+          "frame.time_delta_displayed": "0.071302000",
+          "frame.time_relative": "88604.428511000",
+          "frame.number": "12257",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "0",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "",
+          "bthci_acl.dst.role": "0",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x08",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x08"
+          },
+          "btatt.starting_handle": "0x0013",
+          "btatt.ending_handle": "0x0013",
+          "btatt.uuid16": "0x2803"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:36.717958000Z",
+          "frame.time_utc": "2025-12-28T04:22:36.717958000Z",
+          "frame.time_epoch": "2025-12-28T04:22:36.717958000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.001625000",
+          "frame.time_delta_displayed": "0.059598000",
+          "frame.time_relative": "88604.488109000",
+          "frame.number": "12262",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "0",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "",
+          "bthci_acl.dst.role": "0",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x08",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x08"
+          },
+          "btatt.starting_handle": "0x0014",
+          "btatt.ending_handle": "0x002c",
+          "btatt.uuid16": "0x2802"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:36.746977000Z",
+          "frame.time_utc": "2025-12-28T04:22:36.746977000Z",
+          "frame.time_epoch": "2025-12-28T04:22:36.746977000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.001172000",
+          "frame.time_delta_displayed": "0.029019000",
+          "frame.time_relative": "88604.517128000",
+          "frame.number": "12265",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "0",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "",
+          "bthci_acl.dst.role": "0",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x08",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x08"
+          },
+          "btatt.starting_handle": "0x0014",
+          "btatt.ending_handle": "0x002c",
+          "btatt.uuid16": "0x2803"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:36.763076000Z",
+          "frame.time_utc": "2025-12-28T04:22:36.763076000Z",
+          "frame.time_epoch": "2025-12-28T04:22:36.763076000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.001812000",
+          "frame.time_delta_displayed": "0.016099000",
+          "frame.time_relative": "88604.533227000",
+          "frame.number": "12267",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "0",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "",
+          "bthci_acl.dst.role": "0",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x08",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x08"
+          },
+          "btatt.starting_handle": "0x001a",
+          "btatt.ending_handle": "0x002c",
+          "btatt.uuid16": "0x2803"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:36.777057000Z",
+          "frame.time_utc": "2025-12-28T04:22:36.777057000Z",
+          "frame.time_epoch": "2025-12-28T04:22:36.777057000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.001205000",
+          "frame.time_delta_displayed": "0.013981000",
+          "frame.time_relative": "88604.547208000",
+          "frame.number": "12270",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "0",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "",
+          "bthci_acl.dst.role": "0",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x08",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x08"
+          },
+          "btatt.starting_handle": "0x0023",
+          "btatt.ending_handle": "0x002c",
+          "btatt.uuid16": "0x2803"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:36.792168000Z",
+          "frame.time_utc": "2025-12-28T04:22:36.792168000Z",
+          "frame.time_epoch": "2025-12-28T04:22:36.792168000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.001180000",
+          "frame.time_delta_displayed": "0.015111000",
+          "frame.time_relative": "88604.562319000",
+          "frame.number": "12272",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "0",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "",
+          "bthci_acl.dst.role": "0",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x08",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x08"
+          },
+          "btatt.starting_handle": "0x002c",
+          "btatt.ending_handle": "0x002c",
+          "btatt.uuid16": "0x2803"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:36.941577000Z",
+          "frame.time_utc": "2025-12-28T04:22:36.941577000Z",
+          "frame.time_epoch": "2025-12-28T04:22:36.941577000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.001095000",
+          "frame.time_delta_displayed": "0.149409000",
+          "frame.time_relative": "88604.711728000",
+          "frame.number": "12290",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "0",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "",
+          "bthci_acl.dst.role": "0",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x08",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x08"
+          },
+          "btatt.starting_handle": "0x002d",
+          "btatt.ending_handle": "0x0030",
+          "btatt.uuid16": "0x2802"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:36.957223000Z",
+          "frame.time_utc": "2025-12-28T04:22:36.957223000Z",
+          "frame.time_epoch": "2025-12-28T04:22:36.957223000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.001335000",
+          "frame.time_delta_displayed": "0.015646000",
+          "frame.time_relative": "88604.727374000",
+          "frame.number": "12292",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "0",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "",
+          "bthci_acl.dst.role": "0",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x08",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x08"
+          },
+          "btatt.starting_handle": "0x002d",
+          "btatt.ending_handle": "0x0030",
+          "btatt.uuid16": "0x2803"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:36.987281000Z",
+          "frame.time_utc": "2025-12-28T04:22:36.987281000Z",
+          "frame.time_epoch": "2025-12-28T04:22:36.987281000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.001255000",
+          "frame.time_delta_displayed": "0.030058000",
+          "frame.time_relative": "88604.757432000",
+          "frame.number": "12295",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "0",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "",
+          "bthci_acl.dst.role": "0",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x08",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x08"
+          },
+          "btatt.starting_handle": "0x002f",
+          "btatt.ending_handle": "0x0030",
+          "btatt.uuid16": "0x2803"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:51.208560000Z",
+          "frame.time_utc": "2025-12-28T04:22:51.208560000Z",
+          "frame.time_epoch": "2025-12-28T04:22:51.208560000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.000384000",
+          "frame.time_delta_displayed": "14.221279000",
+          "frame.time_relative": "88618.978711000",
+          "frame.number": "12459",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "1",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "MYVU DCB1",
+          "bthci_acl.dst.role": "2",
+          "bthci_acl.last_change_in_frame.role": "12350",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x08",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x08"
+          },
+          "btatt.starting_handle": "0x0001",
+          "btatt.ending_handle": "0xffff",
+          "btatt.uuid16": "0x2b2a"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:51.292072000Z",
+          "frame.time_utc": "2025-12-28T04:22:51.292072000Z",
+          "frame.time_epoch": "2025-12-28T04:22:51.292072000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.000845000",
+          "frame.time_delta_displayed": "0.083512000",
+          "frame.time_relative": "88619.062223000",
+          "frame.number": "12484",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12194",
+          "bthci_acl.disconnect_in": "12814",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "1",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "MYVU DCB1",
+          "bthci_acl.dst.role": "2",
+          "bthci_acl.last_change_in_frame.role": "12350",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x08",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x08"
+          },
+          "btatt.starting_handle": "0x0001",
+          "btatt.ending_handle": "0xffff",
+          "btatt.uuid16": "0x2a04"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:56.624423000Z",
+          "frame.time_utc": "2025-12-28T04:22:56.624423000Z",
+          "frame.time_epoch": "2025-12-28T04:22:56.624423000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.000367000",
+          "frame.time_delta_displayed": "5.332351000",
+          "frame.time_relative": "88624.394574000",
+          "frame.number": "12857",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12833",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "1",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "MYVU DCB1",
+          "bthci_acl.dst.role": "2",
+          "bthci_acl.last_change_in_frame.role": "12350",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x08",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x08"
+          },
+          "btatt.starting_handle": "0x0001",
+          "btatt.ending_handle": "0xffff",
+          "btatt.uuid16": "0x2a01"
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2025-12-28",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.encap_type": "99",
+          "frame.time": "2025-12-28T04:22:57.203219000Z",
+          "frame.time_utc": "2025-12-28T04:22:57.203219000Z",
+          "frame.time_epoch": "2025-12-28T04:22:57.203219000Z",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.001711000",
+          "frame.time_delta_displayed": "0.578796000",
+          "frame.time_relative": "88624.973370000",
+          "frame.number": "12877",
+          "frame.len": "16",
+          "frame.cap_len": "16",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.p2p_dir": "0",
+          "frame.protocols": "bluetooth:hci_h4:bthci_acl:btl2cap:btatt",
+          "frame.encoding": "0"
+        },
+        "bluetooth": {
+          "bluetooth.addr": "04:00:6e:8b:20:f1",
+          "bluetooth.src": "04:00:6e:8b:20:f1",
+          "bluetooth.addr": "2c:6f:4e:00:dc:b1",
+          "bluetooth.dst": "2c:6f:4e:00:dc:b1"
+        },
+        "hci_h4": {
+          "hci_h4.direction": "0x00",
+          "hci_h4.type": "0x02"
+        },
+        "bthci_acl": {
+          "bthci_acl.chandle": "0x0040",
+          "bthci_acl.pb_flag": "0",
+          "bthci_acl.bc_flag": "0",
+          "bthci_acl.length": "11",
+          "bthci_acl.data": "",
+          "bthci_acl.connect_in": "12833",
+          "bthci_acl.src.bd_addr": "04:00:6e:8b:20:f1",
+          "bthci_acl.src.name": "Pixel 9 Pro",
+          "bthci_acl.src.role": "1",
+          "bthci_acl.dst.bd_addr": "2c:6f:4e:00:dc:b1",
+          "bthci_acl.dst.name": "MYVU DCB1",
+          "bthci_acl.dst.role": "2",
+          "bthci_acl.last_change_in_frame.role": "12350",
+          "bthci_acl.mode": "-1"
+        },
+        "btl2cap": {
+          "btl2cap.length": "7",
+          "btl2cap.cid": "0x0004"
+        },
+        "btatt": {
+          "btatt.opcode": "0x08",
+          "btatt.opcode_tree": {
+            "btatt.opcode.authentication_signature": "0",
+            "btatt.opcode.command": "0",
+            "btatt.opcode.method": "0x08"
+          },
+          "btatt.starting_handle": "0x0001",
+          "btatt.ending_handle": "0xffff",
+          "btatt.uuid16": "0x2b3a"
+        }
+      }
+    }
+  }
+]

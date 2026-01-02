@@ -11,9 +11,9 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="2"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <Button
             android:id="@+id/scanButton"
@@ -27,126 +27,127 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/connect"
-            android:enabled="false" />
+            android:enabled="false"
+            android:text="@string/connect" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/bondRow"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:orientation="horizontal"
         android:weightSum="2"
-        app:layout_constraintTop_toBottomOf="@id/scanRow"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/scanRow">
 
         <Button
             android:id="@+id/bondButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/create_pair"
-            android:enabled="false" />
+            android:enabled="false"
+            android:text="@string/create_pair" />
 
         <Button
             android:id="@+id/disconnectButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/disconnect"
-            android:enabled="false" />
+            android:enabled="false"
+            android:text="@string/disconnect" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/stateLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:text="@string/state_label"
         android:textStyle="bold"
-        android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/bondRow"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bondRow" />
 
     <TextView
         android:id="@+id/stateValue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="IDLE"
-        app:layout_constraintStart_toEndOf="@id/stateLabel"
         app:layout_constraintBaseline_toBaselineOf="@id/stateLabel"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/stateLabel" />
 
     <TextView
         android:id="@+id/deviceLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="@string/device_label"
         android:textStyle="bold"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/stateLabel"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/stateLabel" />
 
     <TextView
         android:id="@+id/deviceValue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="-"
-        app:layout_constraintStart_toEndOf="@id/deviceLabel"
         app:layout_constraintBaseline_toBaselineOf="@id/deviceLabel"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/deviceLabel" />
 
     <TextView
         android:id="@+id/rssiLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="@string/rssi_label"
         android:textStyle="bold"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/deviceLabel"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/deviceLabel" />
 
     <TextView
         android:id="@+id/rssiValue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="-"
-        app:layout_constraintStart_toEndOf="@id/rssiLabel"
         app:layout_constraintBaseline_toBaselineOf="@id/rssiLabel"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/rssiLabel" />
 
     <TextView
         android:id="@+id/logsTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:text="@string/logs_title"
         android:textStyle="bold"
-        android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/rssiLabel"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rssiLabel" />
 
     <ScrollView
         android:id="@+id/logScroll"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
         android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/logsTitle"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/logsTitle">
 
         <TextView
             android:id="@+id/logsView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
             android:background="@color/log_background"
+            android:padding="8dp"
+            android:text=""
             android:textColor="@color/log_text"
             android:textIsSelectable="true"
             android:textSize="12sp"
-            android:typeface="monospace"
-            android:text="" />
+            android:typeface="monospace" />
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
