@@ -440,7 +440,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             logger.logInfo(TAG, "Start command already sent; skipping duplicate reason=$reason")
             return
         }
-        val writeType = selectWriteType(controlChar, withResponse = false)
+        // Use write-with-response even if WRITE_NR is advertised — logs show the glasses react only
+        // after seeing an acknowledged write. This avoids silent drops that led to FIRST_NOTIFY_TIMEOUT.
+        val writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
         firstNotifyAttempts++
         val attempt = firstNotifyAttempts
         logger.logInfo(
@@ -739,7 +741,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val SCAN_TIMEOUT_MS = 25_000L
         private const val CONNECT_TIMEOUT_MS = 12_000L
         private const val DISCOVERY_TIMEOUT_MS = 10_000L
-        private const val FIRST_NOTIFY_TIMEOUT_MS = 10_000L
+        // Slightly longer window to account for INDICATE delivery after MTU/CCCD setup.
+        private const val FIRST_NOTIFY_TIMEOUT_MS = 15_000L
         private const val APP_INIT_TIMEOUT_MS = 10_000L
         private const val BOND_TIMEOUT_MS = 60_000L
         private const val RETRY_DELAY_MS = 800L
