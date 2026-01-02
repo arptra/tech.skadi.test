@@ -10,6 +10,8 @@ import com.skadi.myvu.bleclient.ble.BleErrorReason
 import com.skadi.myvu.bleclient.ble.BleLogger
 import com.skadi.myvu.bleclient.ble.BleManager
 import com.skadi.myvu.bleclient.ble.BleState
+import com.skadi.myvu.bleclient.debug.BleSessionHolder
+import com.skadi.myvu.bleclient.debug.DebugCommandsActivity
 import com.skadi.myvu.bleclient.util.BluetoothUtils
 import com.skadi.myvu.bleclient.util.PermissionUtils
 
@@ -21,6 +23,7 @@ class MainActivity : AppCompatActivity(), BleManager.Listener {
     private lateinit var connectButton: Button
     private lateinit var bondButton: Button
     private lateinit var disconnectButton: Button
+    private lateinit var debugButton: Button
     private lateinit var stateValue: TextView
     private lateinit var deviceValue: TextView
     private lateinit var rssiValue: TextView
@@ -42,6 +45,7 @@ class MainActivity : AppCompatActivity(), BleManager.Listener {
         connectButton = findViewById(R.id.connectButton)
         bondButton = findViewById(R.id.bondButton)
         disconnectButton = findViewById(R.id.disconnectButton)
+        debugButton = findViewById(R.id.debugButton)
         stateValue = findViewById(R.id.stateValue)
         deviceValue = findViewById(R.id.deviceValue)
         rssiValue = findViewById(R.id.rssiValue)
@@ -51,6 +55,8 @@ class MainActivity : AppCompatActivity(), BleManager.Listener {
         logger = BleLogger()
         bleManager = BleManager(this, logger)
         bleManager.setListener(this)
+        BleSessionHolder.logger = logger
+        BleSessionHolder.bleManager = bleManager
 
         logger.addListener(logListener)
 
@@ -79,6 +85,7 @@ class MainActivity : AppCompatActivity(), BleManager.Listener {
         connectButton.setOnClickListener { bleManager.connectToTarget() }
         bondButton.setOnClickListener { bleManager.requestBond() }
         disconnectButton.setOnClickListener { bleManager.disconnect() }
+        debugButton.setOnClickListener { startActivity(DebugCommandsActivity.intent(this)) }
 
         onStateChanged(bleManager.currentState())
     }
@@ -97,12 +104,12 @@ class MainActivity : AppCompatActivity(), BleManager.Listener {
     override fun onStateChanged(state: BleState) {
         runOnUiThread {
             stateValue.text = state.label
-            connectButton.isEnabled = state is BleState.DeviceFound
-            bondButton.isEnabled = state is BleState.HandshakeDone || state is BleState.WaitingForSystemPairing || state is BleState.Bonded
-            disconnectButton.isEnabled = state is BleState.BleConnected || state is BleState.ServicesDiscovering || state is BleState.HandshakeWriting || state is BleState.HandshakeDone || state is BleState.WaitingForSystemPairing || state is BleState.Bonded || state is BleState.Connected
-            if (state is BleState.Error && state.reason == BleErrorReason.NO_MATCHING_ADVERTISING) {
-                connectButton.isEnabled = false
-            }
+            val readyState = state is BleState.ConnectedReady ||
+                state is BleState.ProtocolSessionInit ||
+                state is BleState.ReadyForCommands
+            connectButton.isEnabled = state is BleState.Idle || state is BleState.Scanning || readyState || (state is BleState.Error && state.reason != BleErrorReason.NO_MATCHING_ADVERTISING)
+            bondButton.isEnabled = false
+            disconnectButton.isEnabled = state is BleState.Connecting || state is BleState.ServicesDiscovering || state is BleState.EnablingNotifications || state is BleState.MtuNegotiation || state is BleState.HandshakeSent || readyState
         }
     }
 

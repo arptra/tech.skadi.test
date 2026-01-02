@@ -1,5 +1,7 @@
 package com.skadi.myvu.bleclient.util
 
+import java.util.Locale
+
 object HexUtils {
     private val HEX_ARRAY = "0123456789ABCDEF".toCharArray()
 
@@ -13,5 +15,20 @@ object HexUtils {
             hexChars[index * 3 + 2] = ' '
         }
         return String(hexChars).trim()
+    }
+
+    fun fromHex(input: String): ByteArray? {
+        val cleaned = input.replace("\\s".toRegex(), "").uppercase(Locale.US)
+        if (cleaned.length % 2 != 0) return null
+        val result = ByteArray(cleaned.length / 2)
+        return try {
+            for (i in cleaned.indices step 2) {
+                val byte = cleaned.substring(i, i + 2).toInt(16)
+                result[i / 2] = byte.toByte()
+            }
+            result
+        } catch (e: NumberFormatException) {
+            null
+        }
     }
 }
