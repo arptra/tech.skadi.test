@@ -527,7 +527,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             logger.logInfo(TAG, "Start command already scheduled/sent; skipping duplicate reason=$reason")
             return
         }
-        val writeType = selectWriteType(controlChar, withResponse = false)
+        val writeType = BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
         logger.logInfo(
             TAG,
             "Sending start command reason=$reason to ${controlChar.uuid} props=${propString(controlChar.properties)} " +
@@ -538,7 +538,13 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         startCommandPending = true
         startCommandTimestampMs = SystemClock.elapsedRealtime()
         setState(BleState.HandshakeSent)
-        enqueueCharacteristicWrite(gatt, controlChar, START_COMMAND, withResponse = true, forcedWriteType = writeType)
+        enqueueCharacteristicWrite(
+            gatt,
+            controlChar,
+            START_COMMAND,
+            withResponse = false,
+            forcedWriteType = writeType
+        )
         setState(BleState.WaitFirstVendorNotify)
         startTimeout(TIMEOUT_WAIT_FIRST_NOTIFY, WAIT_FIRST_NOTIFY_MS) {
             logger.logError(TAG, "First vendor notify timeout after start command")
