@@ -59,8 +59,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var controlCharacteristic: BluetoothGattCharacteristic? = null
     private var notifyCharacteristicsStage1: List<BluetoothGattCharacteristic> = emptyList()
     private var indicateCharacteristicsStage1: List<BluetoothGattCharacteristic> = emptyList()
-    private var notifyCharacteristicsStage2: List<BluetoothGattCharacteristic> = emptyList()
-    private var indicateCharacteristicsStage2: List<BluetoothGattCharacteristic> = emptyList()
     private var pendingCccdWrites = 0
     private var handshakeCommandSent = false
     private var startCommandPending = false
@@ -74,8 +72,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var protocolInitHoldElapsed = false
     private var firstVendorPacket: ByteArray? = null
     private var quietHoldActive = false
-    private var stageTwoCccdScheduled = false
-    private var enablingStageTwo = false
     private var clientReadyScheduled = false
     private var clientReadySent = false
     private var clientReadyRunnable: Runnable? = null
@@ -332,7 +328,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         val service = gatt.getService(UUID.fromString(SERVICE_UUID))
         val rxChar = service?.getCharacteristic(UUID.fromString(RX_UUID))
         val controlChar = service?.getCharacteristic(UUID.fromString(CONTROL_UUID))
-        val dataChar = service?.getCharacteristic(UUID.fromString(DATA_UUID))
         if (service == null || controlChar == null) {
             logger.logError(TAG, "Required service/characteristics missing")
             setState(BleState.Error(BleErrorReason.SERVICE_DISCOVERY_FAILED))
@@ -342,7 +337,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         protocol.gatt = gatt
         controlCharacteristic = controlChar
         protocol.notifyCharacteristic = rxChar ?: service.getCharacteristic(UUID.fromString(NOTIFY_UUID))
-        protocol.writeCharacteristic = dataChar ?: controlChar
+        protocol.writeCharacteristic = controlChar
         vendorService = service
         logGattDump(gatt.services)
 
@@ -351,31 +346,17 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         mtuReady = false
         enableCccdQueue.clear()
         pendingCccdWrites = 0
-        stageTwoCccdScheduled = false
-        enablingStageTwo = false
         firstVendorPacket = null
         quietHoldActive = false
         startCommandTimestampMs = 0L
 
-        val notifyCandidates = listOfNotNull(
-            rxChar,
-            service.getCharacteristic(UUID.fromString(RX_ALT_UUID)),
-            dataChar,
-            service.getCharacteristic(UUID.fromString(NOTIFY_UUID)),
-            service.getCharacteristic(UUID.fromString(EXTRA_NOTIFY_UUID)),
-            service.getCharacteristic(UUID.fromString(SYS_NOTIFY_UUID))
-        ).filter { it.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0 }
-
         notifyCharacteristicsStage1 = listOfNotNull(rxChar).filter { it.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0 }
-        notifyCharacteristicsStage2 = notifyCandidates.filter { char -> notifyCharacteristicsStage1.none { it.uuid == char.uuid } }
 
         val gattService = gatt.getService(UUID.fromString(GATT_SERVICE_UUID))
         val serviceChanged = gattService?.getCharacteristic(UUID.fromString(SERVICE_CHANGED_UUID))
         indicateCharacteristicsStage1 = listOfNotNull(serviceChanged).filter {
             it.properties and BluetoothGattCharacteristic.PROPERTY_INDICATE != 0
         }
-        indicateCharacteristicsStage2 = emptyList()
-
         totalNotifyCharacteristics = notifyCharacteristicsStage1.size + indicateCharacteristicsStage1.size
         logger.logInfo(
             TAG,
@@ -463,13 +444,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private fun onAllCccdsEnabled(gatt: BluetoothGatt) {
         logger.logInfo(
             TAG,
-            "All notifications/indications enabled ($totalNotifyCharacteristics chars) stage=${if (enablingStageTwo) "stage2" else "stage1"}"
+            "All notifications/indications enabled ($totalNotifyCharacteristics chars)"
         )
-        if (enablingStageTwo) {
-            enablingStageTwo = false
-            pendingCccdWrites = 0
-            return
-        }
         setState(BleState.MtuNegotiation)
         if (!mtuRequested) {
             mtuRequested = true
@@ -523,11 +499,20 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
             return
         }
+        val expectedUuid = UUID.fromString(CONTROL_UUID)
+        if (controlChar.uuid != expectedUuid) {
+            val message = "Unexpected control characteristic ${controlChar.uuid}; expected $CONTROL_UUID"
+            logger.logError(TAG, message)
+            setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
+            requestDisconnect("invalid_control_char", forceClose = true, extra = mapOf("found" to controlChar.uuid.toString()))
+            throw IllegalStateException(message)
+        }
         if (handshakeCommandSent || startCommandPending) {
             logger.logInfo(TAG, "Start command already scheduled/sent; skipping duplicate reason=$reason")
             return
         }
         val writeType = BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
+        controlChar.writeType = writeType
         logger.logInfo(
             TAG,
             "Sending start command reason=$reason to ${controlChar.uuid} props=${propString(controlChar.properties)} " +
@@ -647,11 +632,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         logger.logInfo(TAG, "Protocol session init complete ($reason); channel ready for commands")
         setState(BleState.ReadyForCommands)
         startHeartbeatLoop()
-        if (AUTO_ENABLE_STAGE2_CCCD) {
-            scheduleStageTwoCccd(gatt)
-        } else {
-            logger.logInfo(TAG, "Stage2 CCCD auto-enable disabled; keeping link quiet")
-        }
     }
 
     private fun scheduleClientReadyFrame() {
@@ -774,52 +754,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         }
     }
 
-    private fun scheduleStageTwoCccd(gatt: BluetoothGatt?) {
-        if (stageTwoCccdScheduled) return
-        if (notifyCharacteristicsStage2.isEmpty() && indicateCharacteristicsStage2.isEmpty()) return
-        val targetGatt = gatt ?: return
-        stageTwoCccdScheduled = true
-        startTimeout(TIMEOUT_STAGE2_CCCD, STAGE2_CCCD_DELAY_MS) {
-            if (state is BleState.Disconnected) return@startTimeout
-            enableStageTwoCccds(targetGatt)
-        }
-    }
-
-    private fun enableStageTwoCccds(gatt: BluetoothGatt) {
-        stopTimeout(TIMEOUT_STAGE2_CCCD)
-        if (notifyCharacteristicsStage2.isEmpty() && indicateCharacteristicsStage2.isEmpty()) return
-        enablingStageTwo = true
-        enableCccdQueue.clear()
-        pendingCccdWrites = 0
-        totalNotifyCharacteristics = notifyCharacteristicsStage2.size + indicateCharacteristicsStage2.size
-        logger.logInfo(
-            TAG,
-            "Enabling stage2 CCCD notify=${notifyCharacteristicsStage2.map { it.uuid }} indicate=${indicateCharacteristicsStage2.map { it.uuid }}"
-        )
-        notifyCharacteristicsStage2.forEach { characteristic ->
-            buildCccdDescriptor(
-                gatt,
-                characteristic,
-                "notify_stage2_${characteristic.uuid}",
-                BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
-            )?.let { enqueueCccd(it) }
-        }
-        indicateCharacteristicsStage2.forEach { characteristic ->
-            buildCccdDescriptor(
-                gatt,
-                characteristic,
-                "indicate_stage2_${characteristic.uuid}",
-                BluetoothGattDescriptor.ENABLE_INDICATION_VALUE
-            )?.let { enqueueCccd(it) }
-        }
-        pendingCccdWrites = enableCccdQueue.size
-        if (pendingCccdWrites == 0) {
-            enablingStageTwo = false
-            return
-        }
-        processNextCccdWrite(gatt)
-    }
-
     private fun onOperationComplete() {
         operationInProgress = false
         processNextOperation()
@@ -842,8 +776,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         protocolInitHoldElapsed = false
         firstVendorPacket = null
         quietHoldActive = false
-        stageTwoCccdScheduled = false
-        enablingStageTwo = false
         clientReadyScheduled = false
         clientReadySent = false
         clientReadyRunnable?.let { mainHandler.removeCallbacks(it) }
@@ -878,8 +810,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         protocolInitHoldElapsed = false
         firstVendorPacket = null
         quietHoldActive = false
-        stageTwoCccdScheduled = false
-        enablingStageTwo = false
         clientReadyScheduled = false
         clientReadySent = false
         clientReadyRunnable?.let { mainHandler.removeCallbacks(it) }
@@ -990,7 +920,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val TIMEOUT_DISCOVERY = "timeout_discovery"
         private const val TIMEOUT_WAIT_FIRST_NOTIFY = "timeout_wait_first_notify"
         private const val TIMEOUT_PROTOCOL_INIT = "timeout_protocol_init"
-        private const val TIMEOUT_STAGE2_CCCD = "timeout_stage2_cccd"
         private val START_COMMAND = byteArrayOf(0x00, 0x00, 0x06, 0x11, 0x01, 0x00)
         // Client-ready is a vendor/session frame (class 0x10) without security flags; sent once post-notify
         private val CLIENT_READY_FRAME = byteArrayOf(0x00, 0x00, 0x02, 0x10, 0x01, 0x00)
@@ -998,12 +927,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private val HEARTBEAT_FRAME = byteArrayOf(0x00, 0x00, 0x02, 0x10, 0x00, 0x00)
         private const val WAIT_FIRST_NOTIFY_MS = 5_000L
         private const val PROTOCOL_INIT_HOLD_MS = 1_000L
-        private const val STAGE2_CCCD_DELAY_MS = 500L
         private const val CLIENT_READY_DELAY_MS = 100L
         private const val HEARTBEAT_INTERVAL_MS = 500L
         private const val KEY_LAST_TARGET = "last_target_mac"
         private const val STATUS_TERMINATE_LOCAL_HOST = 22
-        private const val AUTO_ENABLE_STAGE2_CCCD = false
         private const val DATA_UUID = "00002020-0000-1000-8000-00805f9b34fb"
     }
 
