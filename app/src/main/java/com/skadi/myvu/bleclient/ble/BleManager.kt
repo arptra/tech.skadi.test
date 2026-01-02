@@ -74,7 +74,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var vendorNotifyDuringInit = false
     private var protocolInitHoldElapsed = false
     private var firstVendorPacket: ByteArray? = null
-    private var firstVendorAckSent = false
+    private val ackedVendorPayloads = mutableSetOf<String>()
     private var quietHoldActive = false
     private var stageTwoCccdScheduled = false
     private var enablingStageTwo = false
@@ -376,7 +376,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         stageTwoCccdScheduled = false
         enablingStageTwo = false
         firstVendorPacket = null
-        firstVendorAckSent = false
+        ackedVendorPayloads.clear()
         quietHoldActive = false
 
         val notifyCandidates = listOfNotNull(
@@ -606,13 +606,14 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 TAG,
                 "First vendor packet after start command (${characteristic.uuid} len=${payload.size}): ${HexUtils.toHex(payload)}"
             )
-            sendVendorAckEcho()
+            sendVendorAckEcho(payload)
             onHandshakeCompleteAndReady()
             return
         }
 
         if (state is BleState.ProtocolSessionInit) {
             vendorNotifyDuringInit = true
+            sendVendorAckEcho(payload)
             // Any subsequent vendor packet is a readiness signal; do not sit in the quiet hold.
             if (!protocolInitHoldElapsed) {
                 logger.logInfo(TAG, "Second+ vendor packet during PROTOCOL_SESSION_INIT; promoting immediately")
@@ -677,12 +678,11 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         }
     }
 
-    private fun sendVendorAckEcho() {
-        if (firstVendorAckSent) return
+    private fun sendVendorAckEcho(payload: ByteArray) {
         val targetGatt = gatt ?: return
         val control = vendorService?.getCharacteristic(UUID.fromString(CONTROL_UUID)) ?: return
-        val payload = firstVendorPacket ?: return
-        firstVendorAckSent = true
+        val payloadKey = HexUtils.toHex(payload)
+        if (!ackedVendorPayloads.add(payloadKey)) return
         logger.logInfo(
             TAG,
             "Sending vendor ACK echo len=${payload.size} to ${control.uuid}"
@@ -823,6 +823,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         vendorNotifyDuringInit = false
         protocolInitHoldElapsed = false
         firstVendorPacket = null
+        ackedVendorPayloads.clear()
         quietHoldActive = false
         stageTwoCccdScheduled = false
         enablingStageTwo = false
@@ -850,6 +851,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         vendorNotifyDuringInit = false
         protocolInitHoldElapsed = false
         firstVendorPacket = null
+        ackedVendorPayloads.clear()
         quietHoldActive = false
         stageTwoCccdScheduled = false
         enablingStageTwo = false
