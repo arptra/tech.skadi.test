@@ -7,7 +7,10 @@ import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothProfile
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Handler
 import android.os.Looper
 import com.skadi.myvu.bleclient.util.BluetoothUtils
@@ -63,6 +66,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
     fun removeListener() {
         this.listener = null
+    }
+
+    init {
+        registerBondReceiver()
     }
 
     fun currentState(): BleState = state
@@ -136,6 +143,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     fun destroy() {
         disconnect()
         removeListener()
+        unregisterBondReceiver()
     }
 
     fun send(payload: ByteArray, withResponse: Boolean = false): Boolean = protocol.send(payload, withResponse)
@@ -187,6 +195,24 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             }
             if (!handshakeCommandSent) {
                 sendStartCommand(gatt, reason = "mtu_changed")
+            }
+        }
+    }
+
+    private val bondReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action != BluetoothDevice.ACTION_BOND_STATE_CHANGED) return
+            val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+            val bondState = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR)
+            val prevState = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR)
+            val deviceAddress = device?.address ?: "unknown"
+            logger.logInfo(TAG, "Bond state changed for $deviceAddress prev=$prevState new=$bondState")
+            if (device != null && device == gatt?.device) {
+                when (bondState) {
+                    BluetoothDevice.BOND_BONDING -> logger.logInfo(TAG, "System bonding in progress")
+                    BluetoothDevice.BOND_BONDED -> logger.logInfo(TAG, "System bonding completed; keeping session alive")
+                    BluetoothDevice.BOND_NONE -> logger.logInfo(TAG, "Bond removed or failed")
+                }
             }
         }
     }
@@ -550,6 +576,17 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         enableCccdQueue.clear()
         totalNotifyCharacteristics = 0
         setState(BleState.Idle)
+    }
+
+    private fun registerBondReceiver() {
+        runCatching {
+            context.registerReceiver(bondReceiver, IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED))
+        }.onFailure { logger.logError(TAG, "Failed to register bond receiver: $it") }
+    }
+
+    private fun unregisterBondReceiver() {
+        runCatching { context.unregisterReceiver(bondReceiver) }
+            .onFailure { logger.logError(TAG, "Failed to unregister bond receiver: $it") }
     }
 
     private fun clearQueue() {
