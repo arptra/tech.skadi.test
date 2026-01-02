@@ -49,6 +49,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var indicateCharacteristics: List<BluetoothGattCharacteristic> = emptyList()
     private var pendingCccdWrites = 0
     private var handshakeCommandSent = false
+    private var startCommandPending = false
     private var awaitingFirstNotify = false
     private var mtuRequested = false
     private var mtuReady = false
@@ -127,6 +128,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         protocol.clear()
         pendingCccdWrites = 0
         handshakeCommandSent = false
+        startCommandPending = false
         connectRetries = 0
         setState(BleState.Disconnected)
     }
@@ -167,7 +169,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 TAG,
                 "RX $packetType (${characteristic.uuid} len=${value.size}): ${HexUtils.toHex(value)} utf8=$utf8"
             )
-            if (awaitingFirstNotify) {
+            if (awaitingFirstNotify || state is BleState.HandshakeSent || state is BleState.WaitFirstNotify) {
                 awaitingFirstNotify = false
                 stopTimeout(TIMEOUT_FIRST_NOTIFY)
                 logger.logInfo(
@@ -408,8 +410,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
             return
         }
-        if (handshakeCommandSent) {
-            logger.logInfo(TAG, "Start command already sent; skipping duplicate reason=$reason")
+        if (handshakeCommandSent || startCommandPending) {
+            logger.logInfo(TAG, "Start command already scheduled/sent; skipping duplicate reason=$reason")
             return
         }
         // Write with NO_RESPONSE matches the characteristic capabilities (WRITE_NR only) and avoids
@@ -421,23 +423,26 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 "writeType=$writeType payload=${HexUtils.toHex(START_COMMAND)}"
         )
         handshakeCommandSent = true
-        awaitingFirstNotify = true
+        startCommandPending = true
         setState(BleState.HandshakeSent)
         enqueueCharacteristicWrite(gatt, controlChar, START_COMMAND, withResponse = false, forcedWriteType = writeType)
-        setState(BleState.WaitFirstNotify)
-        startTimeout(TIMEOUT_FIRST_NOTIFY, FIRST_NOTIFY_TIMEOUT_MS) {
-            awaitingFirstNotify = false
-            setState(BleState.Error(BleErrorReason.FIRST_NOTIFY_TIMEOUT))
-        }
     }
 
     private fun handleCharacteristicWrite(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
-        if (handshakeCommandSent && characteristic.uuid == protocol.writeCharacteristic?.uuid) {
+        if (startCommandPending && characteristic.uuid == protocol.writeCharacteristic?.uuid) {
+            startCommandPending = false
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 logger.logInfo(TAG, "Handshake write acknowledged status=$status")
+                awaitingFirstNotify = true
+                setState(BleState.WaitFirstNotify)
+                startTimeout(TIMEOUT_FIRST_NOTIFY, FIRST_NOTIFY_TIMEOUT_MS) {
+                    awaitingFirstNotify = false
+                    setState(BleState.Error(BleErrorReason.FIRST_NOTIFY_TIMEOUT))
+                }
             } else {
                 stopTimeout(TIMEOUT_FIRST_NOTIFY)
                 awaitingFirstNotify = false
+                handshakeCommandSent = false
                 setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
             }
         }
@@ -490,6 +495,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                         stopTimeout(TIMEOUT_FIRST_NOTIFY)
                         setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
                         awaitingFirstNotify = false
+                        startCommandPending = false
+                        handshakeCommandSent = false
                     }
                 }
                 if (!started) {
@@ -513,6 +520,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         protocol.clear()
         pendingCccdWrites = 0
         handshakeCommandSent = false
+        startCommandPending = false
         awaitingFirstNotify = false
         mtuRequested = false
         mtuReady = false
@@ -530,6 +538,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         connectRetries = 0
         pendingCccdWrites = 0
         handshakeCommandSent = false
+        startCommandPending = false
         awaitingFirstNotify = false
         mtuRequested = false
         mtuReady = false
@@ -591,7 +600,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
      */
     fun onProtocolMessage(json: JSONObject, source: UUID) {
         logger.logInfo(TAG, "Protocol message from $source: $json")
-        if (awaitingFirstNotify) {
+        if (awaitingFirstNotify || state is BleState.HandshakeSent || state is BleState.WaitFirstNotify) {
             awaitingFirstNotify = false
             stopTimeout(TIMEOUT_FIRST_NOTIFY)
             logger.logInfo(TAG, "First notify (parsed) received from $source; finishing handshake")
@@ -611,7 +620,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val CONNECT_TIMEOUT_MS = 12_000L
         private const val DISCOVERY_TIMEOUT_MS = 10_000L
         // Wider window to account for indication delivery after MTU/CCCD setup.
-        private const val FIRST_NOTIFY_TIMEOUT_MS = 20_000L
+        private const val FIRST_NOTIFY_TIMEOUT_MS = 30_000L
         private const val RETRY_DELAY_MS = 800L
         private const val MAX_RETRIES = 3
         private const val TIMEOUT_SCAN = "timeout_scan"
