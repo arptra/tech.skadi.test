@@ -50,6 +50,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var operationInProgress = false
     private var bondReceiverRegistered = false
     private var bondTimeoutArmed = false
+    private var totalNotifyCharacteristics = 0
 
     fun setListener(listener: Listener) {
         this.listener = listener
@@ -232,17 +233,15 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         val bondState = targetDevice?.bondState
         logger.logInfo(TAG, "Bond state at discovery=${bondStateString(bondState)}")
         val service = gatt.getService(UUID.fromString(SERVICE_UUID))
-        val notifyChar = service?.getCharacteristic(UUID.fromString(NOTIFY_UUID))
         val controlChar = service?.getCharacteristic(UUID.fromString(CONTROL_UUID))
-        val systemNotifyChar = service?.getCharacteristic(UUID.fromString(SYSTEM_NOTIFY_UUID))
-        if (service == null || notifyChar == null || controlChar == null) {
+        if (service == null || controlChar == null) {
             logger.logError(TAG, "Required service/characteristics missing")
             setState(BleState.Error(BleErrorReason.SERVICE_DISCOVERY_FAILED))
             disconnect()
             return
         }
         protocol.gatt = gatt
-        protocol.notifyCharacteristic = notifyChar
+        protocol.notifyCharacteristic = service.getCharacteristic(UUID.fromString(NOTIFY_UUID))
         protocol.writeCharacteristic = controlChar
         logGattDump(gatt.services)
 
@@ -252,12 +251,18 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         enableCccdQueue.clear()
         pendingCccdWrites = 0
 
-        val notifyDescriptors = listOfNotNull(
-            buildCccdDescriptor(gatt, notifyChar, "vendor_notify"),
-            buildCccdDescriptor(gatt, controlChar, "vendor_control"),
-            systemNotifyChar?.let { buildCccdDescriptor(gatt, it, "system_notify") }
+        val notifyCharacteristics = service.characteristics.filter {
+            it.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0
+        }
+        totalNotifyCharacteristics = notifyCharacteristics.size
+        logger.logInfo(
+            TAG,
+            "Notify-capable chars (${notifyCharacteristics.size}): ${notifyCharacteristics.joinToString { it.uuid.toString() }}"
         )
-        notifyDescriptors.forEach { enqueueCccd(it) }
+
+        notifyCharacteristics.forEach { characteristic ->
+            buildCccdDescriptor(gatt, characteristic, "notify_${characteristic.uuid}")?.let { enqueueCccd(it) }
+        }
 
         pendingCccdWrites = enableCccdQueue.size
         if (pendingCccdWrites == 0) {
@@ -308,6 +313,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     }
 
     private fun onAllCccdsEnabled(gatt: BluetoothGatt) {
+        logger.logInfo(TAG, "All notifications enabled ($totalNotifyCharacteristics chars)")
         if (!handshakeCommandSent) {
             sendStartCommand(gatt, reason = "cccd_complete")
         }
@@ -462,6 +468,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         applicationInitSent = false
         firstNotifyAttempts = 0
         enableCccdQueue.clear()
+        totalNotifyCharacteristics = 0
     }
 
     private fun resetConnection() {
@@ -480,6 +487,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         bondTimeoutArmed = false
         firstNotifyAttempts = 0
         enableCccdQueue.clear()
+        totalNotifyCharacteristics = 0
         setState(BleState.Idle)
         unregisterBondReceiver()
     }
@@ -578,6 +586,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         if (awaitingFirstNotify) {
             awaitingFirstNotify = false
             stopTimeout(TIMEOUT_FIRST_NOTIFY)
+            logger.logInfo(TAG, "First notify received from $source; finishing handshake")
             setState(BleState.HandshakeDone)
             val bondState = targetDevice?.bondState
             if (bondState == BluetoothDevice.BOND_BONDING) {
