@@ -670,7 +670,11 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         quietHoldActive = false
         logger.logInfo(TAG, "Protocol session init complete ($reason); channel ready for commands")
         setState(BleState.ReadyForCommands)
-        scheduleStageTwoCccd(gatt)
+        if (AUTO_ENABLE_STAGE2_CCCD) {
+            scheduleStageTwoCccd(gatt)
+        } else {
+            logger.logInfo(TAG, "Stage2 CCCD auto-enable disabled; keeping link quiet")
+        }
     }
 
     private fun sendVendorAckEcho() {
@@ -967,6 +971,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val STAGE2_CCCD_DELAY_MS = 500L
         private const val KEY_LAST_TARGET = "last_target_mac"
         private const val STATUS_TERMINATE_LOCAL_HOST = 22
+        private const val AUTO_ENABLE_STAGE2_CCCD = false
     }
 
     private sealed class Operation {
