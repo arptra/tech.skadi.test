@@ -85,6 +85,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var heartbeatActive = false
     private var readyForCommandsReached = false
     private var awaitingClassicHandover = false
+    private var classicStartInitiated = false
+    private var readyForCommandsTimestampMs: Long? = null
     private var lastTx: PacketLog? = null
     private var lastRx: PacketLog? = null
     private var lastDisconnectRequestedReason: String? = null
@@ -341,24 +343,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 stopHeartbeatLoop()
                 stopTimeouts()
                 clearQueue()
-                val mac = gatt.device?.address
-                if (mac != null) {
-                    classicConnectionManager.startConnection(
-                        mac,
-                        onConnected = {
-                            logger.logInfo(TAG, "Classic Bluetooth connection established to $mac")
-                        },
-                        onFailed = { throwable ->
-                            logger.logError(TAG, "Classic handover failed", throwable)
-                            cleanupAfterDisconnect()
-                            setState(BleState.Disconnected)
-                        }
-                    )
-                } else {
-                    logger.logError(TAG, "Missing device MAC for classic handover")
-                    cleanupAfterDisconnect()
-                    setState(BleState.Disconnected)
-                }
                 val gattInstance = gatt
                 mainHandler.postDelayed({
                     gattInstance?.let { scheduleGattClose(it) }
@@ -711,9 +695,11 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         quietHoldActive = false
         logger.logInfo(TAG, "Protocol session init complete ($reason); channel ready for commands")
         setState(BleState.ReadyForCommands)
+        readyForCommandsTimestampMs = SystemClock.elapsedRealtime()
         awaitingClassicHandover = true
         readyForCommandsReached = true
         stopHeartbeatLoop()
+        startClassicHandoverIfPossible("ready_for_commands")
         if (AUTO_ENABLE_STAGE2_CCCD) {
             scheduleStageTwoCccd(gatt)
         } else {
@@ -941,6 +927,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         lastDisconnectStack = null
         awaitingClassicHandover = false
         readyForCommandsReached = false
+        classicStartInitiated = false
+        readyForCommandsTimestampMs = null
     }
 
     private fun resetConnection() {
@@ -976,6 +964,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         lastDisconnectStack = null
         awaitingClassicHandover = false
         readyForCommandsReached = false
+        classicStartInitiated = false
+        readyForCommandsTimestampMs = null
         setState(BleState.Idle)
     }
 
@@ -1124,5 +1114,33 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         if (props and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0) parts += "NOTIFY"
         if (props and BluetoothGattCharacteristic.PROPERTY_INDICATE != 0) parts += "INDICATE"
         return parts.joinToString(",")
+    }
+
+    private fun startClassicHandoverIfPossible(trigger: String) {
+        if (classicStartInitiated) return
+        val mac = gatt?.device?.address
+        if (mac.isNullOrEmpty()) {
+            logger.logError(TAG, "Cannot start classic handover without device MAC (trigger=$trigger)")
+            return
+        }
+        classicStartInitiated = true
+        val readyTs = readyForCommandsTimestampMs ?: SystemClock.elapsedRealtime()
+        val connectCallTs = SystemClock.elapsedRealtime()
+        val deltaMs = connectCallTs - readyTs
+        logger.logInfo(
+            TAG,
+            "Starting classic handover (trigger=$trigger) readyTs=$readyTs connectCallTs=$connectCallTs deltaMs=$deltaMs"
+        )
+        classicConnectionManager.startConnection(
+            mac,
+            onConnected = {
+                logger.logInfo(TAG, "Classic Bluetooth connection established to $mac")
+            },
+            onFailed = { throwable ->
+                logger.logError(TAG, "Classic handover failed", throwable)
+                cleanupAfterDisconnect()
+                setState(BleState.Disconnected)
+            }
+        )
     }
 }
