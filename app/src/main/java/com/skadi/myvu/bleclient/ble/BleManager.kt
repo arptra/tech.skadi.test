@@ -77,6 +77,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var quietHoldActive = false
     private var stageTwoCccdScheduled = false
     private var enablingStageTwo = false
+    private var clientReadyScheduled = false
+    private var clientReadySent = false
+    private var clientReadyRunnable: Runnable? = null
     private var lastTx: PacketLog? = null
     private var lastRx: PacketLog? = null
     private var lastDisconnectRequestedReason: String? = null
@@ -604,6 +607,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 TAG,
                 "First vendor packet after start command (${characteristic.uuid} len=${payload.size}): ${HexUtils.toHex(payload)}"
             )
+            scheduleClientReadyFrame()
             onHandshakeCompleteAndReady()
             return
         }
@@ -672,6 +676,35 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         } else {
             logger.logInfo(TAG, "Stage2 CCCD auto-enable disabled; keeping link quiet")
         }
+    }
+
+    private fun scheduleClientReadyFrame() {
+        if (clientReadySent || clientReadyScheduled) return
+        val gattInstance = gatt ?: return
+        val controlChar = protocol.writeCharacteristic ?: return
+        val writeType = selectWriteType(controlChar, withResponse = false)
+        clientReadyScheduled = true
+        val runnable = Runnable {
+            clientReadyScheduled = false
+            if (clientReadySent) return@Runnable
+            if (state !is BleState.HandshakeSent && state !is BleState.ConnectedReady && state !is BleState.ProtocolSessionInit && state !is BleState.ReadyForCommands) {
+                return@Runnable
+            }
+            logger.logInfo(
+                TAG,
+                "Sending client-ready frame to ${controlChar.uuid} writeType=$writeType payload=${HexUtils.toHex(CLIENT_READY_FRAME)}"
+            )
+            clientReadySent = true
+            enqueueCharacteristicWrite(
+                gattInstance,
+                controlChar,
+                CLIENT_READY_FRAME,
+                withResponse = false,
+                forcedWriteType = writeType
+            )
+        }
+        clientReadyRunnable = runnable
+        mainHandler.postDelayed(runnable, CLIENT_READY_DELAY_MS)
     }
 
     fun enqueueDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor): Boolean {
@@ -804,6 +837,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         quietHoldActive = false
         stageTwoCccdScheduled = false
         enablingStageTwo = false
+        clientReadyScheduled = false
+        clientReadySent = false
+        clientReadyRunnable?.let { mainHandler.removeCallbacks(it) }
+        clientReadyRunnable = null
         stopTimeout(TIMEOUT_PROTOCOL_INIT)
         enableCccdQueue.clear()
         totalNotifyCharacteristics = 0
@@ -831,6 +868,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         quietHoldActive = false
         stageTwoCccdScheduled = false
         enablingStageTwo = false
+        clientReadyScheduled = false
+        clientReadySent = false
+        clientReadyRunnable?.let { mainHandler.removeCallbacks(it) }
+        clientReadyRunnable = null
         stopTimeout(TIMEOUT_PROTOCOL_INIT)
         enableCccdQueue.clear()
         totalNotifyCharacteristics = 0
@@ -945,8 +986,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val TIMEOUT_PROTOCOL_INIT = "timeout_protocol_init"
         private const val TIMEOUT_STAGE2_CCCD = "timeout_stage2_cccd"
         private val START_COMMAND = byteArrayOf(0x00, 0x00, 0x06, 0x11, 0x01, 0x00)
+        private val CLIENT_READY_FRAME = byteArrayOf(0x00, 0x00, 0x06, 0x11, 0x02, 0x00)
         private const val PROTOCOL_INIT_HOLD_MS = 1_000L
         private const val STAGE2_CCCD_DELAY_MS = 500L
+        private const val CLIENT_READY_DELAY_MS = 100L
         private const val KEY_LAST_TARGET = "last_target_mac"
         private const val STATUS_TERMINATE_LOCAL_HOST = 22
         private const val AUTO_ENABLE_STAGE2_CCCD = false
