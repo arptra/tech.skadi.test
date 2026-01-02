@@ -353,6 +353,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             return
         }
         val service = gatt.getService(UUID.fromString(SERVICE_UUID))
+        val rxChar = service?.getCharacteristic(UUID.fromString(RX_UUID))
         val controlChar = service?.getCharacteristic(UUID.fromString(CONTROL_UUID))
         if (service == null || controlChar == null) {
             logger.logError(TAG, "Required service/characteristics missing")
@@ -376,7 +377,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         firstVendorPacket = null
         quietHoldActive = false
 
-        val rxChar = service.getCharacteristic(UUID.fromString(RX_UUID))
         val notifyCandidates = listOfNotNull(
             rxChar,
             service.getCharacteristic(UUID.fromString(RX_ALT_UUID)),
