@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity(), BleManager.Listener {
             stateValue.text = state.label
             connectButton.isEnabled = state is BleState.DeviceFound
             bondButton.isEnabled = state is BleState.HandshakeDone || state is BleState.WaitingForSystemPairing || state is BleState.Bonded
-            disconnectButton.isEnabled = state is BleState.BleConnected || state is BleState.ServicesDiscovering || state is BleState.HandshakeWriting || state is BleState.HandshakeDone || state is BleState.WaitingForSystemPairing || state is BleState.Bonded || state is BleState.Connected
+            disconnectButton.isEnabled = state is BleState.BleConnected || state is BleState.ServicesDiscovering || state is BleState.HandshakeWriting || state is BleState.HandshakeDone || state is BleState.WaitingForSystemPairing || state is BleState.Bonded || state is BleState.ApplicationInit || state is BleState.ApplicationReady
             if (state is BleState.Error && state.reason == BleErrorReason.NO_MATCHING_ADVERTISING) {
                 connectButton.isEnabled = false
             }

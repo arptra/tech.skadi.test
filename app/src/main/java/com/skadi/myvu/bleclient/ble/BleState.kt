@@ -14,7 +14,8 @@ sealed class BleState(val label: String) {
     object HandshakeDone : BleState("HANDSHAKE_DONE")
     object WaitingForSystemPairing : BleState("WAITING_FOR_SYSTEM_PAIRING")
     object Bonded : BleState("BONDED")
-    object Connected : BleState("CONNECTED")
+    object ApplicationInit : BleState("APPLICATION_INIT")
+    object ApplicationReady : BleState("APPLICATION_READY")
     object Disconnected : BleState("DISCONNECTED")
     data class Error(val reason: BleErrorReason) : BleState("ERROR: ${reason.name}")
 }

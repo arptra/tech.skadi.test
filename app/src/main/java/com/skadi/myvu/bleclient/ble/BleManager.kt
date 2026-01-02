@@ -17,6 +17,7 @@ import com.skadi.myvu.bleclient.util.BluetoothUtils
 import com.skadi.myvu.bleclient.util.HexUtils
 import java.util.LinkedList
 import java.util.UUID
+import kotlin.text.Charsets
 
 class BleManager(private val context: Context, private val logger: BleLogger) {
     interface Listener {
@@ -41,6 +42,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var pendingCccdWrites = 0
     private var handshakeCommandSent = false
     private var awaitingFirstNotify = false
+    private var shouldPerformPairingHandshake = true
+    private var applicationInitPending = false
+    private var applicationInitSent = false
     private var operationInProgress = false
     private var bondReceiverRegistered = false
     private var bondTimeoutArmed = false
@@ -110,7 +114,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             logger.logInfo(TAG, "Already bonded")
             stopTimeout(TIMEOUT_HANDSHAKE)
             setState(BleState.Bonded)
-            setState(BleState.Connected)
+            startApplicationInit("manual_bond_request_already_bonded")
             return
         }
         val started = device.createBond()
@@ -173,6 +177,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 stopTimeout(TIMEOUT_HANDSHAKE)
                 setState(BleState.HandshakeDone)
                 setState(BleState.WaitingForSystemPairing)
+            } else if (applicationInitPending) {
+                logger.logInfo(TAG, "Application-init response len=${value.size} ${HexUtils.toHex(value)}")
+                applicationInitPending = false
+                setState(BleState.ApplicationReady)
             }
         }
 
@@ -228,6 +236,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             disconnect()
             return
         }
+        val bondState = targetDevice?.bondState
+        logger.logInfo(TAG, "Bond state at discovery=${bondStateString(bondState)}")
         val service = gatt.getService(UUID.fromString(SERVICE_UUID))
         val notifyChar = service?.getCharacteristic(UUID.fromString(NOTIFY_UUID))
         val controlChar = service?.getCharacteristic(UUID.fromString(CONTROL_UUID))
@@ -257,9 +267,16 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         }
         pendingCccdWrites = 0
         handshakeCommandSent = false
+        shouldPerformPairingHandshake = bondState != BluetoothDevice.BOND_BONDED
+        if (shouldPerformPairingHandshake) {
+            setState(BleState.HandshakeWriting)
+            logger.logInfo(TAG, "Using pairing handshake path (not bonded)")
+        } else {
+            setState(BleState.ApplicationInit)
+            logger.logInfo(TAG, "Skipping pairing handshake; already bonded")
+        }
         enqueueCccdWrite(gatt, descNotify)
         enqueueCccdWrite(gatt, descControl)
-        setState(BleState.HandshakeWriting)
     }
 
     private fun enqueueCccdWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor) {
@@ -286,21 +303,25 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             pendingCccdWrites--
         }
         if (pendingCccdWrites == 0 && !handshakeCommandSent) {
-            val controlChar = protocol.writeCharacteristic
-            if (controlChar != null) {
-                val writeType = selectWriteType(controlChar, withResponse = false)
-                logger.logInfo(
-                    TAG,
-                    "Sending start command to ${controlChar.uuid} props=${propString(controlChar.properties)} " +
-                        "writeType=$writeType payload=${HexUtils.toHex(START_COMMAND)}"
-                )
-                handshakeCommandSent = true
-                awaitingFirstNotify = true
-                enqueueCharacteristicWrite(gatt, controlChar, START_COMMAND, withResponse = false, forcedWriteType = writeType)
-                startTimeout(TIMEOUT_HANDSHAKE, HANDSHAKE_TIMEOUT_MS) {
-                    awaitingFirstNotify = false
-                    setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
+            if (shouldPerformPairingHandshake) {
+                val controlChar = protocol.writeCharacteristic
+                if (controlChar != null) {
+                    val writeType = selectWriteType(controlChar, withResponse = false)
+                    logger.logInfo(
+                        TAG,
+                        "Sending start command to ${controlChar.uuid} props=${propString(controlChar.properties)} " +
+                            "writeType=$writeType payload=${HexUtils.toHex(START_COMMAND)}"
+                    )
+                    handshakeCommandSent = true
+                    awaitingFirstNotify = true
+                    enqueueCharacteristicWrite(gatt, controlChar, START_COMMAND, withResponse = false, forcedWriteType = writeType)
+                    startTimeout(TIMEOUT_HANDSHAKE, HANDSHAKE_TIMEOUT_MS) {
+                        awaitingFirstNotify = false
+                        setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
+                    }
                 }
+            } else {
+                startApplicationInit("cccd_ready_already_bonded")
             }
         }
         onOperationComplete()
@@ -404,6 +425,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         pendingCccdWrites = 0
         handshakeCommandSent = false
         awaitingFirstNotify = false
+        shouldPerformPairingHandshake = true
+        applicationInitPending = false
+        applicationInitSent = false
     }
 
     private fun resetConnection() {
@@ -417,6 +441,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         pendingCccdWrites = 0
         handshakeCommandSent = false
         awaitingFirstNotify = false
+        shouldPerformPairingHandshake = true
+        applicationInitPending = false
+        applicationInitSent = false
         bondTimeoutArmed = false
         setState(BleState.Idle)
         unregisterBondReceiver()
@@ -484,6 +511,25 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         bondReceiverRegistered = false
     }
 
+    private fun startApplicationInit(reason: String) {
+        if (applicationInitSent) {
+            logger.logInfo(TAG, "Application init already sent; skipping reason=$reason")
+            return
+        }
+        setState(BleState.ApplicationInit)
+        val payload = APPLICATION_INIT_COMMAND.toByteArray(Charsets.UTF_8)
+        logger.logInfo(TAG, "Entering APPLICATION_INIT reason=$reason payload=${HexUtils.toHex(payload)}")
+        val sent = protocol.send(payload, withResponse = false)
+        applicationInitSent = sent
+        applicationInitPending = sent
+        if (!sent) {
+            logger.logError(TAG, "Failed to send application-init command")
+            setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
+        } else {
+            logger.logInfo(TAG, "Sending get_air_glass_info sent=$sent")
+        }
+    }
+
     private val bondReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action != BluetoothDevice.ACTION_BOND_STATE_CHANGED) return
@@ -502,7 +548,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                     stopTimeout(TIMEOUT_HANDSHAKE)
                     bondTimeoutArmed = false
                     setState(BleState.Bonded)
-                    setState(BleState.Connected)
+                    startApplicationInit("bond_broadcast")
                 }
                 BluetoothDevice.BOND_NONE -> {
                     if (prevExtra == BluetoothDevice.BOND_BONDING) {
@@ -520,6 +566,15 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         startTimeout(TIMEOUT_BOND, BOND_TIMEOUT_MS) {
             setState(BleState.Error(BleErrorReason.BONDING_TIMEOUT))
             disconnect()
+        }
+    }
+
+    private fun bondStateString(state: Int?): String {
+        return when (state) {
+            BluetoothDevice.BOND_NONE -> "BOND_NONE"
+            BluetoothDevice.BOND_BONDING -> "BOND_BONDING"
+            BluetoothDevice.BOND_BONDED -> "BOND_BONDED"
+            else -> "UNKNOWN"
         }
     }
 
@@ -542,6 +597,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val TIMEOUT_HANDSHAKE = "timeout_handshake"
         private const val TIMEOUT_BOND = "timeout_bond"
         private val START_COMMAND = byteArrayOf(0x00, 0x00, 0x06, 0x11, 0x01, 0x00)
+        private const val APPLICATION_INIT_COMMAND = "{\"action\":\"air_ota\",\"data\":{\"action\":\"get_air_glass_info\",\"value\":\"\"}}"
         private const val KEY_LAST_TARGET = "last_target_mac"
     }
 
