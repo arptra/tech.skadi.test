@@ -252,29 +252,12 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         enableCccdQueue.clear()
         pendingCccdWrites = 0
 
-        if (!enableNotifications(gatt, notifyChar)) {
-            setState(BleState.Error(BleErrorReason.CCCD_ENABLE_FAILED))
-            disconnect()
-            return
-        }
-        val descNotify = notifyChar.getDescriptor(UUID.fromString(CCCD_UUID))
-        if (descNotify == null) {
-            logger.logError(TAG, "CCCD descriptor missing for notify characteristic")
-            setState(BleState.Error(BleErrorReason.CCCD_ENABLE_FAILED))
-            disconnect()
-            return
-        }
-        enqueueCccd(descriptor = descNotify)
-
-        if (controlChar.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0) {
-            enableNotifications(gatt, controlChar)
-            controlChar.getDescriptor(UUID.fromString(CCCD_UUID))?.let { enqueueCccd(it) }
-        }
-
-        systemNotifyChar?.takeIf { it.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0 }?.let {
-            enableNotifications(gatt, it)
-            it.getDescriptor(UUID.fromString(CCCD_UUID))?.let { desc -> enqueueCccd(desc) }
-        }
+        val notifyDescriptors = listOfNotNull(
+            buildCccdDescriptor(gatt, notifyChar, "vendor_notify"),
+            buildCccdDescriptor(gatt, controlChar, "vendor_control"),
+            systemNotifyChar?.let { buildCccdDescriptor(gatt, it, "system_notify") }
+        )
+        notifyDescriptors.forEach { enqueueCccd(it) }
 
         pendingCccdWrites = enableCccdQueue.size
         if (pendingCccdWrites == 0) {
@@ -282,8 +265,30 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             disconnect()
             return
         }
+        logger.logInfo(TAG, "Total CCCD writes queued=$pendingCccdWrites")
         setState(BleState.HandshakeWriting)
         processNextCccdWrite(gatt)
+    }
+
+    private fun buildCccdDescriptor(
+        gatt: BluetoothGatt,
+        characteristic: BluetoothGattCharacteristic?,
+        label: String
+    ): BluetoothGattDescriptor? {
+        characteristic ?: return null.also {
+            logger.logError(TAG, "Missing $label characteristic when preparing CCCD")
+        }
+        val cccd = characteristic.getDescriptor(UUID.fromString(CCCD_UUID))
+        if (cccd == null) {
+            logger.logError(TAG, "CCCD descriptor missing for $label char=${characteristic.uuid}")
+            return null
+        }
+        val enabled = enableNotifications(gatt, characteristic)
+        if (!enabled) {
+            logger.logError(TAG, "Failed to enable notifications for $label char=${characteristic.uuid}")
+            return null
+        }
+        return cccd
     }
 
     private fun enqueueCccd(descriptor: BluetoothGattDescriptor) {
@@ -318,6 +323,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
     private fun handleDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
         if (status != BluetoothGatt.GATT_SUCCESS) {
+            logger.logError(TAG, "CCCD write failed for ${descriptor.characteristic.uuid} status=$status")
             setState(BleState.Error(BleErrorReason.CCCD_ENABLE_FAILED))
             disconnect()
             return
@@ -574,7 +580,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             stopTimeout(TIMEOUT_FIRST_NOTIFY)
             setState(BleState.HandshakeDone)
             val bondState = targetDevice?.bondState
-            if (bondState == BluetoothDevice.BOND_NONE || bondState == BluetoothDevice.BOND_BONDING) {
+            if (bondState == BluetoothDevice.BOND_BONDING) {
                 setState(BleState.WaitingForSystemPairing)
             }
             startApplicationInit("first_notify_received_${source}")
