@@ -142,7 +142,19 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     }
 
     fun requestBond() {
-        logger.logInfo(TAG, "Bonding is managed by the device; manual request ignored")
+        val device = gatt?.device ?: run {
+            logger.logInfo(TAG, "Bond request ignored: no active GATT")
+            return
+        }
+        if (device.bondState == BluetoothDevice.BOND_BONDED) {
+            logger.logInfo(TAG, "Bond request ignored: already bonded")
+            return
+        }
+        val started = device.createBond()
+        logger.logInfo(
+            TAG,
+            "Manual bond requested state=${state.label} bond=${device.bondState} started=$started"
+        )
     }
 
     fun disconnect() {
