@@ -440,9 +440,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             logger.logInfo(TAG, "Start command already sent; skipping duplicate reason=$reason")
             return
         }
-        // Use write-with-response even if WRITE_NR is advertised — logs show the glasses react only
-        // after seeing an acknowledged write. This avoids silent drops that led to FIRST_NOTIFY_TIMEOUT.
-        val writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+        // Write with NO_RESPONSE matches the characteristic capabilities (WRITE_NR only) and avoids
+        // GATT_WRITE_NOT_PERMITTED failures observed when forcing a response write type.
+        val writeType = selectWriteType(controlChar, withResponse = false)
         firstNotifyAttempts++
         val attempt = firstNotifyAttempts
         logger.logInfo(
