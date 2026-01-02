@@ -30,6 +30,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private val operationQueue: LinkedList<Operation> = LinkedList()
     private val timeouts = mutableMapOf<String, Runnable>()
     private val prefs = context.getSharedPreferences("ble_prefs", Context.MODE_PRIVATE)
+    private val enableCccdQueue: LinkedList<BluetoothGattDescriptor> = LinkedList()
 
     private var listener: Listener? = null
     private var scanner: BleScanner? = null
@@ -43,7 +44,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var pendingCccdWrites = 0
     private var handshakeCommandSent = false
     private var awaitingFirstNotify = false
-    private var shouldPerformPairingHandshake = true
+    private var firstNotifyAttempts = 0
     private var applicationInitPending = false
     private var applicationInitSent = false
     private var operationInProgress = false
@@ -115,7 +116,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             logger.logInfo(TAG, "Already bonded")
             stopTimeout(TIMEOUT_FIRST_NOTIFY)
             setState(BleState.Bonded)
-            startApplicationInit("manual_bond_request_already_bonded")
             return
         }
         val started = device.createBond()
@@ -174,12 +174,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, value: ByteArray) {
             val utf8 = runCatching { String(value, Charsets.UTF_8) }.getOrNull()
             logger.logInfo(TAG, "RX (${characteristic.uuid} len=${value.size}): ${HexUtils.toHex(value)} utf8=$utf8")
-            if (awaitingFirstNotify) {
-                awaitingFirstNotify = false
-                stopTimeout(TIMEOUT_FIRST_NOTIFY)
-                setState(BleState.HandshakeDone)
-                setState(BleState.WaitingForSystemPairing)
-            }
             protocol.onRx(value, characteristic.uuid)
         }
 
@@ -240,6 +234,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         val service = gatt.getService(UUID.fromString(SERVICE_UUID))
         val notifyChar = service?.getCharacteristic(UUID.fromString(NOTIFY_UUID))
         val controlChar = service?.getCharacteristic(UUID.fromString(CONTROL_UUID))
+        val systemNotifyChar = service?.getCharacteristic(UUID.fromString(SYSTEM_NOTIFY_UUID))
         if (service == null || notifyChar == null || controlChar == null) {
             logger.logError(TAG, "Required service/characteristics missing")
             setState(BleState.Error(BleErrorReason.SERVICE_DISCOVERY_FAILED))
@@ -251,35 +246,66 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         protocol.writeCharacteristic = controlChar
         logGattDump(gatt.services)
 
+        handshakeCommandSent = false
+        awaitingFirstNotify = false
+        firstNotifyAttempts = 0
+        enableCccdQueue.clear()
+        pendingCccdWrites = 0
+
         if (!enableNotifications(gatt, notifyChar)) {
-            setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
+            setState(BleState.Error(BleErrorReason.CCCD_ENABLE_FAILED))
             disconnect()
             return
         }
         val descNotify = notifyChar.getDescriptor(UUID.fromString(CCCD_UUID))
         if (descNotify == null) {
             logger.logError(TAG, "CCCD descriptor missing for notify characteristic")
-            setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
+            setState(BleState.Error(BleErrorReason.CCCD_ENABLE_FAILED))
             disconnect()
             return
         }
-        pendingCccdWrites = 0
-        handshakeCommandSent = false
-        shouldPerformPairingHandshake = bondState != BluetoothDevice.BOND_BONDED
-        if (shouldPerformPairingHandshake) {
-            setState(BleState.HandshakeWriting)
-            logger.logInfo(TAG, "Using pairing handshake path (not bonded)")
-        } else {
-            setState(BleState.ApplicationInit)
-            logger.logInfo(TAG, "Skipping pairing handshake; already bonded")
+        enqueueCccd(descriptor = descNotify)
+
+        if (controlChar.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0) {
+            enableNotifications(gatt, controlChar)
+            controlChar.getDescriptor(UUID.fromString(CCCD_UUID))?.let { enqueueCccd(it) }
         }
-        enqueueCccdWrite(gatt, descNotify)
+
+        systemNotifyChar?.takeIf { it.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0 }?.let {
+            enableNotifications(gatt, it)
+            it.getDescriptor(UUID.fromString(CCCD_UUID))?.let { desc -> enqueueCccd(desc) }
+        }
+
+        pendingCccdWrites = enableCccdQueue.size
+        if (pendingCccdWrites == 0) {
+            setState(BleState.Error(BleErrorReason.CCCD_ENABLE_FAILED))
+            disconnect()
+            return
+        }
+        setState(BleState.HandshakeWriting)
+        processNextCccdWrite(gatt)
     }
 
-    private fun enqueueCccdWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor) {
+    private fun enqueueCccd(descriptor: BluetoothGattDescriptor) {
+        logger.logInfo(TAG, "Queueing CCCD enable for char=${descriptor.characteristic.uuid} desc=${descriptor.uuid}")
         descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
-        pendingCccdWrites++
+        enableCccdQueue.add(descriptor)
+    }
+
+    private fun processNextCccdWrite(gatt: BluetoothGatt) {
+        val descriptor = enableCccdQueue.peekFirst()
+        if (descriptor == null) {
+            onAllCccdsEnabled(gatt)
+            return
+        }
+        logger.logInfo(TAG, "Writing CCCD for char=${descriptor.characteristic.uuid} desc=${descriptor.uuid}")
         enqueueDescriptorWrite(gatt, descriptor)
+    }
+
+    private fun onAllCccdsEnabled(gatt: BluetoothGatt) {
+        if (!handshakeCommandSent) {
+            sendStartCommand(gatt, reason = "cccd_complete")
+        }
     }
 
     private fun enableNotifications(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic): Boolean {
@@ -292,36 +318,56 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
     private fun handleDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
         if (status != BluetoothGatt.GATT_SUCCESS) {
-            setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
+            setState(BleState.Error(BleErrorReason.CCCD_ENABLE_FAILED))
             disconnect()
             return
         }
         if (pendingCccdWrites > 0) {
             pendingCccdWrites--
         }
-        if (pendingCccdWrites == 0 && !handshakeCommandSent) {
-            if (shouldPerformPairingHandshake) {
-                val controlChar = protocol.writeCharacteristic
-                if (controlChar != null) {
-                    val writeType = selectWriteType(controlChar, withResponse = false)
-                    logger.logInfo(
-                        TAG,
-                        "Sending start command to ${controlChar.uuid} props=${propString(controlChar.properties)} " +
-                            "writeType=$writeType payload=${HexUtils.toHex(START_COMMAND)}"
-                    )
-                    handshakeCommandSent = true
-                    awaitingFirstNotify = true
-                    enqueueCharacteristicWrite(gatt, controlChar, START_COMMAND, withResponse = false, forcedWriteType = writeType)
-                    startTimeout(TIMEOUT_FIRST_NOTIFY, FIRST_NOTIFY_TIMEOUT_MS) {
-                        awaitingFirstNotify = false
-                        setState(BleState.Error(BleErrorReason.FIRST_NOTIFY_TIMEOUT))
-                    }
-                }
-            } else {
-                startApplicationInit("cccd_ready_already_bonded")
-            }
+        if (enableCccdQueue.isNotEmpty()) {
+            enableCccdQueue.pollFirst()
+        }
+        if (enableCccdQueue.isNotEmpty()) {
+            processNextCccdWrite(gatt)
+        } else if (pendingCccdWrites == 0) {
+            onAllCccdsEnabled(gatt)
         }
         onOperationComplete()
+    }
+
+    /**
+     * Стартовая команда нужна при каждом подключении (даже после bonding), иначе очки молчат и не
+     * присылают JSON-уведомления. Мы повторяем попытку один раз, чтобы вывести их из pairing экрана
+     * без перезапуска всего соединения.
+     */
+    private fun sendStartCommand(gatt: BluetoothGatt, reason: String) {
+        val controlChar = protocol.writeCharacteristic
+        if (controlChar == null) {
+            logger.logError(TAG, "No control characteristic to send start command")
+            setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
+            return
+        }
+        val writeType = selectWriteType(controlChar, withResponse = false)
+        firstNotifyAttempts++
+        val attempt = firstNotifyAttempts
+        logger.logInfo(
+            TAG,
+            "Sending start command attempt=$attempt reason=$reason to ${controlChar.uuid} props=${propString(controlChar.properties)} " +
+                "writeType=$writeType payload=${HexUtils.toHex(START_COMMAND)}"
+        )
+        handshakeCommandSent = true
+        awaitingFirstNotify = true
+        enqueueCharacteristicWrite(gatt, controlChar, START_COMMAND, withResponse = false, forcedWriteType = writeType)
+        startTimeout(TIMEOUT_FIRST_NOTIFY, FIRST_NOTIFY_TIMEOUT_MS) {
+            awaitingFirstNotify = false
+            if (firstNotifyAttempts < MAX_FIRST_NOTIFY_ATTEMPTS) {
+                logger.logInfo(TAG, "First notify timeout; retrying start command attempt=${firstNotifyAttempts + 1}")
+                sendStartCommand(gatt, reason = "first_notify_retry")
+            } else {
+                setState(BleState.Error(BleErrorReason.FIRST_NOTIFY_TIMEOUT))
+            }
+        }
     }
 
     private fun handleCharacteristicWrite(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
@@ -406,9 +452,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         pendingCccdWrites = 0
         handshakeCommandSent = false
         awaitingFirstNotify = false
-        shouldPerformPairingHandshake = true
         applicationInitPending = false
         applicationInitSent = false
+        firstNotifyAttempts = 0
+        enableCccdQueue.clear()
     }
 
     private fun resetConnection() {
@@ -422,10 +469,11 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         pendingCccdWrites = 0
         handshakeCommandSent = false
         awaitingFirstNotify = false
-        shouldPerformPairingHandshake = true
         applicationInitPending = false
         applicationInitSent = false
         bondTimeoutArmed = false
+        firstNotifyAttempts = 0
+        enableCccdQueue.clear()
         setState(BleState.Idle)
         unregisterBondReceiver()
     }
@@ -525,7 +573,11 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             awaitingFirstNotify = false
             stopTimeout(TIMEOUT_FIRST_NOTIFY)
             setState(BleState.HandshakeDone)
-            setState(BleState.WaitingForSystemPairing)
+            val bondState = targetDevice?.bondState
+            if (bondState == BluetoothDevice.BOND_NONE || bondState == BluetoothDevice.BOND_BONDING) {
+                setState(BleState.WaitingForSystemPairing)
+            }
+            startApplicationInit("first_notify_received_${source}")
         }
         if (applicationInitPending) {
             applicationInitPending = false
@@ -552,7 +604,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                     stopTimeout(TIMEOUT_FIRST_NOTIFY)
                     bondTimeoutArmed = false
                     setState(BleState.Bonded)
-                    startApplicationInit("bond_broadcast")
                 }
                 BluetoothDevice.BOND_NONE -> {
                     if (prevExtra == BluetoothDevice.BOND_BONDING) {
@@ -587,6 +638,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val SERVICE_UUID = "00000bd1-0000-1000-8000-00805f9b34fb"
         private const val NOTIFY_UUID = "00002021-0000-1000-8000-00805f9b34fb"
         private const val CONTROL_UUID = "00002020-0000-1000-8000-00805f9b34fb"
+        private const val SYSTEM_NOTIFY_UUID = "00001001-0000-1000-8000-00805f9b34fb"
         private const val CCCD_UUID = "00002902-0000-1000-8000-00805f9b34fb"
         private const val SCAN_TIMEOUT_MS = 25_000L
         private const val CONNECT_TIMEOUT_MS = 12_000L
@@ -596,6 +648,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val BOND_TIMEOUT_MS = 60_000L
         private const val RETRY_DELAY_MS = 800L
         private const val MAX_RETRIES = 3
+        private const val MAX_FIRST_NOTIFY_ATTEMPTS = 2
         private const val TIMEOUT_SCAN = "timeout_scan"
         private const val TIMEOUT_CONNECT = "timeout_connect"
         private const val TIMEOUT_DISCOVERY = "timeout_discovery"
