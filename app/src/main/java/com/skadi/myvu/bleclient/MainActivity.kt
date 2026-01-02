@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity(), BleManager.Listener {
             stateValue.text = state.label
             connectButton.isEnabled = state is BleState.Idle || state is BleState.Scanning || state is BleState.Ready || (state is BleState.Error && state.reason != BleErrorReason.NO_MATCHING_ADVERTISING)
             bondButton.isEnabled = false
-            disconnectButton.isEnabled = state is BleState.Connecting || state is BleState.ServicesDiscovering || state is BleState.EnablingNotifications || state is BleState.MtuNegotiation || state is BleState.HandshakeSent || state is BleState.WaitFirstNotify || state is BleState.Ready
+            disconnectButton.isEnabled = state is BleState.Connecting || state is BleState.ServicesDiscovering || state is BleState.EnablingNotifications || state is BleState.MtuNegotiation || state is BleState.HandshakeSent || state is BleState.Ready
         }
     }
 
