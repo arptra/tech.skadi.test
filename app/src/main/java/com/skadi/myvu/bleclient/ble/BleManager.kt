@@ -58,7 +58,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var operationInProgress = false
     private var totalNotifyCharacteristics = 0
     private var firstNotifyReceived = false
-    private var postHandshakeCommandSent = false
 
     fun setListener(listener: Listener) {
         this.listener = listener
@@ -180,6 +179,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 "RX $packetType (${characteristic.uuid} len=${value.size} @${timestamp}): ${HexUtils.toHex(value)} utf8=$utf8"
             )
             handleFirstVendorPacket(characteristic, value)
+            handleProtocolInitProgress(characteristic)
             protocol.onRx(value, characteristic.uuid)
         }
 
@@ -247,7 +247,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             gatt.discoverServices()
         } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
             logger.logInfo(TAG, "Disconnected status=$status")
-            val tolerateLocalClose = firstNotifyReceived && status == STATUS_TERMINATE_LOCAL_HOST
+            val readyPhase = state is BleState.ConnectedReady || state is BleState.ProtocolSessionInit || state is BleState.ReadyForCommands
+            val tolerateLocalClose = (firstNotifyReceived || readyPhase) && status == STATUS_TERMINATE_LOCAL_HOST
             if (state !is BleState.Disconnected && state !is BleState.Idle && !tolerateLocalClose) {
                 setState(BleState.Error(BleErrorReason.GATT_CONNECT_FAILED))
             } else {
@@ -450,7 +451,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 "writeType=$writeType payload=${HexUtils.toHex(START_COMMAND)}"
         )
         firstNotifyReceived = false
-        postHandshakeCommandSent = false
         handshakeCommandSent = true
         startCommandPending = true
         setState(BleState.HandshakeSent)
@@ -513,6 +513,14 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         }
     }
 
+    private fun handleProtocolInitProgress(characteristic: BluetoothGattCharacteristic) {
+        if (!firstNotifyReceived) return
+        if (state !is BleState.ProtocolSessionInit) return
+        if (!isVendorNotifyCharacteristic(characteristic)) return
+        logger.logInfo(TAG, "Vendor packet during PROTOCOL_SESSION_INIT; promoting to READY_FOR_COMMANDS")
+        promoteReadyForCommands("vendor_notify")
+    }
+
     private fun isVendorNotifyCharacteristic(characteristic: BluetoothGattCharacteristic): Boolean {
         val vendorUuid = vendorService?.uuid
         return vendorUuid != null &&
@@ -521,35 +529,27 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             (BluetoothGattCharacteristic.PROPERTY_NOTIFY or BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0
     }
 
-    private fun sendPostHandshakeKeepAlive() {
-        if (postHandshakeCommandSent) return
-        val gattInstance = gatt
-        val writeChar = protocol.writeCharacteristic
-        if (gattInstance == null || writeChar == null) {
-            logger.logInfo(TAG, "Cannot send post-handshake keep-alive: missing gatt or write characteristic")
-            return
-        }
-        val writeType = selectWriteType(writeChar, withResponse = false)
-        logger.logInfo(
-            TAG,
-            "Sending post-handshake keep-alive to ${writeChar.uuid} len=${POST_HANDSHAKE_PING.size}" +
-                " payload=${HexUtils.toHex(POST_HANDSHAKE_PING)}"
-        )
-        postHandshakeCommandSent = true
-        enqueueCharacteristicWrite(
-            gattInstance,
-            writeChar,
-            POST_HANDSHAKE_PING,
-            withResponse = false,
-            forcedWriteType = writeType
-        )
-    }
-
     private fun onHandshakeCompleteAndReady() {
-        if (state !is BleState.ConnectedReady) {
+        if (state !is BleState.ConnectedReady && state !is BleState.ProtocolSessionInit && state !is BleState.ReadyForCommands) {
             setState(BleState.ConnectedReady)
         }
-        sendPostHandshakeKeepAlive()
+        beginProtocolSessionInit()
+    }
+
+    private fun beginProtocolSessionInit() {
+        if (state is BleState.ProtocolSessionInit || state is BleState.ReadyForCommands) return
+        setState(BleState.ProtocolSessionInit)
+        startTimeout(TIMEOUT_PROTOCOL_INIT, PROTOCOL_INIT_HOLD_MS) {
+            logger.logInfo(TAG, "Protocol session hold elapsed; promoting to READY_FOR_COMMANDS")
+            promoteReadyForCommands("hold_elapsed")
+        }
+    }
+
+    private fun promoteReadyForCommands(reason: String) {
+        stopTimeout(TIMEOUT_PROTOCOL_INIT)
+        if (state is BleState.ReadyForCommands) return
+        logger.logInfo(TAG, "Protocol session init complete ($reason); channel ready for commands")
+        setState(BleState.ReadyForCommands)
     }
 
     fun enqueueDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor): Boolean {
@@ -625,7 +625,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         mtuRequested = false
         mtuReady = false
         firstNotifyReceived = false
-        postHandshakeCommandSent = false
+        stopTimeout(TIMEOUT_PROTOCOL_INIT)
         enableCccdQueue.clear()
         totalNotifyCharacteristics = 0
     }
@@ -644,7 +644,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         mtuRequested = false
         mtuReady = false
         firstNotifyReceived = false
-        postHandshakeCommandSent = false
+        stopTimeout(TIMEOUT_PROTOCOL_INIT)
         enableCccdQueue.clear()
         totalNotifyCharacteristics = 0
         setState(BleState.Idle)
@@ -732,9 +732,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val TIMEOUT_SCAN = "timeout_scan"
         private const val TIMEOUT_CONNECT = "timeout_connect"
         private const val TIMEOUT_DISCOVERY = "timeout_discovery"
+        private const val TIMEOUT_PROTOCOL_INIT = "timeout_protocol_init"
         private val START_COMMAND = byteArrayOf(0x00, 0x00, 0x06, 0x11, 0x01, 0x00)
-        private val POST_HANDSHAKE_PING =
-            """{"action":"air_ota","data":{"action":"get_air_glass_info","value":""}}""".toByteArray(Charsets.UTF_8)
+        private const val PROTOCOL_INIT_HOLD_MS = 3_000L
         private const val KEY_LAST_TARGET = "last_target_mac"
         private const val STATUS_TERMINATE_LOCAL_HOST = 22
     }
