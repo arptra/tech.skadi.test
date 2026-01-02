@@ -108,6 +108,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         val device = targetDevice ?: return logger.logError(TAG, "No target to bond")
         if (device.bondState == BluetoothDevice.BOND_BONDED) {
             logger.logInfo(TAG, "Already bonded")
+            stopTimeout(TIMEOUT_HANDSHAKE)
             setState(BleState.Bonded)
             setState(BleState.Connected)
             return
@@ -498,6 +499,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 }
                 BluetoothDevice.BOND_BONDED -> {
                     stopTimeout(TIMEOUT_BOND)
+                    stopTimeout(TIMEOUT_HANDSHAKE)
                     bondTimeoutArmed = false
                     setState(BleState.Bonded)
                     setState(BleState.Connected)
