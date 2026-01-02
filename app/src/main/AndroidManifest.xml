@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BleClient">
         <activity
+            android:name="com.skadi.myvu.bleclient.debug.DebugCommandsActivity"
+            android:exported="false" />
+        <activity
             android:name="com.skadi.myvu.bleclient.MainActivity"
             android:exported="true">
             <intent-filter>

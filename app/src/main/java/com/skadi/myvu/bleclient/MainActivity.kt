@@ -10,6 +10,8 @@ import com.skadi.myvu.bleclient.ble.BleErrorReason
 import com.skadi.myvu.bleclient.ble.BleLogger
 import com.skadi.myvu.bleclient.ble.BleManager
 import com.skadi.myvu.bleclient.ble.BleState
+import com.skadi.myvu.bleclient.debug.BleSessionHolder
+import com.skadi.myvu.bleclient.debug.DebugCommandsActivity
 import com.skadi.myvu.bleclient.util.BluetoothUtils
 import com.skadi.myvu.bleclient.util.PermissionUtils
 
@@ -21,6 +23,7 @@ class MainActivity : AppCompatActivity(), BleManager.Listener {
     private lateinit var connectButton: Button
     private lateinit var bondButton: Button
     private lateinit var disconnectButton: Button
+    private lateinit var debugButton: Button
     private lateinit var stateValue: TextView
     private lateinit var deviceValue: TextView
     private lateinit var rssiValue: TextView
@@ -42,6 +45,7 @@ class MainActivity : AppCompatActivity(), BleManager.Listener {
         connectButton = findViewById(R.id.connectButton)
         bondButton = findViewById(R.id.bondButton)
         disconnectButton = findViewById(R.id.disconnectButton)
+        debugButton = findViewById(R.id.debugButton)
         stateValue = findViewById(R.id.stateValue)
         deviceValue = findViewById(R.id.deviceValue)
         rssiValue = findViewById(R.id.rssiValue)
@@ -51,6 +55,8 @@ class MainActivity : AppCompatActivity(), BleManager.Listener {
         logger = BleLogger()
         bleManager = BleManager(this, logger)
         bleManager.setListener(this)
+        BleSessionHolder.logger = logger
+        BleSessionHolder.bleManager = bleManager
 
         logger.addListener(logListener)
 
@@ -79,6 +85,7 @@ class MainActivity : AppCompatActivity(), BleManager.Listener {
         connectButton.setOnClickListener { bleManager.connectToTarget() }
         bondButton.setOnClickListener { bleManager.requestBond() }
         disconnectButton.setOnClickListener { bleManager.disconnect() }
+        debugButton.setOnClickListener { startActivity(DebugCommandsActivity.intent(this)) }
 
         onStateChanged(bleManager.currentState())
     }
