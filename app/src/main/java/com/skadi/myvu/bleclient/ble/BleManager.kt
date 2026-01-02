@@ -56,6 +56,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var state: BleState = BleState.Idle
     private var connectRetries = 0
     private var vendorService: BluetoothGattService? = null
+    private var controlCharacteristic: BluetoothGattCharacteristic? = null
     private var notifyCharacteristicsStage1: List<BluetoothGattCharacteristic> = emptyList()
     private var indicateCharacteristicsStage1: List<BluetoothGattCharacteristic> = emptyList()
     private var notifyCharacteristicsStage2: List<BluetoothGattCharacteristic> = emptyList()
@@ -63,6 +64,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var pendingCccdWrites = 0
     private var handshakeCommandSent = false
     private var startCommandPending = false
+    private var startCommandTimestampMs: Long = 0L
     private var mtuRequested = false
     private var mtuReady = false
     private var operationInProgress = false
@@ -142,19 +144,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     }
 
     fun requestBond() {
-        val device = gatt?.device ?: run {
-            logger.logInfo(TAG, "Bond request ignored: no active GATT")
-            return
-        }
-        if (device.bondState == BluetoothDevice.BOND_BONDED) {
-            logger.logInfo(TAG, "Bond request ignored: already bonded")
-            return
-        }
-        val started = device.createBond()
-        logger.logInfo(
-            TAG,
-            "Manual bond requested state=${state.label} bond=${device.bondState} started=$started"
-        )
+        logger.logInfo(TAG, "Bond request ignored: bonding is disabled for this session")
     }
 
     fun disconnect() {
@@ -342,6 +332,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         val service = gatt.getService(UUID.fromString(SERVICE_UUID))
         val rxChar = service?.getCharacteristic(UUID.fromString(RX_UUID))
         val controlChar = service?.getCharacteristic(UUID.fromString(CONTROL_UUID))
+        val dataChar = service?.getCharacteristic(UUID.fromString(DATA_UUID))
         if (service == null || controlChar == null) {
             logger.logError(TAG, "Required service/characteristics missing")
             setState(BleState.Error(BleErrorReason.SERVICE_DISCOVERY_FAILED))
@@ -349,8 +340,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             return
         }
         protocol.gatt = gatt
+        controlCharacteristic = controlChar
         protocol.notifyCharacteristic = rxChar ?: service.getCharacteristic(UUID.fromString(NOTIFY_UUID))
-        protocol.writeCharacteristic = controlChar
+        protocol.writeCharacteristic = dataChar ?: controlChar
         vendorService = service
         logGattDump(gatt.services)
 
@@ -363,11 +355,12 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         enablingStageTwo = false
         firstVendorPacket = null
         quietHoldActive = false
+        startCommandTimestampMs = 0L
 
         val notifyCandidates = listOfNotNull(
             rxChar,
             service.getCharacteristic(UUID.fromString(RX_ALT_UUID)),
-            service.getCharacteristic(UUID.fromString(CONTROL_UUID)),
+            dataChar,
             service.getCharacteristic(UUID.fromString(NOTIFY_UUID)),
             service.getCharacteristic(UUID.fromString(EXTRA_NOTIFY_UUID)),
             service.getCharacteristic(UUID.fromString(SYS_NOTIFY_UUID))
@@ -524,7 +517,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
      * присылают JSON-уведомления. Отправляем один раз строго после MTU negotiation и включения CCCD.
      */
     private fun sendStartCommand(gatt: BluetoothGatt, reason: String) {
-        val controlChar = protocol.writeCharacteristic
+        val controlChar = controlCharacteristic
         if (controlChar == null) {
             logger.logError(TAG, "No control characteristic to send start command")
             setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
@@ -534,9 +527,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             logger.logInfo(TAG, "Start command already scheduled/sent; skipping duplicate reason=$reason")
             return
         }
-        // Write with NO_RESPONSE matches the characteristic capabilities (WRITE_NR only) and avoids
-        // GATT_WRITE_NOT_PERMITTED failures observed when forcing a response write type.
-        val writeType = selectWriteType(controlChar, withResponse = false)
+        val writeType = selectWriteType(controlChar, withResponse = true)
         logger.logInfo(
             TAG,
             "Sending start command reason=$reason to ${controlChar.uuid} props=${propString(controlChar.properties)} " +
@@ -545,16 +536,24 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         firstNotifyReceived = false
         handshakeCommandSent = true
         startCommandPending = true
+        startCommandTimestampMs = SystemClock.elapsedRealtime()
         setState(BleState.HandshakeSent)
-        enqueueCharacteristicWrite(gatt, controlChar, START_COMMAND, withResponse = false, forcedWriteType = writeType)
+        enqueueCharacteristicWrite(gatt, controlChar, START_COMMAND, withResponse = true, forcedWriteType = writeType)
+        setState(BleState.WaitFirstVendorNotify)
+        startTimeout(TIMEOUT_WAIT_FIRST_NOTIFY, WAIT_FIRST_NOTIFY_MS) {
+            logger.logError(TAG, "First vendor notify timeout after start command")
+            setState(BleState.Error(BleErrorReason.FIRST_VENDOR_NOTIFY_TIMEOUT))
+            requestDisconnect("first_vendor_notify_timeout", forceClose = true)
+        }
     }
 
     private fun handleCharacteristicWrite(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
-        if (startCommandPending && characteristic.uuid == protocol.writeCharacteristic?.uuid) {
+        if (startCommandPending && characteristic.uuid == controlCharacteristic?.uuid && START_COMMAND.contentEquals(characteristic.value)) {
             startCommandPending = false
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 logger.logInfo(TAG, "Handshake write acknowledged status=$status")
             } else {
+                stopTimeout(TIMEOUT_WAIT_FIRST_NOTIFY)
                 handshakeCommandSent = false
                 setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
             }
@@ -570,9 +569,12 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             firstNotifyReceived = true
             firstVendorPacket = payload.copyOf()
             vendorNotifyDuringInit = true
+            val elapsed = if (startCommandTimestampMs > 0) SystemClock.elapsedRealtime() - startCommandTimestampMs else null
+            stopTimeout(TIMEOUT_WAIT_FIRST_NOTIFY)
             logger.logInfo(
                 TAG,
-                "First vendor packet after start command (${characteristic.uuid} len=${payload.size}): ${HexUtils.toHex(payload)}"
+                "First vendor packet after start command (${characteristic.uuid} len=${payload.size}): ${HexUtils.toHex(payload)} " +
+                    "elapsedMs=${elapsed ?: "n/a"}"
             )
             scheduleClientReadyFrame()
             onHandshakeCompleteAndReady()
@@ -655,7 +657,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         val runnable = Runnable {
             clientReadyScheduled = false
             if (clientReadySent) return@Runnable
-            if (state !is BleState.HandshakeSent && state !is BleState.ConnectedReady && state !is BleState.ProtocolSessionInit && state !is BleState.ReadyForCommands) {
+            if (state !is BleState.HandshakeSent && state !is BleState.WaitFirstVendorNotify && state !is BleState.ConnectedReady && state !is BleState.ProtocolSessionInit && state !is BleState.ReadyForCommands) {
                 return@Runnable
             }
             logger.logInfo(
@@ -746,7 +748,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                     "TX ${op.characteristic.uuid} writeType=${op.writeType} len=${op.payload.size} payload=${HexUtils.toHex(op.payload)}"
                 )
                 val started = op.gatt.writeCharacteristic(op.characteristic)
-                if (handshakeCommandSent && op.characteristic.uuid == protocol.writeCharacteristic?.uuid && op.payload.contentEquals(START_COMMAND)) {
+                if (handshakeCommandSent && op.characteristic.uuid == controlCharacteristic?.uuid && op.payload.contentEquals(START_COMMAND)) {
                     logger.logInfo(
                         TAG,
                         "Start command write initiated started=$started writeType=${op.writeType}"
@@ -840,11 +842,15 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         clientReadySent = false
         clientReadyRunnable?.let { mainHandler.removeCallbacks(it) }
         clientReadyRunnable = null
+        stopTimeout(TIMEOUT_WAIT_FIRST_NOTIFY)
         stopTimeout(TIMEOUT_PROTOCOL_INIT)
         enableCccdQueue.clear()
         totalNotifyCharacteristics = 0
         lastDisconnectRequestedReason = null
         lastDisconnectStack = null
+        startCommandTimestampMs = 0L
+        controlCharacteristic = null
+        vendorService = null
     }
 
     private fun resetConnection() {
@@ -872,11 +878,15 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         clientReadySent = false
         clientReadyRunnable?.let { mainHandler.removeCallbacks(it) }
         clientReadyRunnable = null
+        stopTimeout(TIMEOUT_WAIT_FIRST_NOTIFY)
         stopTimeout(TIMEOUT_PROTOCOL_INIT)
         enableCccdQueue.clear()
         totalNotifyCharacteristics = 0
         lastDisconnectRequestedReason = null
         lastDisconnectStack = null
+        startCommandTimestampMs = 0L
+        controlCharacteristic = null
+        vendorService = null
         setState(BleState.Idle)
     }
 
@@ -958,7 +968,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val RX_UUID = "00002001-0000-1000-8000-00805f9b34fb"
         private const val RX_ALT_UUID = "00002002-0000-1000-8000-00805f9b34fb"
         private const val NOTIFY_UUID = "00002021-0000-1000-8000-00805f9b34fb"
-        private const val CONTROL_UUID = "00002020-0000-1000-8000-00805f9b34fb"
+        private const val CONTROL_UUID = "00002000-0000-1000-8000-00805f9b34fb"
         private const val EXTRA_NOTIFY_UUID = "00002022-0000-1000-8000-00805f9b34fb"
         private const val SYS_NOTIFY_UUID = "00001001-0000-1000-8000-00805f9b34fb"
         private const val GATT_SERVICE_UUID = "00001801-0000-1000-8000-00805f9b34fb"
@@ -972,6 +982,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val TIMEOUT_SCAN = "timeout_scan"
         private const val TIMEOUT_CONNECT = "timeout_connect"
         private const val TIMEOUT_DISCOVERY = "timeout_discovery"
+        private const val TIMEOUT_WAIT_FIRST_NOTIFY = "timeout_wait_first_notify"
         private const val TIMEOUT_PROTOCOL_INIT = "timeout_protocol_init"
         private const val TIMEOUT_STAGE2_CCCD = "timeout_stage2_cccd"
         private val START_COMMAND = byteArrayOf(0x00, 0x00, 0x06, 0x11, 0x01, 0x00)
@@ -979,6 +990,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private val CLIENT_READY_FRAME = byteArrayOf(0x00, 0x00, 0x02, 0x10, 0x01, 0x00)
         // Heartbeat is a minimal vendor/session frame (class 0x10) to keep the link alive post-ready
         private val HEARTBEAT_FRAME = byteArrayOf(0x00, 0x00, 0x02, 0x10, 0x00, 0x00)
+        private const val WAIT_FIRST_NOTIFY_MS = 5_000L
         private const val PROTOCOL_INIT_HOLD_MS = 1_000L
         private const val STAGE2_CCCD_DELAY_MS = 500L
         private const val CLIENT_READY_DELAY_MS = 100L
@@ -986,6 +998,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val KEY_LAST_TARGET = "last_target_mac"
         private const val STATUS_TERMINATE_LOCAL_HOST = 22
         private const val AUTO_ENABLE_STAGE2_CCCD = false
+        private const val DATA_UUID = "00002020-0000-1000-8000-00805f9b34fb"
     }
 
     private sealed class Operation {

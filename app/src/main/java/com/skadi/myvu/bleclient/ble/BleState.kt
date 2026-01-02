@@ -11,6 +11,7 @@ sealed class BleState(val label: String) {
     object EnablingNotifications : BleState("ENABLING_NOTIFICATIONS")
     object MtuNegotiation : BleState("MTU_NEGOTIATION")
     object HandshakeSent : BleState("HANDSHAKE_SENT")
+    object WaitFirstVendorNotify : BleState("WAIT_FIRST_VENDOR_NOTIFY")
     object ProtocolSessionInit : BleState("PROTOCOL_SESSION_INIT")
     object ConnectedReady : BleState("CONNECTED_READY")
     object ReadyForCommands : BleState("READY_FOR_COMMANDS")
@@ -24,5 +25,6 @@ enum class BleErrorReason {
     GATT_CONNECT_FAILED,
     SERVICE_DISCOVERY_FAILED,
     HANDSHAKE_WRITE_FAILED,
-    CCCD_ENABLE_FAILED
+    CCCD_ENABLE_FAILED,
+    FIRST_VENDOR_NOTIFY_TIMEOUT
 }
