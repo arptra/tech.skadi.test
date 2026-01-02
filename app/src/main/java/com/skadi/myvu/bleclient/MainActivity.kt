@@ -104,12 +104,9 @@ class MainActivity : AppCompatActivity(), BleManager.Listener {
     override fun onStateChanged(state: BleState) {
         runOnUiThread {
             stateValue.text = state.label
-            connectButton.isEnabled = state is BleState.DeviceFound
-            bondButton.isEnabled = state is BleState.HandshakeDone || state is BleState.WaitingForSystemPairing || state is BleState.Bonded
-            disconnectButton.isEnabled = state is BleState.BleConnected || state is BleState.ServicesDiscovering || state is BleState.HandshakeWriting || state is BleState.HandshakeDone || state is BleState.WaitingForSystemPairing || state is BleState.Bonded || state is BleState.ApplicationInit || state is BleState.ApplicationReady
-            if (state is BleState.Error && state.reason == BleErrorReason.NO_MATCHING_ADVERTISING) {
-                connectButton.isEnabled = false
-            }
+            connectButton.isEnabled = state is BleState.Idle || state is BleState.Scanning || state is BleState.Ready || (state is BleState.Error && state.reason != BleErrorReason.NO_MATCHING_ADVERTISING)
+            bondButton.isEnabled = false
+            disconnectButton.isEnabled = state is BleState.Connecting || state is BleState.ServicesDiscovering || state is BleState.EnablingNotifications || state is BleState.MtuNegotiation || state is BleState.HandshakeSent || state is BleState.WaitFirstNotify || state is BleState.Ready
         }
     }
 

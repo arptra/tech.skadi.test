@@ -6,16 +6,13 @@ package com.skadi.myvu.bleclient.ble
 sealed class BleState(val label: String) {
     object Idle : BleState("IDLE")
     object Scanning : BleState("SCANNING")
-    object DeviceFound : BleState("DEVICE_FOUND")
-    object BleConnecting : BleState("BLE_CONNECTING")
-    object BleConnected : BleState("BLE_CONNECTED")
+    object Connecting : BleState("CONNECTING")
     object ServicesDiscovering : BleState("SERVICES_DISCOVERING")
-    object HandshakeWriting : BleState("HANDSHAKE_WRITING")
-    object HandshakeDone : BleState("HANDSHAKE_DONE")
-    object WaitingForSystemPairing : BleState("WAITING_FOR_SYSTEM_PAIRING")
-    object Bonded : BleState("BONDED")
-    object ApplicationInit : BleState("APPLICATION_INIT")
-    object ApplicationReady : BleState("APPLICATION_READY")
+    object EnablingNotifications : BleState("ENABLING_NOTIFICATIONS")
+    object MtuNegotiation : BleState("MTU_NEGOTIATION")
+    object HandshakeSent : BleState("HANDSHAKE_SENT")
+    object WaitFirstNotify : BleState("WAIT_FIRST_NOTIFY")
+    object Ready : BleState("READY")
     object Disconnected : BleState("DISCONNECTED")
     data class Error(val reason: BleErrorReason) : BleState("ERROR: ${reason.name}")
 }
@@ -27,8 +24,5 @@ enum class BleErrorReason {
     SERVICE_DISCOVERY_FAILED,
     HANDSHAKE_WRITE_FAILED,
     FIRST_NOTIFY_TIMEOUT,
-    CCCD_ENABLE_FAILED,
-    APP_INIT_TIMEOUT,
-    BONDING_FAILED,
-    BONDING_TIMEOUT
+    CCCD_ENABLE_FAILED
 }
