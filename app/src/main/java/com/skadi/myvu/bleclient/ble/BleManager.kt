@@ -986,7 +986,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val TIMEOUT_PROTOCOL_INIT = "timeout_protocol_init"
         private const val TIMEOUT_STAGE2_CCCD = "timeout_stage2_cccd"
         private val START_COMMAND = byteArrayOf(0x00, 0x00, 0x06, 0x11, 0x01, 0x00)
-        private val CLIENT_READY_FRAME = byteArrayOf(0x00, 0x00, 0x06, 0x11, 0x02, 0x00)
+        // Client-ready is a vendor/session frame (class 0x10) without security flags; sent once post-notify
+        private val CLIENT_READY_FRAME = byteArrayOf(0x00, 0x00, 0x02, 0x10, 0x01, 0x00)
         private const val PROTOCOL_INIT_HOLD_MS = 1_000L
         private const val STAGE2_CCCD_DELAY_MS = 500L
         private const val CLIENT_READY_DELAY_MS = 100L
