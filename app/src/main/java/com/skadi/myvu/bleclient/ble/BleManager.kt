@@ -58,6 +58,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var operationInProgress = false
     private var totalNotifyCharacteristics = 0
     private var firstNotifyReceived = false
+    private var vendorNotifyDuringInit = false
+    private var protocolInitHoldElapsed = false
 
     fun setListener(listener: Listener) {
         this.listener = listener
@@ -517,8 +519,11 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         if (!firstNotifyReceived) return
         if (state !is BleState.ProtocolSessionInit) return
         if (!isVendorNotifyCharacteristic(characteristic)) return
-        logger.logInfo(TAG, "Vendor packet during PROTOCOL_SESSION_INIT; promoting to READY_FOR_COMMANDS")
-        promoteReadyForCommands("vendor_notify")
+        vendorNotifyDuringInit = true
+        logger.logInfo(TAG, "Vendor packet during PROTOCOL_SESSION_INIT; waiting for quiet-hold to elapse")
+        if (protocolInitHoldElapsed) {
+            promoteReadyForCommands("vendor_notify_after_hold")
+        }
     }
 
     private fun isVendorNotifyCharacteristic(characteristic: BluetoothGattCharacteristic): Boolean {
@@ -538,10 +543,15 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
     private fun beginProtocolSessionInit() {
         if (state is BleState.ProtocolSessionInit || state is BleState.ReadyForCommands) return
+        vendorNotifyDuringInit = false
+        protocolInitHoldElapsed = false
         setState(BleState.ProtocolSessionInit)
         startTimeout(TIMEOUT_PROTOCOL_INIT, PROTOCOL_INIT_HOLD_MS) {
-            logger.logInfo(TAG, "Protocol session hold elapsed; promoting to READY_FOR_COMMANDS")
-            promoteReadyForCommands("hold_elapsed")
+            protocolInitHoldElapsed = true
+            if (state !is BleState.ProtocolSessionInit) return@startTimeout
+            val reason = if (vendorNotifyDuringInit) "hold_elapsed_with_vendor_notify" else "hold_elapsed"
+            logger.logInfo(TAG, "Protocol session hold elapsed; promoting to READY_FOR_COMMANDS reason=$reason")
+            promoteReadyForCommands(reason)
         }
     }
 
@@ -625,6 +635,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         mtuRequested = false
         mtuReady = false
         firstNotifyReceived = false
+        vendorNotifyDuringInit = false
+        protocolInitHoldElapsed = false
         stopTimeout(TIMEOUT_PROTOCOL_INIT)
         enableCccdQueue.clear()
         totalNotifyCharacteristics = 0
@@ -644,6 +656,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         mtuRequested = false
         mtuReady = false
         firstNotifyReceived = false
+        vendorNotifyDuringInit = false
+        protocolInitHoldElapsed = false
         stopTimeout(TIMEOUT_PROTOCOL_INIT)
         enableCccdQueue.clear()
         totalNotifyCharacteristics = 0
