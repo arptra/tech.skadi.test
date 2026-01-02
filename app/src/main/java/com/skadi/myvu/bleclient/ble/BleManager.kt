@@ -30,7 +30,13 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private val operationQueue: LinkedList<Operation> = LinkedList()
     private val timeouts = mutableMapOf<String, Runnable>()
     private val prefs = context.getSharedPreferences("ble_prefs", Context.MODE_PRIVATE)
-    private val enableCccdQueue: LinkedList<BluetoothGattDescriptor> = LinkedList()
+    private data class CccdRequest(
+        val descriptor: BluetoothGattDescriptor,
+        val value: ByteArray,
+        val label: String
+    )
+
+    private val enableCccdQueue: LinkedList<CccdRequest> = LinkedList()
 
     private var listener: Listener? = null
     private var scanner: BleScanner? = null
@@ -45,6 +51,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var handshakeCommandSent = false
     private var awaitingFirstNotify = false
     private var firstNotifyAttempts = 0
+    private var mtuRequested = false
+    private var mtuReady = false
     private var applicationInitPending = false
     private var applicationInitSent = false
     private var operationInProgress = false
@@ -174,13 +182,43 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
         override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, value: ByteArray) {
             val utf8 = runCatching { String(value, Charsets.UTF_8) }.getOrNull()
-            logger.logInfo(TAG, "RX (${characteristic.uuid} len=${value.size}): ${HexUtils.toHex(value)} utf8=$utf8")
+            val isIndicate = characteristic.properties and BluetoothGattCharacteristic.PROPERTY_INDICATE != 0
+            val packetType = if (isIndicate) "INDICATE" else "NOTIFY"
+            logger.logInfo(
+                TAG,
+                "RX $packetType (${characteristic.uuid} len=${value.size}): ${HexUtils.toHex(value)} utf8=$utf8"
+            )
+            if (awaitingFirstNotify) {
+                awaitingFirstNotify = false
+                stopTimeout(TIMEOUT_FIRST_NOTIFY)
+                logger.logInfo(
+                    TAG,
+                    "First packet received via $packetType from UUID=${characteristic.uuid}; finishing handshake"
+                )
+                setState(BleState.HandshakeDone)
+                val bondState = targetDevice?.bondState
+                if (bondState == BluetoothDevice.BOND_BONDING) {
+                    setState(BleState.WaitingForSystemPairing)
+                }
+                startApplicationInit("first_packet_${packetType}_${characteristic.uuid}")
+            }
             protocol.onRx(value, characteristic.uuid)
         }
 
         override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
             val payload = characteristic.value ?: byteArrayOf()
             onCharacteristicChanged(gatt, characteristic, payload)
+        }
+
+        override fun onMtuChanged(gatt: BluetoothGatt, mtu: Int, status: Int) {
+            logger.logInfo(TAG, "onMtuChanged mtu=$mtu status=$status")
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                mtuReady = true
+                logger.logInfo(TAG, "MTU negotiated to $mtu")
+            }
+            if (!handshakeCommandSent) {
+                sendStartCommand(gatt, reason = "mtu_changed")
+            }
         }
     }
 
@@ -248,20 +286,42 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         handshakeCommandSent = false
         awaitingFirstNotify = false
         firstNotifyAttempts = 0
+        mtuRequested = false
+        mtuReady = false
         enableCccdQueue.clear()
         pendingCccdWrites = 0
 
         val notifyCharacteristics = service.characteristics.filter {
             it.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0
         }
-        totalNotifyCharacteristics = notifyCharacteristics.size
+        val indicateCharacteristics = service.characteristics.filter {
+            it.properties and BluetoothGattCharacteristic.PROPERTY_INDICATE != 0
+        }.toMutableList()
+        val gattService = gatt.getService(UUID.fromString(GATT_SERVICE_UUID))
+        val serviceChanged = gattService?.getCharacteristic(UUID.fromString(SERVICE_CHANGED_UUID))
+        if (serviceChanged != null && serviceChanged.properties and BluetoothGattCharacteristic.PROPERTY_INDICATE != 0) {
+            indicateCharacteristics.add(serviceChanged)
+        }
+        totalNotifyCharacteristics = notifyCharacteristics.size + indicateCharacteristics.size
         logger.logInfo(
             TAG,
             "Notify-capable chars (${notifyCharacteristics.size}): ${notifyCharacteristics.joinToString { it.uuid.toString() }}"
         )
+        logger.logInfo(
+            TAG,
+            "Indicate-capable chars (${indicateCharacteristics.size}): ${indicateCharacteristics.joinToString { it.uuid.toString() }}"
+        )
 
         notifyCharacteristics.forEach { characteristic ->
-            buildCccdDescriptor(gatt, characteristic, "notify_${characteristic.uuid}")?.let { enqueueCccd(it) }
+            buildCccdDescriptor(gatt, characteristic, "notify_${characteristic.uuid}", BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)?.let {
+                enqueueCccd(it)
+            }
+        }
+
+        indicateCharacteristics.forEach { characteristic ->
+            buildCccdDescriptor(gatt, characteristic, "indicate_${characteristic.uuid}", BluetoothGattDescriptor.ENABLE_INDICATION_VALUE)?.let {
+                enqueueCccd(it)
+            }
         }
 
         pendingCccdWrites = enableCccdQueue.size
@@ -278,7 +338,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private fun buildCccdDescriptor(
         gatt: BluetoothGatt,
         characteristic: BluetoothGattCharacteristic?,
-        label: String
+        label: String,
+        value: ByteArray
     ): BluetoothGattDescriptor? {
         characteristic ?: return null.also {
             logger.logError(TAG, "Missing $label characteristic when preparing CCCD")
@@ -293,29 +354,42 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             logger.logError(TAG, "Failed to enable notifications for $label char=${characteristic.uuid}")
             return null
         }
-        return cccd
+        return cccd.also {
+            it.value = value
+        }
     }
 
     private fun enqueueCccd(descriptor: BluetoothGattDescriptor) {
-        logger.logInfo(TAG, "Queueing CCCD enable for char=${descriptor.characteristic.uuid} desc=${descriptor.uuid}")
-        descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
-        enableCccdQueue.add(descriptor)
+        logger.logInfo(
+            TAG,
+            "Queueing CCCD enable for char=${descriptor.characteristic.uuid} desc=${descriptor.uuid} value=${HexUtils.toHex(descriptor.value)}"
+        )
+        enableCccdQueue.add(CccdRequest(descriptor, descriptor.value, "cccd_${descriptor.characteristic.uuid}"))
     }
 
     private fun processNextCccdWrite(gatt: BluetoothGatt) {
-        val descriptor = enableCccdQueue.peekFirst()
-        if (descriptor == null) {
+        val request = enableCccdQueue.peekFirst()
+        if (request == null) {
             onAllCccdsEnabled(gatt)
             return
         }
-        logger.logInfo(TAG, "Writing CCCD for char=${descriptor.characteristic.uuid} desc=${descriptor.uuid}")
-        enqueueDescriptorWrite(gatt, descriptor)
+        logger.logInfo(
+            TAG,
+            "Writing CCCD for char=${request.descriptor.characteristic.uuid} desc=${request.descriptor.uuid} value=${HexUtils.toHex(request.value)}"
+        )
+        request.descriptor.value = request.value
+        enqueueDescriptorWrite(gatt, request.descriptor)
     }
 
     private fun onAllCccdsEnabled(gatt: BluetoothGatt) {
-        logger.logInfo(TAG, "All notifications enabled ($totalNotifyCharacteristics chars)")
-        if (!handshakeCommandSent) {
-            sendStartCommand(gatt, reason = "cccd_complete")
+        logger.logInfo(TAG, "All notifications/indications enabled ($totalNotifyCharacteristics chars)")
+        if (!mtuRequested) {
+            mtuRequested = true
+            val requested = gatt.requestMtu(256)
+            logger.logInfo(TAG, "Requesting MTU 256 requested=$requested")
+            if (!requested && !handshakeCommandSent) {
+                sendStartCommand(gatt, reason = "mtu_request_failed")
+            }
         }
     }
 
@@ -323,6 +397,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         val success = gatt.setCharacteristicNotification(characteristic, true)
         if (!success) {
             logger.logError(TAG, "Failed to enable notification for ${characteristic.uuid}")
+        } else if (characteristic.uuid.toString().equals(SERVICE_CHANGED_UUID, ignoreCase = true)) {
+            logger.logInfo(TAG, "Indication enabled for ${characteristic.uuid}")
         }
         return success
     }
@@ -360,6 +436,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
             return
         }
+        if (handshakeCommandSent) {
+            logger.logInfo(TAG, "Start command already sent; skipping duplicate reason=$reason")
+            return
+        }
         val writeType = selectWriteType(controlChar, withResponse = false)
         firstNotifyAttempts++
         val attempt = firstNotifyAttempts
@@ -373,12 +453,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         enqueueCharacteristicWrite(gatt, controlChar, START_COMMAND, withResponse = false, forcedWriteType = writeType)
         startTimeout(TIMEOUT_FIRST_NOTIFY, FIRST_NOTIFY_TIMEOUT_MS) {
             awaitingFirstNotify = false
-            if (firstNotifyAttempts < MAX_FIRST_NOTIFY_ATTEMPTS) {
-                logger.logInfo(TAG, "First notify timeout; retrying start command attempt=${firstNotifyAttempts + 1}")
-                sendStartCommand(gatt, reason = "first_notify_retry")
-            } else {
-                setState(BleState.Error(BleErrorReason.FIRST_NOTIFY_TIMEOUT))
-            }
+            setState(BleState.Error(BleErrorReason.FIRST_NOTIFY_TIMEOUT))
         }
     }
 
@@ -464,6 +539,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         pendingCccdWrites = 0
         handshakeCommandSent = false
         awaitingFirstNotify = false
+        mtuRequested = false
+        mtuReady = false
         applicationInitPending = false
         applicationInitSent = false
         firstNotifyAttempts = 0
@@ -482,6 +559,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         pendingCccdWrites = 0
         handshakeCommandSent = false
         awaitingFirstNotify = false
+        mtuRequested = false
+        mtuReady = false
         applicationInitPending = false
         applicationInitSent = false
         bondTimeoutArmed = false
@@ -654,6 +733,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val NOTIFY_UUID = "00002021-0000-1000-8000-00805f9b34fb"
         private const val CONTROL_UUID = "00002020-0000-1000-8000-00805f9b34fb"
         private const val SYSTEM_NOTIFY_UUID = "00001001-0000-1000-8000-00805f9b34fb"
+        private const val GATT_SERVICE_UUID = "00001801-0000-1000-8000-00805f9b34fb"
+        private const val SERVICE_CHANGED_UUID = "00002a05-0000-1000-8000-00805f9b34fb"
         private const val CCCD_UUID = "00002902-0000-1000-8000-00805f9b34fb"
         private const val SCAN_TIMEOUT_MS = 25_000L
         private const val CONNECT_TIMEOUT_MS = 12_000L
