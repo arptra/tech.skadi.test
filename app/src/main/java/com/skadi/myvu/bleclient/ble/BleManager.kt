@@ -80,6 +80,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var clientReadyScheduled = false
     private var clientReadySent = false
     private var clientReadyRunnable: Runnable? = null
+    private var heartbeatRunnable: Runnable? = null
+    private var heartbeatActive = false
     private var lastTx: PacketLog? = null
     private var lastRx: PacketLog? = null
     private var lastDisconnectRequestedReason: String? = null
@@ -164,6 +166,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         lastDisconnectRequestedReason = reason
         val stack = Throwable("disconnect stack")
         lastDisconnectStack = stack
+        stopHeartbeatLoop()
         val now = SystemClock.elapsedRealtime()
         val bondState = gatt?.device?.bondState
         val lastTxAge = lastTx?.let { now - it.timestamp }?.toString() ?: "n/a"
@@ -671,6 +674,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         quietHoldActive = false
         logger.logInfo(TAG, "Protocol session init complete ($reason); channel ready for commands")
         setState(BleState.ReadyForCommands)
+        startHeartbeatLoop()
         if (AUTO_ENABLE_STAGE2_CCCD) {
             scheduleStageTwoCccd(gatt)
         } else {
@@ -705,6 +709,36 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         }
         clientReadyRunnable = runnable
         mainHandler.postDelayed(runnable, CLIENT_READY_DELAY_MS)
+    }
+
+    private fun startHeartbeatLoop() {
+        if (heartbeatActive) return
+        val gattInstance = gatt ?: return
+        val controlChar = protocol.writeCharacteristic ?: return
+        val writeType = selectWriteType(controlChar, withResponse = false)
+        heartbeatActive = true
+        val runnable = object : Runnable {
+            override fun run() {
+                if (!heartbeatActive) return
+                enqueueCharacteristicWrite(
+                    gattInstance,
+                    controlChar,
+                    HEARTBEAT_FRAME,
+                    withResponse = false,
+                    forcedWriteType = writeType
+                )
+                heartbeatRunnable = this
+                mainHandler.postDelayed(this, HEARTBEAT_INTERVAL_MS)
+            }
+        }
+        heartbeatRunnable = runnable
+        mainHandler.postDelayed(runnable, HEARTBEAT_INTERVAL_MS)
+    }
+
+    private fun stopHeartbeatLoop() {
+        heartbeatActive = false
+        heartbeatRunnable?.let { mainHandler.removeCallbacks(it) }
+        heartbeatRunnable = null
     }
 
     fun enqueueDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor): Boolean {
@@ -830,6 +864,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         startCommandPending = false
         mtuRequested = false
         mtuReady = false
+        stopHeartbeatLoop()
         firstNotifyReceived = false
         vendorNotifyDuringInit = false
         protocolInitHoldElapsed = false
@@ -861,6 +896,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         startCommandPending = false
         mtuRequested = false
         mtuReady = false
+        stopHeartbeatLoop()
         firstNotifyReceived = false
         vendorNotifyDuringInit = false
         protocolInitHoldElapsed = false
@@ -988,9 +1024,12 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private val START_COMMAND = byteArrayOf(0x00, 0x00, 0x06, 0x11, 0x01, 0x00)
         // Client-ready is a vendor/session frame (class 0x10) without security flags; sent once post-notify
         private val CLIENT_READY_FRAME = byteArrayOf(0x00, 0x00, 0x02, 0x10, 0x01, 0x00)
+        // Heartbeat is a minimal vendor/session frame (class 0x10) to keep the link alive post-ready
+        private val HEARTBEAT_FRAME = byteArrayOf(0x00, 0x00, 0x02, 0x10, 0x00, 0x00)
         private const val PROTOCOL_INIT_HOLD_MS = 1_000L
         private const val STAGE2_CCCD_DELAY_MS = 500L
         private const val CLIENT_READY_DELAY_MS = 100L
+        private const val HEARTBEAT_INTERVAL_MS = 500L
         private const val KEY_LAST_TARGET = "last_target_mac"
         private const val STATUS_TERMINATE_LOCAL_HOST = 22
         private const val AUTO_ENABLE_STAGE2_CCCD = false
