@@ -613,7 +613,11 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
         if (state is BleState.ProtocolSessionInit) {
             vendorNotifyDuringInit = true
-            if (protocolInitHoldElapsed) {
+            // Any subsequent vendor packet is a readiness signal; do not sit in the quiet hold.
+            if (!protocolInitHoldElapsed) {
+                logger.logInfo(TAG, "Second+ vendor packet during PROTOCOL_SESSION_INIT; promoting immediately")
+                promoteReadyForCommands("vendor_notify_during_hold")
+            } else {
                 promoteReadyForCommands("vendor_notify_after_hold")
             }
         }
@@ -959,8 +963,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val TIMEOUT_PROTOCOL_INIT = "timeout_protocol_init"
         private const val TIMEOUT_STAGE2_CCCD = "timeout_stage2_cccd"
         private val START_COMMAND = byteArrayOf(0x00, 0x00, 0x06, 0x11, 0x01, 0x00)
-        private const val PROTOCOL_INIT_HOLD_MS = 3_000L
-        private const val STAGE2_CCCD_DELAY_MS = 2_000L
+        private const val PROTOCOL_INIT_HOLD_MS = 1_000L
+        private const val STAGE2_CCCD_DELAY_MS = 500L
         private const val KEY_LAST_TARGET = "last_target_mac"
         private const val STATUS_TERMINATE_LOCAL_HOST = 22
     }
