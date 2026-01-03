@@ -87,6 +87,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var awaitingClassicHandover = false
     private var classicStartInitiated = false
     private var readyForCommandsTimestampMs: Long? = null
+    private var bleCloseTimestampMs: Long? = null
+    private var classicHandoverDelayMs: Long = CLASSIC_HANDOVER_DELAY_MS
     private var lastTx: PacketLog? = null
     private var lastRx: PacketLog? = null
     private var lastDisconnectRequestedReason: String? = null
@@ -99,6 +101,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
     fun removeListener() {
         this.listener = null
+    }
+
+    fun setClassicHandoverDelay(delayMs: Long) {
+        classicHandoverDelayMs = delayMs
     }
 
     init {
@@ -337,24 +343,30 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 "Disconnected status=$status requested=$lastDisconnectRequestedReason lastTxAgeMs=${lastTxAgeMs ?: "n/a"} lastRxAgeMs=${lastRxAgeMs ?: "n/a"}"
             )
             lastDisconnectStack?.let { logger.logError(TAG, "Last disconnect request stack", it) }
-            if (status == STATUS_TERMINATE_LOCAL_HOST && awaitingClassicHandover) {
-                logger.logInfo(TAG, "BLE closed by peer – expected classic handover")
-                awaitingClassicHandover = false
-                stopHeartbeatLoop()
+            if (
+                status == STATUS_TERMINATE_LOCAL_HOST &&
+                awaitingClassicHandover &&
+                state is BleState.WaitingForBleClose
+            ) {
+                val closeTs = SystemClock.elapsedRealtime()
+                bleCloseTimestampMs = closeTs
+                val readyTs = readyForCommandsTimestampMs
+                val deltaReadyToClose = readyTs?.let { closeTs - it }
+                logger.logInfo(
+                    TAG,
+                    "BLE closed by peer – expected classic handover readyTs=$readyTs closeTs=$closeTs deltaReadyToCloseMs=$deltaReadyToClose"
+                )
                 stopTimeouts()
                 clearQueue()
-                val gattInstance = gatt
-                mainHandler.postDelayed({
-                    gattInstance?.let { scheduleGattClose(it) }
-                    if (this.gatt == gattInstance) {
-                        this.gatt = null
-                    }
-                }, 1_200)
+                gatt?.let { gattInstance ->
+                    scheduleClassicAfterBleClose(gattInstance, trigger = "ble_closed_status_22")
+                }
                 return
             }
             val readyPhase = state is BleState.ConnectedReady ||
                 state is BleState.ProtocolSessionInit ||
-                state is BleState.ReadyForCommands
+                state is BleState.ReadyForCommands ||
+                state is BleState.WaitingForBleClose
             val tolerateLocalClose = (firstNotifyReceived || readyPhase) && status == STATUS_TERMINATE_LOCAL_HOST
             if (state !is BleState.Disconnected && state !is BleState.Idle && !tolerateLocalClose) {
                 setState(BleState.Error(BleErrorReason.GATT_CONNECT_FAILED))
@@ -698,8 +710,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         readyForCommandsTimestampMs = SystemClock.elapsedRealtime()
         awaitingClassicHandover = true
         readyForCommandsReached = true
+        bleCloseTimestampMs = null
+        logger.logInfo(TAG, "Transitioning to WAITING_FOR_BLE_CLOSE for classic handover")
+        setState(BleState.WaitingForBleClose)
         stopHeartbeatLoop()
-        startClassicHandoverIfPossible("ready_for_commands")
         if (AUTO_ENABLE_STAGE2_CCCD) {
             scheduleStageTwoCccd(gatt)
         } else {
@@ -929,6 +943,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         readyForCommandsReached = false
         classicStartInitiated = false
         readyForCommandsTimestampMs = null
+        bleCloseTimestampMs = null
     }
 
     private fun resetConnection() {
@@ -966,6 +981,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         readyForCommandsReached = false
         classicStartInitiated = false
         readyForCommandsTimestampMs = null
+        bleCloseTimestampMs = null
         setState(BleState.Idle)
     }
 
@@ -1083,6 +1099,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val STAGE2_CCCD_DELAY_MS = 500L
         private const val CLIENT_READY_DELAY_MS = 100L
         private const val HEARTBEAT_INTERVAL_MS = 500L
+        private const val CLASSIC_HANDOVER_DELAY_MS = 100L
         private const val KEY_LAST_TARGET = "last_target_mac"
         private const val STATUS_TERMINATE_LOCAL_HOST = 22
         private const val AUTO_ENABLE_STAGE2_CCCD = false
@@ -1116,7 +1133,26 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         return parts.joinToString(",")
     }
 
-    private fun startClassicHandoverIfPossible(trigger: String) {
+    private fun scheduleClassicAfterBleClose(gattInstance: BluetoothGatt, trigger: String) {
+        if (classicStartInitiated) return
+        val delayMs = classicHandoverDelayMs
+        val readyTs = readyForCommandsTimestampMs
+        val closeTs = bleCloseTimestampMs ?: SystemClock.elapsedRealtime()
+        val deltaReadyToClose = readyTs?.let { closeTs - it }
+        logger.logInfo(
+            TAG,
+            "Scheduling classic handover in ${delayMs}ms trigger=$trigger readyTs=$readyTs closeTs=$closeTs deltaReadyToCloseMs=$deltaReadyToClose"
+        )
+        mainHandler.postDelayed({
+            startClassicHandoverIfPossible(trigger, bleCloseTimestampMs ?: closeTs)
+            scheduleGattClose(gattInstance)
+            if (this.gatt == gattInstance) {
+                this.gatt = null
+            }
+        }, delayMs)
+    }
+
+    private fun startClassicHandoverIfPossible(trigger: String, bleCloseTs: Long? = null) {
         if (classicStartInitiated) return
         val mac = gatt?.device?.address
         if (mac.isNullOrEmpty()) {
@@ -1124,12 +1160,16 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             return
         }
         classicStartInitiated = true
+        awaitingClassicHandover = false
         val readyTs = readyForCommandsTimestampMs ?: SystemClock.elapsedRealtime()
+        val closeTs = bleCloseTs ?: readyTs
         val connectCallTs = SystemClock.elapsedRealtime()
-        val deltaMs = connectCallTs - readyTs
+        val deltaReadyToConnect = connectCallTs - readyTs
+        val deltaCloseToConnect = connectCallTs - closeTs
         logger.logInfo(
             TAG,
-            "Starting classic handover (trigger=$trigger) readyTs=$readyTs connectCallTs=$connectCallTs deltaMs=$deltaMs"
+            "Starting classic handover (trigger=$trigger) readyTs=$readyTs closeTs=$closeTs connectCallTs=$connectCallTs " +
+                "deltaReadyToConnectMs=$deltaReadyToConnect deltaCloseToConnectMs=$deltaCloseToConnect"
         )
         classicConnectionManager.startConnection(
             mac,

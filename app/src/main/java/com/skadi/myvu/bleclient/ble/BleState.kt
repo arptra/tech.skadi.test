@@ -14,6 +14,7 @@ sealed class BleState(val label: String) {
     object ProtocolSessionInit : BleState("PROTOCOL_SESSION_INIT")
     object ConnectedReady : BleState("CONNECTED_READY")
     object ReadyForCommands : BleState("READY_FOR_COMMANDS")
+    object WaitingForBleClose : BleState("WAITING_FOR_BLE_CLOSE")
     object Disconnected : BleState("DISCONNECTED")
     data class Error(val reason: BleErrorReason) : BleState("ERROR: ${reason.name}")
 }
