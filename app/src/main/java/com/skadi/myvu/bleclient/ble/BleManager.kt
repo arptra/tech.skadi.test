@@ -82,6 +82,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var clientReadyRunnable: Runnable? = null
     private var heartbeatRunnable: Runnable? = null
     private var heartbeatActive = false
+    private var heartbeatDeferredForBond = false
+    private var heartbeatBondWatchdog: Runnable? = null
     private var autoReconnectAttempts = 0
     private var lastTx: PacketLog? = null
     private var lastRx: PacketLog? = null
@@ -713,7 +715,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         setState(BleState.ReadyForCommands)
         val bondState = gatt?.device?.bondState
         if (bondState != BluetoothDevice.BOND_BONDED) {
-            logger.logInfo(TAG, "Bond not completed (state=$bondState); starting heartbeat to keep link alive")
+            logger.logInfo(TAG, "Bond not completed (state=$bondState); deferring heartbeat until bonded or watchdog fires")
+            heartbeatDeferredForBond = true
+            startHeartbeatBondWatchdog()
+            return
         }
         startHeartbeatLoop()
         if (AUTO_ENABLE_STAGE2_CCCD) {
@@ -754,6 +759,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
     private fun startHeartbeatLoop() {
         if (heartbeatActive) return
+        heartbeatDeferredForBond = false
+        heartbeatBondWatchdog?.let { mainHandler.removeCallbacks(it) }
+        heartbeatBondWatchdog = null
         val gattInstance = gatt ?: return
         val controlChar = protocol.writeCharacteristic ?: return
         val writeType = selectWriteType(controlChar, withResponse = false)
@@ -780,6 +788,21 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         heartbeatActive = false
         heartbeatRunnable?.let { mainHandler.removeCallbacks(it) }
         heartbeatRunnable = null
+        heartbeatDeferredForBond = false
+        heartbeatBondWatchdog?.let { mainHandler.removeCallbacks(it) }
+        heartbeatBondWatchdog = null
+    }
+
+    private fun startHeartbeatBondWatchdog() {
+        if (heartbeatBondWatchdog != null) return
+        val runnable = Runnable {
+            heartbeatBondWatchdog = null
+            if (heartbeatActive || !heartbeatDeferredForBond) return@Runnable
+            logger.logInfo(TAG, "Bond watchdog elapsed; starting heartbeat even though bond not completed")
+            startHeartbeatLoop()
+        }
+        heartbeatBondWatchdog = runnable
+        mainHandler.postDelayed(runnable, BOND_HEARTBEAT_GRACE_MS)
     }
 
     fun enqueueDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor): Boolean {
@@ -1071,6 +1094,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val STAGE2_CCCD_DELAY_MS = 500L
         private const val CLIENT_READY_DELAY_MS = 100L
         private const val HEARTBEAT_INTERVAL_MS = 500L
+        private const val BOND_HEARTBEAT_GRACE_MS = 7_000L
         private const val AUTO_RECONNECT_DELAY_MS = 750L
         private const val MAX_AUTO_RECONNECT_ATTEMPTS = 3
         private const val KEY_LAST_TARGET = "last_target_mac"
