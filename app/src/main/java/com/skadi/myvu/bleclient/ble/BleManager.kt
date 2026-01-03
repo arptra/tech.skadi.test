@@ -1094,7 +1094,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val STAGE2_CCCD_DELAY_MS = 500L
         private const val CLIENT_READY_DELAY_MS = 100L
         private const val HEARTBEAT_INTERVAL_MS = 500L
-        private const val BOND_HEARTBEAT_GRACE_MS = 7_000L
+        // The headset drops the link a few seconds after READY_FOR_COMMANDS when no traffic is
+        // flowing. The bond can still be in progress at that point, so we start the heartbeat
+        // much sooner (2s) even if bonding hasn't completed yet to keep the L2CAP link alive.
+        private const val BOND_HEARTBEAT_GRACE_MS = 2_000L
         private const val AUTO_RECONNECT_DELAY_MS = 750L
         private const val MAX_AUTO_RECONNECT_ATTEMPTS = 3
         private const val KEY_LAST_TARGET = "last_target_mac"
