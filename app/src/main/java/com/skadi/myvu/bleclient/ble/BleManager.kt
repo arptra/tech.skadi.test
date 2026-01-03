@@ -7,7 +7,10 @@ import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothProfile
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
@@ -49,6 +52,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private enum class HandshakeStage {
         IDLE,
         HELLO_SENT,
+        WAITING_FOR_BOND,
         ECDH_SENT,
         READY
     }
@@ -56,6 +60,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private val enableCccdQueue: LinkedList<CccdRequest> = LinkedList()
 
     private var listener: Listener? = null
+    private val appContext = context.applicationContext
     private var scanner: BleScanner? = null
     private var targetDevice: BluetoothDevice? = null
     private var targetRssi: Int? = null
@@ -73,6 +78,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var lastDisconnectStack: Throwable? = null
     private var currentMtu: Int = DEFAULT_MTU
     private var handshakeStage: HandshakeStage = HandshakeStage.IDLE
+    private var isBonded: Boolean = false
+    private var helloResponseSeen: Boolean = false
+    private var pairingReceiverRegistered = false
 
     fun setListener(listener: Listener) {
         this.listener = listener
@@ -124,6 +132,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         }
         scanner?.stopScan()
         handshakeStage = HandshakeStage.IDLE
+        helloResponseSeen = false
+        isBonded = device.bondState == BluetoothDevice.BOND_BONDED
+        ensurePairingReceiver()
         setState(BleState.Connecting)
         startTimeout(TIMEOUT_CONNECT, CONNECT_TIMEOUT_MS) {
             setState(BleState.Error(BleErrorReason.GATT_CONNECT_FAILED))
@@ -133,7 +144,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     }
 
     fun requestBond() {
-        // The glasses drop the link if Android initiates bonding; keep it disabled intentionally.
+        // The glasses initiate pairing after HELLO. Manually calling createBond() causes them to hang or disconnect,
+        // so we rely on their SMP request and auto-confirm via the broadcast receiver.
         logger.logInfo(TAG, "Bonding is managed by the device; manual request ignored")
     }
 
@@ -182,6 +194,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     fun destroy() {
         disconnect()
         removeListener()
+        unregisterPairingReceiver()
         callbackThread.quitSafely()
     }
 
@@ -453,7 +466,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private fun handleCharacteristicWrite(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
         if (status != BluetoothGatt.GATT_SUCCESS) {
             logger.logError(TAG, "Characteristic write failed for ${characteristic.uuid} status=$status")
-            if (state == BleState.HelloSent || state == BleState.HandshakeInProgress) {
+            if (state == BleState.HelloSent || state == BleState.HandshakeContinued) {
                 setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
                 requestDisconnect("handshake_write_failed", forceClose = true)
             }
@@ -465,8 +478,24 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         logger.logInfo(TAG, "Framed payload complete from $source len=${payload.size}")
         when (handshakeStage) {
             HandshakeStage.HELLO_SENT -> {
-                logger.logInfo(TAG, "HELLO response received; sending ECDH key")
-                sendEcdhKey()
+                helloResponseSeen = true
+                if (isBonded) {
+                    logger.logInfo(TAG, "HELLO response received after bond; sending ECDH key")
+                    sendEcdhKey()
+                } else {
+                    logger.logInfo(TAG, "HELLO response received before bond; waiting for pairing to complete")
+                    setState(BleState.WaitingForPairing)
+                    handshakeStage = HandshakeStage.WAITING_FOR_BOND
+                }
+            }
+            HandshakeStage.WAITING_FOR_BOND -> {
+                helloResponseSeen = true
+                if (isBonded) {
+                    logger.logInfo(TAG, "HELLO response received while bonded; continuing handshake")
+                    sendEcdhKey()
+                } else {
+                    setState(BleState.WaitingForPairing)
+                }
             }
             HandshakeStage.ECDH_SENT -> {
                 logger.logInfo(TAG, "ECDH response received; marking READY")
@@ -507,7 +536,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         val sent = protocol.send(publicKey, withResponse = false)
         if (sent) {
             handshakeStage = HandshakeStage.ECDH_SENT
-            setState(BleState.HandshakeInProgress)
+            setState(BleState.HandshakeContinued)
         } else {
             setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
             requestDisconnect("ecdh_send_failed", forceClose = true)
@@ -594,6 +623,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         mtuRequested = false
         currentMtu = DEFAULT_MTU
         handshakeStage = HandshakeStage.IDLE
+        isBonded = false
+        helloResponseSeen = false
         enableCccdQueue.clear()
         lastDisconnectRequestedReason = null
         lastDisconnectStack = null
@@ -611,6 +642,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         mtuRequested = false
         currentMtu = DEFAULT_MTU
         handshakeStage = HandshakeStage.IDLE
+        isBonded = false
+        helloResponseSeen = false
         enableCccdQueue.clear()
         lastDisconnectRequestedReason = null
         lastDisconnectStack = null
@@ -679,6 +712,70 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
     private fun recordRx(uuid: UUID?, payload: ByteArray) {
         lastRx = PacketLog(uuid, HexUtils.toHex(payload.take(16).toByteArray()), SystemClock.elapsedRealtime())
+    }
+
+    private fun ensurePairingReceiver() {
+        if (pairingReceiverRegistered) return
+        val filter = IntentFilter().apply {
+            addAction(BluetoothDevice.ACTION_PAIRING_REQUEST)
+            addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
+        }
+        appContext.registerReceiver(pairingReceiver, filter)
+        pairingReceiverRegistered = true
+    }
+
+    private fun unregisterPairingReceiver() {
+        if (!pairingReceiverRegistered) return
+        runCatching { appContext.unregisterReceiver(pairingReceiver) }
+        pairingReceiverRegistered = false
+    }
+
+    private val pairingReceiver = object : BroadcastReceiver() {
+        override fun onReceive(ctx: Context?, intent: Intent?) {
+            intent ?: return
+            val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE) ?: return
+            val target = targetDevice ?: return
+            if (device.address != target.address) {
+                logger.logInfo(TAG, "Ignoring pairing broadcast for non-target ${device.address}")
+                return
+            }
+            when (intent.action) {
+                BluetoothDevice.ACTION_PAIRING_REQUEST -> {
+                    val variant = intent.getIntExtra(BluetoothDevice.EXTRA_PAIRING_VARIANT, -1)
+                    logger.logInfo(TAG, "Pairing request from glasses variant=$variant")
+                    // The device drives pairing; we simply confirm to avoid disconnects.
+                    runCatching { device.setPairingConfirmation(true) }
+                        .onFailure { logger.logError(TAG, "Failed to auto-confirm pairing", it) }
+                    if (state !is BleState.Bonded) {
+                        setState(BleState.WaitingForPairing)
+                        handshakeStage = HandshakeStage.WAITING_FOR_BOND
+                    }
+                }
+                BluetoothDevice.ACTION_BOND_STATE_CHANGED -> {
+                    val bondState = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.BOND_NONE)
+                    val prevState = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.BOND_NONE)
+                    logger.logInfo(TAG, "Bond state changed from $prevState to $bondState")
+                    when (bondState) {
+                        BluetoothDevice.BOND_BONDING -> setState(BleState.WaitingForPairing)
+                        BluetoothDevice.BOND_BONDED -> {
+                            isBonded = true
+                            setState(BleState.Bonded)
+                            if (handshakeStage == HandshakeStage.HELLO_SENT && helloResponseSeen) {
+                                logger.logInfo(TAG, "Bonded after HELLO response; continuing handshake")
+                                sendEcdhKey()
+                            }
+                        }
+                        BluetoothDevice.BOND_NONE -> {
+                            isBonded = false
+                            if (state is BleState.WaitingForPairing || state is BleState.Bonded) {
+                                setState(BleState.Error(BleErrorReason.BOND_FAILED))
+                                requestDisconnect("bond_lost", forceClose = true)
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**

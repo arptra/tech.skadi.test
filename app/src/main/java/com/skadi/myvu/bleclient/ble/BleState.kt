@@ -12,7 +12,9 @@ sealed class BleState(val label: String) {
     object EnablingNotifications : BleState("ENABLING_NOTIFICATIONS")
     object NotificationsEnabled : BleState("NOTIFICATIONS_ENABLED")
     object HelloSent : BleState("HELLO_SENT")
-    object HandshakeInProgress : BleState("HANDSHAKE_IN_PROGRESS")
+    object WaitingForPairing : BleState("WAITING_FOR_PAIRING")
+    object Bonded : BleState("BONDED")
+    object HandshakeContinued : BleState("HANDSHAKE_CONTINUED")
     object ConnectedReady : BleState("READY")
     object Disconnected : BleState("DISCONNECTED")
     data class Error(val reason: BleErrorReason) : BleState("ERROR: ${reason.name}")
@@ -24,5 +26,6 @@ enum class BleErrorReason {
     GATT_CONNECT_FAILED,
     SERVICE_DISCOVERY_FAILED,
     HANDSHAKE_WRITE_FAILED,
-    CCCD_ENABLE_FAILED
+    CCCD_ENABLE_FAILED,
+    BOND_FAILED
 }
