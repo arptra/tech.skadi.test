@@ -347,10 +347,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 "Disconnected status=$status requested=$lastDisconnectRequestedReason lastTxAgeMs=${lastTxAgeMs ?: "n/a"} lastRxAgeMs=${lastRxAgeMs ?: "n/a"}"
             )
             lastDisconnectStack?.let { logger.logError(TAG, "Last disconnect request stack", it) }
-            if (
-                status == STATUS_TERMINATE_LOCAL_HOST &&
-                (awaitingClassicHandover || state is BleState.HandshakeSent || state is BleState.WaitingForBleClose)
-            ) {
+            val readyForExpectedClose = awaitingClassicHandover || state is BleState.WaitingForBleClose
+            if (status == STATUS_TERMINATE_LOCAL_HOST && readyForExpectedClose) {
                 val closeTs = SystemClock.elapsedRealtime()
                 bleCloseTimestampMs = closeTs
                 val readyTs = readyForCommandsTimestampMs ?: closeTs
