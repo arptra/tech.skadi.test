@@ -17,6 +17,7 @@ import android.os.Looper
 import android.os.SystemClock
 import com.skadi.myvu.bleclient.util.BluetoothUtils
 import com.skadi.myvu.bleclient.util.HexUtils
+import com.skadi.myvu.bleclient.ble.classic.ClassicConnectionManager
 import java.util.LinkedList
 import java.util.UUID
 import org.json.JSONObject
@@ -82,10 +83,15 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var clientReadyRunnable: Runnable? = null
     private var heartbeatRunnable: Runnable? = null
     private var heartbeatActive = false
+    private var heartbeatDeferredForBond = false
+    private var heartbeatBondWatchdog: Runnable? = null
+    private var autoReconnectAttempts = 0
+    private var classicHandoverStarted = false
     private var lastTx: PacketLog? = null
     private var lastRx: PacketLog? = null
     private var lastDisconnectRequestedReason: String? = null
     private var lastDisconnectStack: Throwable? = null
+    private val classicConnectionManager = ClassicConnectionManager(logger)
 
     fun setListener(listener: Listener) {
         this.listener = listener
@@ -167,6 +173,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         val stack = Throwable("disconnect stack")
         lastDisconnectStack = stack
         stopHeartbeatLoop()
+        classicHandoverStarted = false
+        classicConnectionManager.close()
         val now = SystemClock.elapsedRealtime()
         val bondState = gatt?.device?.bondState
         val lastTxAge = lastTx?.let { now - it.timestamp }?.toString() ?: "n/a"
@@ -286,6 +294,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                         if (firstNotifyReceived) {
                             onHandshakeCompleteAndReady()
                         }
+                        if (state is BleState.ReadyForCommands && !classicHandoverStarted) {
+                            startHeartbeatLoop()
+                        }
                     }
                     BluetoothDevice.BOND_NONE -> logger.logInfo(TAG, "Bond removed or failed")
                 }
@@ -317,6 +328,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         }
         if (newState == BluetoothProfile.STATE_CONNECTED && status == BluetoothGatt.GATT_SUCCESS) {
             connectRetries = 0
+            autoReconnectAttempts = 0
             setState(BleState.ServicesDiscovering)
             startTimeout(TIMEOUT_DISCOVERY, DISCOVERY_TIMEOUT_MS) {
                 setState(BleState.Error(BleErrorReason.SERVICE_DISCOVERY_FAILED))
@@ -331,9 +343,21 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 "Disconnected status=$status requested=$lastDisconnectRequestedReason lastTxAgeMs=${lastTxAgeMs ?: "n/a"} lastRxAgeMs=${lastRxAgeMs ?: "n/a"}"
             )
             lastDisconnectStack?.let { logger.logError(TAG, "Last disconnect request stack", it) }
+            if (status == STATUS_TERMINATE_LOCAL_HOST && classicHandoverStarted) {
+                logger.logInfo(TAG, ">>> BLE CLOSED BY DEVICE – EXPECTED (handover)")
+                cleanupAfterDisconnect()
+                setState(BleState.Disconnected)
+                return
+            }
             val readyPhase = state is BleState.ConnectedReady ||
                 state is BleState.ProtocolSessionInit ||
                 state is BleState.ReadyForCommands
+            val unexpectedLocalClose =
+                lastDisconnectRequestedReason == null && status == STATUS_TERMINATE_LOCAL_HOST && readyPhase
+            if (unexpectedLocalClose && autoReconnectAttempts < MAX_AUTO_RECONNECT_ATTEMPTS) {
+                scheduleAutoReconnect("terminate_local_host_ready")
+                return
+            }
             val tolerateLocalClose = (firstNotifyReceived || readyPhase) && status == STATUS_TERMINATE_LOCAL_HOST
             if (state !is BleState.Disconnected && state !is BleState.Idle && !tolerateLocalClose) {
                 setState(BleState.Error(BleErrorReason.GATT_CONNECT_FAILED))
@@ -349,6 +373,22 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         requestDisconnect("retry_connection", forceClose = true)
         BluetoothUtils.refreshGattCache(this.gatt)
         mainHandler.postDelayed({ connectToTarget() }, RETRY_DELAY_MS)
+    }
+
+    private fun scheduleAutoReconnect(trigger: String) {
+        val device = targetDevice ?: gatt?.device
+        if (device == null) {
+            logger.logError(TAG, "Auto-reconnect skipped (no device) trigger=$trigger")
+            return
+        }
+        val deviceAddress = device.address
+        autoReconnectAttempts++
+        logger.logInfo(
+            TAG,
+            "Auto-reconnect scheduled trigger=$trigger device=$deviceAddress attempt=$autoReconnectAttempts/${MAX_AUTO_RECONNECT_ATTEMPTS}"
+        )
+        cleanupAfterDisconnect()
+        mainHandler.postDelayed({ connectToTarget() }, AUTO_RECONNECT_DELAY_MS)
     }
 
     private fun handleServicesDiscovered(gatt: BluetoothGatt, status: Int) {
@@ -392,8 +432,13 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             service.getCharacteristic(UUID.fromString(SYS_NOTIFY_UUID))
         ).filter { it.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0 }
 
-        notifyCharacteristicsStage1 = listOfNotNull(rxChar).filter { it.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0 }
-        notifyCharacteristicsStage2 = notifyCandidates.filter { char -> notifyCharacteristicsStage1.none { it.uuid == char.uuid } }
+        // Some firmware revisions send the first vendor packet on the control characteristic
+        // (00002020...) rather than the RX characteristic. Previously we only enabled CCCDs for
+        // RX, which meant we never saw that first notify and the link would time out with a
+        // local-host disconnect (status=22). Enabling all vendor notify-capable characteristics
+        // up front keeps the session alive and mirrors the sniffed working trace.
+        notifyCharacteristicsStage1 = notifyCandidates
+        notifyCharacteristicsStage2 = emptyList()
 
         val gattService = gatt.getService(UUID.fromString(GATT_SERVICE_UUID))
         val serviceChanged = gattService?.getCharacteristic(UUID.fromString(SERVICE_CHANGED_UUID))
@@ -573,6 +618,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             startCommandPending = false
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     logger.logInfo(TAG, "Handshake write acknowledged status=$status")
+                    scheduleClientReadyFrame()
+                    onHandshakeCompleteAndReady()
                     val device = gatt.device
                     val bondState = device.bondState
                     when (bondState) {
@@ -586,6 +633,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                             logger.logInfo(TAG, "Device already bonded; waiting for first vendor notify to mark ready")
                             if (firstNotifyReceived) {
                                 onHandshakeCompleteAndReady()
+                            }
+                            if (state is BleState.ReadyForCommands) {
+                                startHeartbeatLoop()
                             }
                         }
                         else -> logger.logInfo(TAG, "Unhandled bond state=$bondState after start command")
@@ -674,6 +724,17 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         quietHoldActive = false
         logger.logInfo(TAG, "Protocol session init complete ($reason); channel ready for commands")
         setState(BleState.ReadyForCommands)
+        if (firstNotifyReceived) {
+            startClassicHandover("ready_for_commands")
+            return
+        }
+        val bondState = gatt?.device?.bondState
+        if (bondState != BluetoothDevice.BOND_BONDED) {
+            logger.logInfo(TAG, "Bond not completed (state=$bondState); deferring heartbeat until bonded or watchdog fires")
+            heartbeatDeferredForBond = true
+            startHeartbeatBondWatchdog()
+            return
+        }
         startHeartbeatLoop()
         if (AUTO_ENABLE_STAGE2_CCCD) {
             scheduleStageTwoCccd(gatt)
@@ -713,6 +774,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
     private fun startHeartbeatLoop() {
         if (heartbeatActive) return
+        heartbeatDeferredForBond = false
+        heartbeatBondWatchdog?.let { mainHandler.removeCallbacks(it) }
+        heartbeatBondWatchdog = null
         val gattInstance = gatt ?: return
         val controlChar = protocol.writeCharacteristic ?: return
         val writeType = selectWriteType(controlChar, withResponse = false)
@@ -739,6 +803,35 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         heartbeatActive = false
         heartbeatRunnable?.let { mainHandler.removeCallbacks(it) }
         heartbeatRunnable = null
+        heartbeatDeferredForBond = false
+        heartbeatBondWatchdog?.let { mainHandler.removeCallbacks(it) }
+        heartbeatBondWatchdog = null
+    }
+
+    private fun startClassicHandover(trigger: String) {
+        if (classicHandoverStarted) return
+        classicHandoverStarted = true
+        stopHeartbeatLoop()
+        val device = targetDevice ?: gatt?.device
+        if (device == null) {
+            logger.logError(TAG, "Classic handover skipped (no device) trigger=$trigger")
+            classicHandoverStarted = false
+            return
+        }
+        logger.logInfo(TAG, ">>> CLASSIC HANDOVER START trigger=$trigger")
+        classicConnectionManager.start(device, trigger)
+    }
+
+    private fun startHeartbeatBondWatchdog() {
+        if (heartbeatBondWatchdog != null) return
+        val runnable = Runnable {
+            heartbeatBondWatchdog = null
+            if (heartbeatActive || !heartbeatDeferredForBond) return@Runnable
+            logger.logInfo(TAG, "Bond watchdog elapsed; starting heartbeat even though bond not completed")
+            startHeartbeatLoop()
+        }
+        heartbeatBondWatchdog = runnable
+        mainHandler.postDelayed(runnable, BOND_HEARTBEAT_GRACE_MS)
     }
 
     fun enqueueDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor): Boolean {
@@ -891,6 +984,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         gatt = null
         protocol.clear()
         connectRetries = 0
+        classicHandoverStarted = false
+        classicConnectionManager.close()
         pendingCccdWrites = 0
         handshakeCommandSent = false
         startCommandPending = false
@@ -1030,6 +1125,12 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val STAGE2_CCCD_DELAY_MS = 500L
         private const val CLIENT_READY_DELAY_MS = 100L
         private const val HEARTBEAT_INTERVAL_MS = 500L
+        // The headset drops the link a few seconds after READY_FOR_COMMANDS when no traffic is
+        // flowing. The bond can still be in progress at that point, so we start the heartbeat
+        // much sooner (2s) even if bonding hasn't completed yet to keep the L2CAP link alive.
+        private const val BOND_HEARTBEAT_GRACE_MS = 2_000L
+        private const val AUTO_RECONNECT_DELAY_MS = 750L
+        private const val MAX_AUTO_RECONNECT_ATTEMPTS = 3
         private const val KEY_LAST_TARGET = "last_target_mac"
         private const val STATUS_TERMINATE_LOCAL_HOST = 22
         private const val AUTO_ENABLE_STAGE2_CCCD = false
