@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattDescriptor
+import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothProfile
 import android.content.Context
 import android.os.Handler
@@ -424,8 +425,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         val success = gatt.setCharacteristicNotification(characteristic, true)
         if (!success) {
             logger.logError(TAG, "Failed to enable notification for ${characteristic.uuid}")
-        } else if (characteristic.uuid.toString().equals(SERVICE_CHANGED_UUID, ignoreCase = true)) {
-            logger.logInfo(TAG, "Indication enabled for ${characteristic.uuid}")
         }
         return success
     }
