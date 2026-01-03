@@ -349,15 +349,19 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             return
         }
         val service = gatt.getService(UUID.fromString(SERVICE_UUID))
-        val controlChar = service?.getCharacteristic(UUID.fromString(CONTROL_UUID))
-        if (service == null || controlChar == null) {
-            logger.logError(TAG, "Required service/characteristics missing")
+        val controlWriteChar = service?.getCharacteristic(UUID.fromString(CONTROL_WRITE_UUID))
+        val streamWriteChar = service?.getCharacteristic(UUID.fromString(STREAM_WRITE_UUID))
+        val notifyChar = service?.getCharacteristic(UUID.fromString(NOTIFY_UUID))
+        if (service == null || controlWriteChar == null) {
+            logger.logError(TAG, "Required service/characteristics missing (service=$service control=$controlWriteChar)")
             setState(BleState.Error(BleErrorReason.SERVICE_DISCOVERY_FAILED))
             requestDisconnect("missing_service_or_control", forceClose = true)
             return
         }
         protocol.gatt = gatt
-        protocol.writeCharacteristic = controlChar
+        protocol.controlWriteCharacteristic = controlWriteChar
+        protocol.streamWriteCharacteristic = streamWriteChar
+        protocol.notifyCharacteristic = notifyChar
         logGattDump(gatt.services)
 
         enableCccdQueue.clear()
@@ -365,10 +369,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         vendorState = VENDOR_STATE_IDLE
         allowBleTraffic = true
         cccdEnabled = false
-
-        if (controlChar != null) {
-            logger.logInfo(TAG, "Control characteristic ${controlChar.uuid} used for writes only; skipping CCCD")
-        }
 
         val notifyTargets = service.characteristics.filter { ch ->
             val props = ch.properties
@@ -512,8 +512,12 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             put("b", 2)
             put("c", "9999")
         }.toString().toByteArray(Charsets.UTF_8)
-        logger.logInfo(TAG, "Sending CLIENT_HELLO with writeType=WRITE_TYPE_DEFAULT")
-        val sent = protocol.send(hello, withResponse = true, forcedWriteType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
+        val targetChar = protocol.controlWriteCharacteristic
+        logger.logInfo(
+            TAG,
+            "Sending CLIENT_HELLO via control write char=${targetChar?.uuid} (withResponse=true, writeType selected by properties)"
+        )
+        val sent = protocol.send(hello, withResponse = true)
         if (!sent) {
             logger.logError(TAG, "Failed to enqueue CLIENT_HELLO")
             setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
@@ -579,6 +583,15 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         forcedWriteType: Int? = null
     ): Boolean {
         val type = forcedWriteType ?: selectWriteType(characteristic, withResponse)
+        if (type == BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT &&
+            characteristic.properties and BluetoothGattCharacteristic.PROPERTY_WRITE == 0
+        ) {
+            logger.logError(
+                TAG,
+                "Attempted WRITE_TYPE_DEFAULT on non-WRITE characteristic ${characteristic.uuid} props=${propString(characteristic.properties)}"
+            )
+            return false
+        }
         operationQueue.add(Operation.CharacteristicWrite(gatt, characteristic, payload, type))
         processNextOperation()
         return true
@@ -854,7 +867,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val TAG = "BleManager"
         private const val SERVICE_UUID = "00000bd1-0000-1000-8000-00805f9b34fb"
         private const val NOTIFY_UUID = "00002021-0000-1000-8000-00805f9b34fb"
-        private const val CONTROL_UUID = "00002020-0000-1000-8000-00805f9b34fb"
+        private const val CONTROL_WRITE_UUID = "00002000-0000-1000-8000-00805f9b34fb"
+        private const val STREAM_WRITE_UUID = "00002020-0000-1000-8000-00805f9b34fb"
         private const val CCCD_UUID = "00002902-0000-1000-8000-00805f9b34fb"
         private const val SCAN_TIMEOUT_MS = 25_000L
         private const val CONNECT_TIMEOUT_MS = 12_000L

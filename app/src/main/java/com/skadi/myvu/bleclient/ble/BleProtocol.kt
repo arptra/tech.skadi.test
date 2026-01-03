@@ -18,7 +18,8 @@ class BleProtocol(
 ) {
     var gatt: BluetoothGatt? = null
     var notifyCharacteristic: BluetoothGattCharacteristic? = null
-    var writeCharacteristic: BluetoothGattCharacteristic? = null
+    var controlWriteCharacteristic: BluetoothGattCharacteristic? = null
+    var streamWriteCharacteristic: BluetoothGattCharacteristic? = null
 
     private data class FragmentBuffer(
         val data: ByteArrayOutputStream = ByteArrayOutputStream(),
@@ -31,7 +32,8 @@ class BleProtocol(
     fun clear() {
         gatt = null
         notifyCharacteristic = null
-        writeCharacteristic = null
+        controlWriteCharacteristic = null
+        streamWriteCharacteristic = null
         buffers.values.forEach { buffer ->
             buffer.flushRunnable?.let { handler.removeCallbacks(it) }
         }
@@ -39,8 +41,16 @@ class BleProtocol(
     }
 
     fun send(payload: ByteArray, withResponse: Boolean = false, forcedWriteType: Int? = null): Boolean {
-        val char = writeCharacteristic ?: return false.also {
-            logger.logError(TAG, "No write characteristic available")
+        val char = if (withResponse) {
+            controlWriteCharacteristic ?: streamWriteCharacteristic
+        } else {
+            streamWriteCharacteristic ?: controlWriteCharacteristic
+        } ?: return false.also {
+            logger.logError(TAG, "No suitable write characteristic available for withResponse=$withResponse")
+        }
+        if (withResponse && char.properties and BluetoothGattCharacteristic.PROPERTY_WRITE == 0) {
+            logger.logError(TAG, "WRITE with response requested on non-WRITE characteristic ${char.uuid}")
+            return false
         }
         val gattInstance = gatt ?: return false.also {
             logger.logError(TAG, "No active GATT session")
