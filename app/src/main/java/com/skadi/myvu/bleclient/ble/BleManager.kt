@@ -688,11 +688,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         logger.logInfo(TAG, "Protocol session init complete ($reason); channel ready for commands")
         setState(BleState.ReadyForCommands)
         val bondState = gatt?.device?.bondState
-        if (bondState == BluetoothDevice.BOND_BONDED) {
-            startHeartbeatLoop()
-        } else {
-            logger.logInfo(TAG, "Bond not completed (state=$bondState); deferring heartbeat until bonded")
+        if (bondState != BluetoothDevice.BOND_BONDED) {
+            logger.logInfo(TAG, "Bond not completed (state=$bondState); starting heartbeat to keep link alive")
         }
+        startHeartbeatLoop()
         if (AUTO_ENABLE_STAGE2_CCCD) {
             scheduleStageTwoCccd(gatt)
         } else {
