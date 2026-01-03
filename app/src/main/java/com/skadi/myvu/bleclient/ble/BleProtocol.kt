@@ -53,14 +53,15 @@ class BleProtocol(
         val gattInstance = gatt ?: return false.also {
             logger.logError(TAG, "No active GATT session")
         }
-        return sendInternal(gattInstance, char, payload, withResponse, forcedWriteType)
+        return sendInternal(gattInstance, char, payload, withResponse, forcedWriteType, framed = true)
     }
 
     fun sendWithCharacteristic(
         payload: ByteArray,
         characteristic: BluetoothGattCharacteristic?,
         withResponse: Boolean,
-        forcedWriteType: Int? = null
+        forcedWriteType: Int? = null,
+        framed: Boolean = true
     ): Boolean {
         val char = characteristic ?: return false.also {
             logger.logError(TAG, "No characteristic supplied for explicit send")
@@ -68,7 +69,22 @@ class BleProtocol(
         val gattInstance = gatt ?: return false.also {
             logger.logError(TAG, "No active GATT session")
         }
-        return sendInternal(gattInstance, char, payload, withResponse, forcedWriteType)
+        return sendInternal(gattInstance, char, payload, withResponse, forcedWriteType, framed)
+    }
+
+    fun sendRawWithCharacteristic(
+        payload: ByteArray,
+        characteristic: BluetoothGattCharacteristic?,
+        withResponse: Boolean,
+        forcedWriteType: Int? = null
+    ): Boolean {
+        return sendWithCharacteristic(
+            payload = payload,
+            characteristic = characteristic,
+            withResponse = withResponse,
+            forcedWriteType = forcedWriteType,
+            framed = false
+        )
     }
 
     private fun sendInternal(
@@ -76,27 +92,44 @@ class BleProtocol(
         characteristic: BluetoothGattCharacteristic,
         payload: ByteArray,
         withResponse: Boolean,
-        forcedWriteType: Int?
+        forcedWriteType: Int?,
+        framed: Boolean
     ): Boolean {
         if (withResponse && characteristic.properties and BluetoothGattCharacteristic.PROPERTY_WRITE == 0) {
             logger.logError(TAG, "WRITE with response requested on non-WRITE characteristic ${characteristic.uuid}")
             return false
         }
         val maxChunk = bleManager.maxWritePayload()
+        if (!framed) {
+            if (payload.size > maxChunk) {
+                logger.logError(
+                    TAG,
+                    "Raw send payload too large (${payload.size}) for single write (max=$maxChunk) on ${characteristic.uuid}"
+                )
+                return false
+            }
+            return bleManager.enqueueCharacteristicWrite(
+                gattInstance,
+                characteristic,
+                payload,
+                withResponse,
+                forcedWriteType
+            )
+        }
         var fragmentIndex = 0
         var offset = 0
         if (payload.isEmpty()) {
-            val framed = framePayload(byteArrayOf(), fragmentIndex)
-            return bleManager.enqueueCharacteristicWrite(gattInstance, characteristic, framed, withResponse, forcedWriteType)
+            val framedPayload = framePayload(byteArrayOf(), fragmentIndex)
+            return bleManager.enqueueCharacteristicWrite(gattInstance, characteristic, framedPayload, withResponse, forcedWriteType)
         }
         while (offset < payload.size) {
             val end = (offset + maxChunk).coerceAtMost(payload.size)
             val chunk = payload.copyOfRange(offset, end)
-            val framed = framePayload(chunk, fragmentIndex)
+            val framedPayload = framePayload(chunk, fragmentIndex)
             val enqueued = bleManager.enqueueCharacteristicWrite(
                 gattInstance,
                 characteristic,
-                framed,
+                framedPayload,
                 withResponse,
                 forcedWriteType
             )

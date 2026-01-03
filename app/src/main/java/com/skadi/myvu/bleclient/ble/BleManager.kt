@@ -609,7 +609,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         val withResponse = targetChar?.properties?.let { props ->
             props and BluetoothGattCharacteristic.PROPERTY_WRITE != 0
         } ?: false
-        val sent = protocol.sendWithCharacteristic(payload, targetChar, withResponse = withResponse)
+        val sent = protocol.sendRawWithCharacteristic(payload, targetChar, withResponse = withResponse)
         if (!sent) {
             logger.logError(TAG, "Failed to enqueue CLIENT_HELLO")
             setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
