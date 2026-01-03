@@ -124,14 +124,14 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         scanner?.stopScan()
         isBonded = device.bondState == BluetoothDevice.BOND_BONDED
         vendorState = if (isBonded) VENDOR_STATE_BONDED_READY else VENDOR_STATE_IDLE
-        allowBleTraffic = !isBonded
+        allowBleTraffic = true
         ensurePairingReceiver()
         setState(BleState.Connecting)
         startTimeout(TIMEOUT_CONNECT, CONNECT_TIMEOUT_MS) {
             setState(BleState.Error(BleErrorReason.GATT_CONNECT_FAILED))
             requestDisconnect("connect_timeout", forceClose = true)
         }
-        gatt = device.connectGatt(context, false, gattCallback, BluetoothDevice.TRANSPORT_LE)
+        gatt = device.connectGatt(appContext, false, gattCallback, BluetoothDevice.TRANSPORT_LE)
     }
 
     fun requestBond() {
@@ -201,7 +201,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     fun canStartBrEdrTransport(): Boolean {
         val ready = vendorState == VENDOR_STATE_BONDED_READY && isBonded
         if (!ready) {
-            logger.logInfo(TAG, "SPP/RFCOMM blocked until vendorState=4 and bond complete (current=$vendorState bonded=$isBonded)")
+            logger.logInfo(TAG, "SPP/RFCOMM blocked until vendorState=$VENDOR_STATE_BONDED_READY and bond complete (current=$vendorState bonded=$isBonded)")
         }
         return ready
     }
@@ -350,15 +350,13 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         }
         val service = gatt.getService(UUID.fromString(SERVICE_UUID))
         val controlChar = service?.getCharacteristic(UUID.fromString(CONTROL_UUID))
-        val dataChar = service?.getCharacteristic(UUID.fromString(NOTIFY_UUID))
-        if (service == null || controlChar == null || dataChar == null) {
+        if (service == null || controlChar == null) {
             logger.logError(TAG, "Required service/characteristics missing")
             setState(BleState.Error(BleErrorReason.SERVICE_DISCOVERY_FAILED))
             requestDisconnect("missing_service_or_control", forceClose = true)
             return
         }
         protocol.gatt = gatt
-        protocol.notifyCharacteristic = dataChar
         protocol.writeCharacteristic = controlChar
         logGattDump(gatt.services)
 
@@ -372,22 +370,22 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             logger.logInfo(TAG, "Control characteristic ${controlChar.uuid} used for writes only; skipping CCCD")
         }
 
-        val notifyTargets = mutableListOf<BluetoothGattCharacteristic>()
-        dataChar?.let { ch ->
-            val hasNotify = ch.properties and (BluetoothGattCharacteristic.PROPERTY_NOTIFY or BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0
-            if (hasNotify) {
-                notifyTargets += ch
-            } else {
-                logger.logError(TAG, "Data characteristic ${ch.uuid} missing NOTIFY/INDICATE; cannot enable CCCD")
-            }
+        val notifyTargets = service.characteristics.filter { ch ->
+            val props = ch.properties
+            props and (BluetoothGattCharacteristic.PROPERTY_NOTIFY or BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0
         }
 
         notifyTargets.forEach { characteristic ->
+            val value = if (characteristic.properties and BluetoothGattCharacteristic.PROPERTY_INDICATE != 0) {
+                BluetoothGattDescriptor.ENABLE_INDICATION_VALUE
+            } else {
+                BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+            }
             buildCccdDescriptor(
                 gatt,
                 characteristic,
                 "notify_${characteristic.uuid}",
-                BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+                value
             )?.let { enqueueCccd(it) }
         }
 
@@ -457,10 +455,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         logger.logInfo(TAG, "All required notifications enabled (CCCD enabled)")
         cccdEnabled = true
         setState(BleState.NotificationsEnabled, "CCCD enabled")
-        if (vendorState == VENDOR_STATE_IDLE) {
-            vendorState = VENDOR_STATE_WAITING_FOR_SERVER_KEY
+        if (vendorState < VENDOR_STATE_CCCD_ENABLED) {
+            advanceVendorState(VENDOR_STATE_CCCD_ENABLED, "Notifications enabled")
         }
-        setState(BleState.WaitingForServerKey, "Awaiting server key before BR/EDR bond")
+        sendClientHello(gatt)
     }
 
     private fun enableNotifications(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic): Boolean {
@@ -501,9 +499,63 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         onOperationComplete()
     }
 
+    private fun sendClientHello(gatt: BluetoothGatt) {
+        if (vendorState >= VENDOR_STATE_CLIENT_HELLO_SENT) {
+            logger.logInfo(TAG, "Client HELLO already sent; skipping duplicate dispatch")
+            return
+        }
+        val hello = JSONObject().apply {
+            put("i", System.currentTimeMillis().toString())
+            put("v", 3)
+            put("e", 5)
+            put("m", MTU_TARGET)
+            put("b", 2)
+            put("c", "9999")
+        }.toString().toByteArray(Charsets.UTF_8)
+        logger.logInfo(TAG, "Sending CLIENT_HELLO with writeType=WRITE_TYPE_DEFAULT")
+        val sent = protocol.send(hello, withResponse = true, forcedWriteType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
+        if (!sent) {
+            logger.logError(TAG, "Failed to enqueue CLIENT_HELLO")
+            setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
+            requestDisconnect("client_hello_failed", forceClose = true)
+            return
+        }
+        advanceVendorState(VENDOR_STATE_CLIENT_HELLO_SENT, "Client HELLO dispatched")
+        setState(BleState.WaitingForServerKey, "Client HELLO sent; awaiting server response")
+        startTimeout(TIMEOUT_SERVER_HELLO, SERVER_HELLO_TIMEOUT_MS) {
+            logger.logError(TAG, "Timeout waiting for server hello after CLIENT_HELLO")
+            setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
+            requestDisconnect("server_hello_timeout", forceClose = true)
+        }
+    }
+
     fun onFramedPayload(payload: ByteArray, source: UUID) {
         logger.logInfo(TAG, "Framed payload complete from $source len=${payload.size}")
-        if (vendorState < VENDOR_STATE_READY_FOR_BOND) {
+        stopTimeout(TIMEOUT_SERVER_HELLO)
+        stopTimeout(TIMEOUT_SERVER_KEY)
+        val jsonText = runCatching { String(payload, Charsets.UTF_8) }.getOrNull()
+        if (vendorState < VENDOR_STATE_CLIENT_HELLO_SENT) {
+            logger.logInfo(TAG, "Payload received before client HELLO dispatch; ignoring")
+            return
+        }
+        if (vendorState == VENDOR_STATE_CLIENT_HELLO_SENT && jsonText?.trim()?.startsWith("{") == true) {
+            advanceVendorState(VENDOR_STATE_SERVER_HELLO_RECEIVED, "Server hello received from $source")
+            setState(BleState.WaitingForServerKey, "Server hello received")
+            startTimeout(TIMEOUT_SERVER_KEY, SERVER_KEY_TIMEOUT_MS) {
+                logger.logError(TAG, "Timeout waiting for server key after hello")
+                setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
+                requestDisconnect("server_key_timeout", forceClose = true)
+            }
+            return
+        }
+        if (vendorState == VENDOR_STATE_CLIENT_HELLO_SENT) {
+            advanceVendorState(VENDOR_STATE_READY_FOR_BOND, "Server key received (no JSON) from $source")
+            setState(BleState.ReadyForBond, "Server key received")
+            stopBleTrafficForBonding()
+            triggerBrEdrBondIfNeeded()
+            return
+        }
+        if (vendorState >= VENDOR_STATE_SERVER_HELLO_RECEIVED && vendorState < VENDOR_STATE_READY_FOR_BOND) {
             advanceVendorState(VENDOR_STATE_READY_FOR_BOND, "Server key received from $source")
             setState(BleState.ReadyForBond, "Server key received")
             stopBleTrafficForBonding()
@@ -709,6 +761,11 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                         advanceVendorState(VENDOR_STATE_BONDING, "System pairing request received")
                     }
                     setState(BleState.BondingBrEdr, "System pairing request")
+                    startTimeout(TIMEOUT_BONDING, BONDING_TIMEOUT_MS) {
+                        logger.logError(TAG, "Bonding timeout after pairing request")
+                        setState(BleState.Error(BleErrorReason.BOND_FAILED))
+                        requestDisconnect("bonding_timeout", forceClose = true)
+                    }
                 }
                 BluetoothDevice.ACTION_BOND_STATE_CHANGED -> {
                     val bondState = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.BOND_NONE)
@@ -718,12 +775,18 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                         BluetoothDevice.BOND_BONDING -> {
                             advanceVendorState(VENDOR_STATE_BONDING, "Android reports BONDING")
                             setState(BleState.BondingBrEdr, "Android reports BONDING")
+                            startTimeout(TIMEOUT_BONDING, BONDING_TIMEOUT_MS) {
+                                logger.logError(TAG, "Bonding timeout while in BONDING state")
+                                setState(BleState.Error(BleErrorReason.BOND_FAILED))
+                                requestDisconnect("bonding_timeout", forceClose = true)
+                            }
                         }
                         BluetoothDevice.BOND_BONDED -> {
                             isBonded = true
                             advanceVendorState(VENDOR_STATE_BONDED_READY, "Android reports BONDED")
                             setState(BleState.Bonded, "Android reports BONDED")
                             setState(BleState.ReadyForTransport, "Vendor state ready + bond complete")
+                            stopTimeout(TIMEOUT_BONDING)
                         }
                         BluetoothDevice.BOND_NONE -> {
                             isBonded = false
@@ -731,6 +794,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                                 setState(BleState.Error(BleErrorReason.BOND_FAILED))
                                 requestDisconnect("bond_lost", forceClose = true)
                             }
+                            stopTimeout(TIMEOUT_BONDING)
                         }
                     }
                 }
@@ -750,7 +814,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             setState(BleState.ReadyForTransport, "Vendor state ready + bond complete")
             return
         }
-        stopBleTrafficForBonding()
         advanceVendorState(VENDOR_STATE_BONDING, "Invoking createBond() after server key")
         logger.logInfo(TAG, "Invoking createBond() for BR/EDR after server key")
         val started = runCatching { device.createBond() }.getOrDefault(false)
@@ -759,6 +822,11 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             setState(BleState.Error(BleErrorReason.BOND_FAILED), "createBond start failed")
         } else {
             setState(BleState.BondingBrEdr, "createBond started")
+            startTimeout(TIMEOUT_BONDING, BONDING_TIMEOUT_MS) {
+                logger.logError(TAG, "Bonding timeout after createBond")
+                setState(BleState.Error(BleErrorReason.BOND_FAILED))
+                requestDisconnect("bonding_timeout", forceClose = true)
+            }
         }
     }
 
@@ -796,15 +864,23 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val TIMEOUT_SCAN = "timeout_scan"
         private const val TIMEOUT_CONNECT = "timeout_connect"
         private const val TIMEOUT_DISCOVERY = "timeout_discovery"
+        private const val TIMEOUT_SERVER_HELLO = "timeout_server_hello"
+        private const val TIMEOUT_SERVER_KEY = "timeout_server_key"
+        private const val TIMEOUT_BONDING = "timeout_bonding"
         private const val MTU_TARGET = 512
         private const val DEFAULT_MTU = 23
         private const val KEY_LAST_TARGET = "last_target_mac"
         private const val STATUS_TERMINATE_LOCAL_HOST = 22
         private const val VENDOR_STATE_IDLE = 0
-        private const val VENDOR_STATE_WAITING_FOR_SERVER_KEY = 1
-        private const val VENDOR_STATE_READY_FOR_BOND = 2
-        private const val VENDOR_STATE_BONDING = 3
-        private const val VENDOR_STATE_BONDED_READY = 4
+        private const val VENDOR_STATE_CCCD_ENABLED = 1
+        private const val VENDOR_STATE_CLIENT_HELLO_SENT = 2
+        private const val VENDOR_STATE_SERVER_HELLO_RECEIVED = 3
+        private const val VENDOR_STATE_READY_FOR_BOND = 4
+        private const val VENDOR_STATE_BONDING = 5
+        private const val VENDOR_STATE_BONDED_READY = 6
+        private const val SERVER_HELLO_TIMEOUT_MS = 5_000L
+        private const val SERVER_KEY_TIMEOUT_MS = 5_000L
+        private const val BONDING_TIMEOUT_MS = 10_000L
     }
 
     private sealed class Operation {
