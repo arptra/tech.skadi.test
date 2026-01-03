@@ -76,6 +76,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var protocolInitHoldElapsed = false
     private var firstVendorPacket: ByteArray? = null
     private var quietHoldActive = false
+    private var sessionInitBlobSent = false
     private var stageTwoCccdScheduled = false
     private var enablingStageTwo = false
     private var clientReadyScheduled = false
@@ -610,6 +611,36 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         enqueueCharacteristicWrite(gatt, controlChar, START_COMMAND, withResponse = false, forcedWriteType = writeType)
     }
 
+    private fun sendSessionInitBlob() {
+        if (sessionInitBlobSent) {
+            logger.logInfo(TAG, "Session-init blob already sent; skipping duplicate")
+            return
+        }
+        if (isBleQuietPhase()) {
+            logger.logInfo(TAG, "Skipping session-init blob; BLE is in quiet phase state=${state.label}")
+            return
+        }
+        val gattInstance = gatt
+        val controlChar = protocol.writeCharacteristic
+        if (gattInstance == null || controlChar == null) {
+            logger.logError(TAG, "Cannot send session-init blob; gatt=$gattInstance controlChar=$controlChar")
+            return
+        }
+        val writeType = selectWriteType(controlChar, withResponse = false)
+        logger.logInfo(
+            TAG,
+            "Sending session-init blob len=${SESSION_INIT_BLOB.size} to ${controlChar.uuid} writeType=$writeType payload=${HexUtils.toHex(SESSION_INIT_BLOB)}"
+        )
+        sessionInitBlobSent = true
+        enqueueCharacteristicWrite(
+            gattInstance,
+            controlChar,
+            SESSION_INIT_BLOB,
+            withResponse = false,
+            forcedWriteType = writeType
+        )
+    }
+
     private fun handleCharacteristicWrite(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
         if (startCommandPending && characteristic.uuid == protocol.writeCharacteristic?.uuid) {
             startCommandPending = false
@@ -652,7 +683,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 TAG,
                 "First vendor packet after start command (${characteristic.uuid} len=${payload.size}): ${HexUtils.toHex(payload)}"
             )
-            scheduleClientReadyFrame()
+            sendSessionInitBlob()
             onHandshakeCompleteAndReady()
             return
         }
@@ -969,6 +1000,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         protocolInitHoldElapsed = false
         firstVendorPacket = null
         quietHoldActive = false
+        sessionInitBlobSent = false
         stageTwoCccdScheduled = false
         enablingStageTwo = false
         clientReadyScheduled = false
@@ -1007,6 +1039,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         protocolInitHoldElapsed = false
         firstVendorPacket = null
         quietHoldActive = false
+        sessionInitBlobSent = false
         stageTwoCccdScheduled = false
         enablingStageTwo = false
         clientReadyScheduled = false
@@ -1132,6 +1165,125 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val TIMEOUT_PROTOCOL_INIT = "timeout_protocol_init"
         private const val TIMEOUT_STAGE2_CCCD = "timeout_stage2_cccd"
         private val START_COMMAND = byteArrayOf(0x00, 0x00, 0x06, 0x11, 0x01, 0x00)
+        private val SESSION_INIT_BLOB = byteArrayOf(
+            0x00,
+            0x00,
+            0x02,
+            0x10,
+            0x0a,
+            0x06,
+            0xc3.toByte(),
+            0x5b,
+            0x3f,
+            0x48,
+            0x0d,
+            0x1c,
+            0x10,
+            0x0b,
+            0x1a,
+            0x65,
+            0x0a,
+            0x5b,
+            0x30,
+            0x59,
+            0x30,
+            0x13,
+            0x06,
+            0x07,
+            0x2a,
+            0x86.toByte(),
+            0x48,
+            0xce.toByte(),
+            0x3d,
+            0x02,
+            0x01,
+            0x06,
+            0x08,
+            0x2a,
+            0x86.toByte(),
+            0x48,
+            0xce.toByte(),
+            0x3d,
+            0x03,
+            0x01,
+            0x07,
+            0x03,
+            0x42,
+            0x00,
+            0x04,
+            0x68,
+            0xa7.toByte(),
+            0xef.toByte(),
+            0x99.toByte(),
+            0x42,
+            0x6e,
+            0xdc.toByte(),
+            0x53,
+            0x21,
+            0xfa.toByte(),
+            0x58,
+            0x71,
+            0xba.toByte(),
+            0x1a,
+            0xdf.toByte(),
+            0xb0.toByte(),
+            0x56,
+            0xf1.toByte(),
+            0x12,
+            0xd2.toByte(),
+            0x6b,
+            0x03,
+            0x32,
+            0x0d,
+            0x8c.toByte(),
+            0xe1.toByte(),
+            0xcc.toByte(),
+            0xc7.toByte(),
+            0xaa.toByte(),
+            0x22,
+            0x37,
+            0xad.toByte(),
+            0xa6.toByte(),
+            0x29,
+            0x40,
+            0x87.toByte(),
+            0x77,
+            0xac.toByte(),
+            0x78,
+            0x5f,
+            0x4e,
+            0x27,
+            0xed.toByte(),
+            0x2f,
+            0x4e,
+            0x70,
+            0xae.toByte(),
+            0xe1.toByte(),
+            0xf6.toByte(),
+            0x39,
+            0x65,
+            0x1e,
+            0x95.toByte(),
+            0xcc.toByte(),
+            0x0d,
+            0x9c.toByte(),
+            0xff.toByte(),
+            0xdc.toByte(),
+            0xc7.toByte(),
+            0x48,
+            0xe6.toByte(),
+            0x21,
+            0x06,
+            0x57,
+            0x12,
+            0x06,
+            0xe3.toByte(),
+            0xf2.toByte(),
+            0xb7.toByte(),
+            0xc0.toByte(),
+            0xa4.toByte(),
+            0x3c
+        )
         // Client-ready is a vendor/session frame (class 0x10) without security flags; sent once post-notify
         private val CLIENT_READY_FRAME = byteArrayOf(0x00, 0x00, 0x02, 0x10, 0x01, 0x00)
         // Heartbeat is a minimal vendor/session frame (class 0x10) to keep the link alive post-ready
