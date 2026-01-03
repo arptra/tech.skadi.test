@@ -94,6 +94,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var lastDisconnectRequestedReason: String? = null
     private var lastDisconnectStack: Throwable? = null
 
+    private fun isBleQuietPhase(): Boolean {
+        return state is BleState.ReadyForCommands || state is BleState.WaitingForBleClose
+    }
+
     fun setListener(listener: Listener) {
         this.listener = listener
         listener.onTargetUpdated(targetDevice?.address ?: prefs.getString(KEY_LAST_TARGET, null), targetRssi, targetReason)
@@ -714,6 +718,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         logger.logInfo(TAG, "Transitioning to WAITING_FOR_BLE_CLOSE for classic handover")
         setState(BleState.WaitingForBleClose)
         stopHeartbeatLoop()
+        clearQueue()
         if (AUTO_ENABLE_STAGE2_CCCD) {
             scheduleStageTwoCccd(gatt)
         } else {
@@ -730,6 +735,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         val runnable = Runnable {
             clientReadyScheduled = false
             if (clientReadySent) return@Runnable
+            if (isBleQuietPhase()) {
+                logger.logInfo(TAG, "Dropping client-ready send; BLE is in quiet phase state=${state.label}")
+                return@Runnable
+            }
             if (state !is BleState.HandshakeSent && state !is BleState.ConnectedReady && state !is BleState.ProtocolSessionInit && state !is BleState.ReadyForCommands) {
                 return@Runnable
             }
@@ -752,6 +761,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
     private fun startHeartbeatLoop() {
         if (heartbeatActive) return
+        if (isBleQuietPhase()) {
+            logger.logInfo(TAG, "Heartbeat suppressed; BLE is in quiet phase state=${state.label}")
+            return
+        }
         val gattInstance = gatt ?: return
         val controlChar = protocol.writeCharacteristic ?: return
         val writeType = selectWriteType(controlChar, withResponse = false)
@@ -759,6 +772,11 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         val runnable = object : Runnable {
             override fun run() {
                 if (!heartbeatActive) return
+                if (isBleQuietPhase()) {
+                    logger.logInfo(TAG, "Heartbeat loop stopping; BLE entered quiet phase state=${state.label}")
+                    heartbeatActive = false
+                    return
+                }
                 enqueueCharacteristicWrite(
                     gattInstance,
                     controlChar,
@@ -781,6 +799,13 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     }
 
     fun enqueueDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor): Boolean {
+        if (isBleQuietPhase()) {
+            logger.logInfo(
+                TAG,
+                "Dropping descriptor write ${descriptor.uuid} because BLE is quiet state=${state.label}"
+            )
+            return false
+        }
         operationQueue.add(Operation.DescriptorWrite(gatt, descriptor))
         processNextOperation()
         return true
@@ -794,6 +819,13 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         forcedWriteType: Int? = null,
         sender: String = "unspecified"
     ): Boolean {
+        if (isBleQuietPhase()) {
+            logger.logInfo(
+                TAG,
+                "Dropping BLE write to ${characteristic.uuid} because state=${state.label} is quiet; sender=$sender"
+            )
+            return false
+        }
         val isSessionFrame = payload.size >= 4 &&
             payload[2] == 0x02.toByte() && payload[3] == 0x10.toByte()
         if (isSessionFrame) {
@@ -819,7 +851,11 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
     private fun processNextOperation() {
         if (operationInProgress) return
-        val op = operationQueue.poll() ?: return
+        var op = operationQueue.poll() ?: return
+        while (isBleQuietPhase()) {
+            logger.logInfo(TAG, "Dropping pending operation ${op.javaClass.simpleName} because BLE is quiet state=${state.label}")
+            op = operationQueue.poll() ?: return
+        }
         operationInProgress = true
         when (op) {
             is Operation.DescriptorWrite -> {
