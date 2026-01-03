@@ -579,8 +579,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         sendClientHello(gatt)
     }
 
-    private fun sendClientHello(gatt: BluetoothGatt) {
-        if (vendorState >= VENDOR_STATE_CLIENT_HELLO_SENT) {
+    private fun sendClientHello(gatt: BluetoothGatt, allowRetry: Boolean = false) {
+        if (vendorState >= VENDOR_STATE_CLIENT_HELLO_SENT && !allowRetry) {
             logger.logInfo(TAG, "Client HELLO already sent; skipping duplicate dispatch")
             return
         }
@@ -684,7 +684,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         if (helloAttempts < MAX_HELLO_RETRIES) {
             logger.logError(TAG, "Timeout waiting for server hello; retrying CLIENT_HELLO (attempt ${helloAttempts + 1}/$MAX_HELLO_RETRIES)")
             advanceVendorState(VENDOR_STATE_PRE_HELLO_READS_COMPLETE, "Retrying HELLO after timeout")
-            sendClientHello(gatt)
+            sendClientHello(gatt, allowRetry = true)
             return
         }
         logger.logError(TAG, "Timeout waiting for server hello after $helloAttempts attempts")
