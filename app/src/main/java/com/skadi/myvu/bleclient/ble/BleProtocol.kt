@@ -20,6 +20,7 @@ class BleProtocol(
     var notifyCharacteristic: BluetoothGattCharacteristic? = null
     var controlWriteCharacteristic: BluetoothGattCharacteristic? = null
     var streamWriteCharacteristic: BluetoothGattCharacteristic? = null
+    var streamHelloWriteCharacteristic: BluetoothGattCharacteristic? = null
 
     private data class FragmentBuffer(
         val data: ByteArrayOutputStream = ByteArrayOutputStream(),
@@ -34,6 +35,7 @@ class BleProtocol(
         notifyCharacteristic = null
         controlWriteCharacteristic = null
         streamWriteCharacteristic = null
+        streamHelloWriteCharacteristic = null
         buffers.values.forEach { buffer ->
             buffer.flushRunnable?.let { handler.removeCallbacks(it) }
         }
@@ -48,19 +50,44 @@ class BleProtocol(
         } ?: return false.also {
             logger.logError(TAG, "No suitable write characteristic available for withResponse=$withResponse")
         }
-        if (withResponse && char.properties and BluetoothGattCharacteristic.PROPERTY_WRITE == 0) {
-            logger.logError(TAG, "WRITE with response requested on non-WRITE characteristic ${char.uuid}")
-            return false
+        val gattInstance = gatt ?: return false.also {
+            logger.logError(TAG, "No active GATT session")
+        }
+        return sendInternal(gattInstance, char, payload, withResponse, forcedWriteType)
+    }
+
+    fun sendWithCharacteristic(
+        payload: ByteArray,
+        characteristic: BluetoothGattCharacteristic?,
+        withResponse: Boolean,
+        forcedWriteType: Int? = null
+    ): Boolean {
+        val char = characteristic ?: return false.also {
+            logger.logError(TAG, "No characteristic supplied for explicit send")
         }
         val gattInstance = gatt ?: return false.also {
             logger.logError(TAG, "No active GATT session")
+        }
+        return sendInternal(gattInstance, char, payload, withResponse, forcedWriteType)
+    }
+
+    private fun sendInternal(
+        gattInstance: BluetoothGatt,
+        characteristic: BluetoothGattCharacteristic,
+        payload: ByteArray,
+        withResponse: Boolean,
+        forcedWriteType: Int?
+    ): Boolean {
+        if (withResponse && characteristic.properties and BluetoothGattCharacteristic.PROPERTY_WRITE == 0) {
+            logger.logError(TAG, "WRITE with response requested on non-WRITE characteristic ${characteristic.uuid}")
+            return false
         }
         val maxChunk = bleManager.maxWritePayload()
         var fragmentIndex = 0
         var offset = 0
         if (payload.isEmpty()) {
             val framed = framePayload(byteArrayOf(), fragmentIndex)
-            return bleManager.enqueueCharacteristicWrite(gattInstance, char, framed, withResponse, forcedWriteType)
+            return bleManager.enqueueCharacteristicWrite(gattInstance, characteristic, framed, withResponse, forcedWriteType)
         }
         while (offset < payload.size) {
             val end = (offset + maxChunk).coerceAtMost(payload.size)
@@ -68,7 +95,7 @@ class BleProtocol(
             val framed = framePayload(chunk, fragmentIndex)
             val enqueued = bleManager.enqueueCharacteristicWrite(
                 gattInstance,
-                char,
+                characteristic,
                 framed,
                 withResponse,
                 forcedWriteType
@@ -103,7 +130,7 @@ class BleProtocol(
         if (message.isEmpty()) return
         logger.logInfo(
             TAG,
-            "Assembled message from $uuid len=${message.size} preview=${HexUtils.toHex(message.take(16).toByteArray())}"
+            "Assembled message from $uuid len=${message.size} hex=${HexUtils.toHex(message)}"
         )
         bleManager.onFramedPayload(message, uuid)
         val jsonText = runCatching { String(message, Charsets.UTF_8) }.getOrNull()

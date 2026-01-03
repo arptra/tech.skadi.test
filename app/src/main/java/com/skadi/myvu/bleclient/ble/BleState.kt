@@ -11,6 +11,7 @@ sealed class BleState(val label: String) {
     object ServicesDiscovering : BleState("SERVICES_DISCOVERING")
     object EnablingNotifications : BleState("ENABLING_NOTIFICATIONS")
     object NotificationsEnabled : BleState("NOTIFICATIONS_ENABLED")
+    object ReadingPreHello : BleState("READING_PRE_HELLO")
     object WaitingForServerKey : BleState("WAITING_FOR_SERVER_KEY")
     object ReadyForBond : BleState("READY_FOR_BOND")
     object BondingBrEdr : BleState("BONDING_BR_EDR")
