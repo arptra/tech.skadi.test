@@ -689,7 +689,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         }
         logger.logError(TAG, "Timeout waiting for server hello after $helloAttempts attempts")
         setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
-        requestDisconnect("server_hello_timeout", forceClose = true)
+        // Avoid a hard close here to prevent the host-terminated (22) tear-down that power-cycles the glasses.
+        requestDisconnect("server_hello_timeout", forceClose = false)
     }
 
     fun enqueueDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor): Boolean {
