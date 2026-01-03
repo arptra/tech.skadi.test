@@ -1,5 +1,6 @@
 package com.skadi.myvu.bleclient.ble.classic
 
+import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.os.SystemClock
@@ -20,8 +21,8 @@ class ClassicConnectionManager(private val logger: BleLogger) {
         val thread = Thread({
             val startedAt = SystemClock.elapsedRealtime()
             logger.logInfo(TAG, ">>> CLASSIC HANDOVER START trigger=$trigger device=${device.address}")
-            runCatching { device.bluetoothAdapter?.cancelDiscovery() }
-                .onFailure { logger.logError(TAG, "Failed to cancel discovery", it) }
+            runCatching { BluetoothAdapter.getDefaultAdapter()?.cancelDiscovery() }
+                .onFailure { err -> logger.logError(TAG, "Failed to cancel discovery", err) }
 
             val primary = runCatching { device.createRfcommSocketToServiceRecord(SPP_UUID) }
                 .onFailure { logger.logError(TAG, "Primary RFCOMM socket create failed", it) }
@@ -53,8 +54,8 @@ class ClassicConnectionManager(private val logger: BleLogger) {
             true
         } catch (t: Throwable) {
             logger.logError(TAG, ">>> RFCOMM CONNECT FAILED type=$label", t)
-            runCatching { candidate.close() }.onFailure {
-                logger.logError(TAG, "Failed to close RFCOMM socket after $label failure", it)
+            runCatching { candidate.close() }.onFailure { err ->
+                logger.logError(TAG, "Failed to close RFCOMM socket after $label failure", err)
             }
             false
         }
