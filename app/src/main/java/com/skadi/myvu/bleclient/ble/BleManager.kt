@@ -578,6 +578,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             startCommandPending = false
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     logger.logInfo(TAG, "Handshake write acknowledged status=$status")
+                    scheduleClientReadyFrame()
+                    onHandshakeCompleteAndReady()
                     val device = gatt.device
                     val bondState = device.bondState
                     when (bondState) {
