@@ -454,7 +454,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     }
 
     private fun onAllCccdsEnabled(gatt: BluetoothGatt) {
-        logger.logInfo(TAG, "All required notifications enabled")
+        logger.logInfo(TAG, "All required notifications enabled (CCCD enabled)")
         notificationsReady = true
         cccdEnabled = true
         setState(BleState.NotificationsEnabled)
@@ -696,6 +696,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         handshakeStage = HandshakeStage.IDLE
         isBonded = false
         helloResponseSeen = false
+        notificationsReady = false
+        cccdEnabled = false
         enableCccdQueue.clear()
         lastDisconnectRequestedReason = null
         lastDisconnectStack = null
@@ -716,6 +718,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         isBonded = false
         helloResponseSeen = false
         notificationsReady = false
+        cccdEnabled = false
         enableCccdQueue.clear()
         lastDisconnectRequestedReason = null
         lastDisconnectStack = null
