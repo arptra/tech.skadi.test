@@ -82,6 +82,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var isBonded: Boolean = false
     private var helloResponseSeen: Boolean = false
     private var notificationsReady: Boolean = false
+    private var cccdEnabled: Boolean = false
     private var pairingReceiverRegistered = false
 
     fun setListener(listener: Listener) {
@@ -365,6 +366,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         pendingCccdWrites = 0
         handshakeStage = HandshakeStage.IDLE
         notificationsReady = false
+        cccdEnabled = false
 
         if (controlChar != null) {
             logger.logInfo(TAG, "Control characteristic ${controlChar.uuid} used for writes only; skipping CCCD")
@@ -454,13 +456,15 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private fun onAllCccdsEnabled(gatt: BluetoothGatt) {
         logger.logInfo(TAG, "All required notifications enabled")
         notificationsReady = true
+        cccdEnabled = true
         setState(BleState.NotificationsEnabled)
         if (isBonded) {
+            logger.logInfo(TAG, "CCCD enabled and already bonded; sending HELLO")
             sendHello()
         } else {
             handshakeStage = HandshakeStage.WAITING_FOR_BOND_BEFORE_HELLO
             setState(BleState.WaitingForBondBeforeHello)
-            logger.logInfo(TAG, "Waiting for pairing before sending HELLO")
+            logger.logInfo(TAG, "CCCD enabled; waiting for bond before HELLO")
         }
     }
 
@@ -547,6 +551,12 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         }
         if (!notificationsReady) {
             logger.logInfo(TAG, "Notifications not ready; deferring HELLO")
+            handshakeStage = HandshakeStage.WAITING_FOR_BOND_BEFORE_HELLO
+            setState(BleState.WaitingForBondBeforeHello)
+            return
+        }
+        if (!cccdEnabled) {
+            logger.logInfo(TAG, "CCCD not yet enabled; deferring HELLO")
             handshakeStage = HandshakeStage.WAITING_FOR_BOND_BEFORE_HELLO
             setState(BleState.WaitingForBondBeforeHello)
             return
