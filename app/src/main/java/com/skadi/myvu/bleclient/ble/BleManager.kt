@@ -51,8 +51,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
     private enum class HandshakeStage {
         IDLE,
+        WAITING_FOR_BOND_BEFORE_HELLO,
         HELLO_SENT,
-        WAITING_FOR_BOND,
+        WAITING_FOR_BOND_AFTER_HELLO,
         ECDH_SENT,
         READY
     }
@@ -80,6 +81,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var handshakeStage: HandshakeStage = HandshakeStage.IDLE
     private var isBonded: Boolean = false
     private var helloResponseSeen: Boolean = false
+    private var notificationsReady: Boolean = false
     private var pairingReceiverRegistered = false
 
     fun setListener(listener: Listener) {
@@ -144,8 +146,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     }
 
     fun requestBond() {
-        // The glasses initiate pairing after HELLO. Manually calling createBond() causes them to hang or disconnect,
-        // so we rely on their SMP request and auto-confirm via the broadcast receiver.
+        // The glasses drive pairing immediately after notifications are enabled. Manually calling createBond() still
+        // causes them to hang or disconnect, so we only react to their SMP request via the broadcast receiver.
         logger.logInfo(TAG, "Bonding is managed by the device; manual request ignored")
     }
 
@@ -198,7 +200,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         callbackThread.quitSafely()
     }
 
-    fun send(payload: ByteArray, withResponse: Boolean = false): Boolean = protocol.send(payload, withResponse)
+    fun send(payload: ByteArray, withResponse: Boolean = false, forcedWriteType: Int? = null): Boolean =
+        protocol.send(payload, withResponse, forcedWriteType)
 
     fun maxWritePayload(): Int = (currentMtu - 3 - 2).coerceAtLeast(1)
 
@@ -361,8 +364,23 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         enableCccdQueue.clear()
         pendingCccdWrites = 0
         handshakeStage = HandshakeStage.IDLE
+        notificationsReady = false
 
-        listOf(controlChar, dataChar).forEach { characteristic ->
+        if (controlChar != null) {
+            logger.logInfo(TAG, "Control characteristic ${controlChar.uuid} used for writes only; skipping CCCD")
+        }
+
+        val notifyTargets = mutableListOf<BluetoothGattCharacteristic>()
+        dataChar?.let { ch ->
+            val hasNotify = ch.properties and (BluetoothGattCharacteristic.PROPERTY_NOTIFY or BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0
+            if (hasNotify) {
+                notifyTargets += ch
+            } else {
+                logger.logError(TAG, "Data characteristic ${ch.uuid} missing NOTIFY/INDICATE; cannot enable CCCD")
+            }
+        }
+
+        notifyTargets.forEach { characteristic ->
             buildCccdDescriptor(
                 gatt,
                 characteristic,
@@ -390,6 +408,11 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     ): BluetoothGattDescriptor? {
         characteristic ?: return null.also {
             logger.logError(TAG, "Missing $label characteristic when preparing CCCD")
+        }
+        val supportsNotify = characteristic.properties and (BluetoothGattCharacteristic.PROPERTY_NOTIFY or BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0
+        if (!supportsNotify) {
+            logger.logInfo(TAG, "Skipping CCCD for $label char=${characteristic.uuid} because it is write-only")
+            return null
         }
         val cccd = characteristic.getDescriptor(UUID.fromString(CCCD_UUID))
         if (cccd == null) {
@@ -430,8 +453,15 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
     private fun onAllCccdsEnabled(gatt: BluetoothGatt) {
         logger.logInfo(TAG, "All required notifications enabled")
+        notificationsReady = true
         setState(BleState.NotificationsEnabled)
-        sendHello(gatt)
+        if (isBonded) {
+            sendHello()
+        } else {
+            handshakeStage = HandshakeStage.WAITING_FOR_BOND_BEFORE_HELLO
+            setState(BleState.WaitingForBondBeforeHello)
+            logger.logInfo(TAG, "Waiting for pairing before sending HELLO")
+        }
     }
 
     private fun enableNotifications(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic): Boolean {
@@ -485,10 +515,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 } else {
                     logger.logInfo(TAG, "HELLO response received before bond; waiting for pairing to complete")
                     setState(BleState.WaitingForPairing)
-                    handshakeStage = HandshakeStage.WAITING_FOR_BOND
+                    handshakeStage = HandshakeStage.WAITING_FOR_BOND_AFTER_HELLO
                 }
             }
-            HandshakeStage.WAITING_FOR_BOND -> {
+            HandshakeStage.WAITING_FOR_BOND_AFTER_HELLO -> {
                 helloResponseSeen = true
                 if (isBonded) {
                     logger.logInfo(TAG, "HELLO response received while bonded; continuing handshake")
@@ -507,7 +537,30 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         }
     }
 
-    private fun sendHello(gatt: BluetoothGatt) {
+    private fun sendHello() {
+        if (handshakeStage == HandshakeStage.HELLO_SENT ||
+            handshakeStage == HandshakeStage.ECDH_SENT ||
+            handshakeStage == HandshakeStage.READY
+        ) {
+            logger.logInfo(TAG, "HELLO already dispatched; current stage=$handshakeStage")
+            return
+        }
+        if (!notificationsReady) {
+            logger.logInfo(TAG, "Notifications not ready; deferring HELLO")
+            handshakeStage = HandshakeStage.WAITING_FOR_BOND_BEFORE_HELLO
+            setState(BleState.WaitingForBondBeforeHello)
+            return
+        }
+        if (!isBonded) {
+            logger.logInfo(TAG, "Not bonded yet; holding HELLO until BOND_BONDED")
+            handshakeStage = HandshakeStage.WAITING_FOR_BOND_BEFORE_HELLO
+            setState(BleState.WaitingForBondBeforeHello)
+            return
+        }
+        val gattInstance = gatt ?: run {
+            logger.logError(TAG, "No active GATT when attempting to send HELLO")
+            return
+        }
         val sessionId = System.currentTimeMillis().toString(16)
         val helloJson = JSONObject().apply {
             put("i", sessionId)
@@ -519,7 +572,11 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         }
         val payload = helloJson.toString().toByteArray(Charsets.UTF_8)
         logger.logInfo(TAG, "Sending HELLO handshake: $helloJson")
-        val sent = protocol.send(payload, withResponse = false)
+        val sent = protocol.send(
+            payload,
+            withResponse = true,
+            forcedWriteType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+        )
         if (sent) {
             handshakeStage = HandshakeStage.HELLO_SENT
             setState(BleState.HelloSent)
@@ -533,7 +590,11 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         val keyPair = generateEcdhKeyPair()
         val publicKey = keyPair.public.encoded
         logger.logInfo(TAG, "Sending ECDH public key (DER) len=${publicKey.size}")
-        val sent = protocol.send(publicKey, withResponse = false)
+        val sent = protocol.send(
+            publicKey,
+            withResponse = true,
+            forcedWriteType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+        )
         if (sent) {
             handshakeStage = HandshakeStage.ECDH_SENT
             setState(BleState.HandshakeContinued)
@@ -644,6 +705,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         handshakeStage = HandshakeStage.IDLE
         isBonded = false
         helloResponseSeen = false
+        notificationsReady = false
         enableCccdQueue.clear()
         lastDisconnectRequestedReason = null
         lastDisconnectStack = null
@@ -748,7 +810,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                         .onFailure { logger.logError(TAG, "Failed to auto-confirm pairing", it) }
                     if (state !is BleState.Bonded) {
                         setState(BleState.WaitingForPairing)
-                        handshakeStage = HandshakeStage.WAITING_FOR_BOND
+                    }
+                    if (handshakeStage == HandshakeStage.IDLE) {
+                        handshakeStage = HandshakeStage.WAITING_FOR_BOND_BEFORE_HELLO
                     }
                 }
                 BluetoothDevice.ACTION_BOND_STATE_CHANGED -> {
@@ -760,9 +824,22 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                         BluetoothDevice.BOND_BONDED -> {
                             isBonded = true
                             setState(BleState.Bonded)
-                            if (handshakeStage == HandshakeStage.HELLO_SENT && helloResponseSeen) {
-                                logger.logInfo(TAG, "Bonded after HELLO response; continuing handshake")
-                                sendEcdhKey()
+                            when (handshakeStage) {
+                                HandshakeStage.WAITING_FOR_BOND_BEFORE_HELLO, HandshakeStage.IDLE -> {
+                                    logger.logInfo(TAG, "Bonded with CCCD ready=${notificationsReady}; attempting HELLO")
+                                    sendHello()
+                                }
+                                HandshakeStage.HELLO_SENT, HandshakeStage.WAITING_FOR_BOND_AFTER_HELLO -> {
+                                    if (helloResponseSeen) {
+                                        logger.logInfo(TAG, "Bonded after HELLO response; continuing handshake")
+                                        sendEcdhKey()
+                                    } else {
+                                        logger.logInfo(TAG, "Bonded after HELLO send; waiting for response")
+                                    }
+                                }
+                                else -> {
+                                    // READY/ECDH path already in progress
+                                }
                             }
                         }
                         BluetoothDevice.BOND_NONE -> {

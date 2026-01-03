@@ -38,7 +38,7 @@ class BleProtocol(
         buffers.clear()
     }
 
-    fun send(payload: ByteArray, withResponse: Boolean = false): Boolean {
+    fun send(payload: ByteArray, withResponse: Boolean = false, forcedWriteType: Int? = null): Boolean {
         val char = writeCharacteristic ?: return false.also {
             logger.logError(TAG, "No write characteristic available")
         }
@@ -50,13 +50,19 @@ class BleProtocol(
         var offset = 0
         if (payload.isEmpty()) {
             val framed = framePayload(byteArrayOf(), fragmentIndex)
-            return bleManager.enqueueCharacteristicWrite(gattInstance, char, framed, withResponse)
+            return bleManager.enqueueCharacteristicWrite(gattInstance, char, framed, withResponse, forcedWriteType)
         }
         while (offset < payload.size) {
             val end = (offset + maxChunk).coerceAtMost(payload.size)
             val chunk = payload.copyOfRange(offset, end)
             val framed = framePayload(chunk, fragmentIndex)
-            val enqueued = bleManager.enqueueCharacteristicWrite(gattInstance, char, framed, withResponse)
+            val enqueued = bleManager.enqueueCharacteristicWrite(
+                gattInstance,
+                char,
+                framed,
+                withResponse,
+                forcedWriteType
+            )
             if (!enqueued) return false
             offset = end
             fragmentIndex++
