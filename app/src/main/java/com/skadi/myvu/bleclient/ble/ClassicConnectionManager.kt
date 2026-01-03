@@ -40,19 +40,20 @@ class ClassicConnectionManager(private val context: Context, private val logger:
         executor.execute {
             val startMs = SystemClock.elapsedRealtime()
             var lastError: Throwable? = null
-            for (attempt in 1..MAX_ATTEMPTS) {
+            attemptLoop@ for (attempt in 1..MAX_ATTEMPTS) {
                 if (cancelled) {
                     logger.logInfo(TAG, "Classic connection cancelled before attempt $attempt")
                     return@execute
                 }
                 BluetoothUtils.getAdapter(context)?.cancelDiscovery()
                 val createStart = SystemClock.elapsedRealtime()
-                val candidateSocket = runCatching { createSocket(device, attempt) }
-                    .getOrElse {
-                        lastError = it
-                        logger.logError(TAG, "Attempt $attempt failed to create socket", it)
-                        continue
-                    }
+                val candidateSocket = try {
+                    createSocket(device, attempt)
+                } catch (t: Throwable) {
+                    lastError = t
+                    logger.logError(TAG, "Attempt $attempt failed to create socket", t)
+                    continue@attemptLoop
+                }
                 socket = candidateSocket
                 val connectStart = SystemClock.elapsedRealtime()
                 logger.logInfo(
