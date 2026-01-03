@@ -532,9 +532,13 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
     private fun handleCharacteristicRead(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
         if (status != BluetoothGatt.GATT_SUCCESS) {
-            logger.logError(TAG, "Characteristic read failed for ${characteristic.uuid} status=$status")
-            setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED), "Characteristic read failed")
-            requestDisconnect("pre_hello_read_failed", forceClose = true)
+            logger.logError(
+                TAG,
+                "Characteristic read failed for ${characteristic.uuid} status=$status; proceeding to HELLO"
+            )
+            pendingPreHelloReads = 0
+            onPreHelloReadsComplete(gatt)
+            onOperationComplete()
             return
         }
         recordRx(characteristic.uuid, characteristic.value ?: byteArrayOf())
@@ -561,9 +565,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             enqueueCharacteristicRead(gatt, characteristic)
         }
         startTimeout(TIMEOUT_PRE_HELLO_READ, PRE_HELLO_READ_TIMEOUT_MS) {
-            logger.logError(TAG, "Timeout waiting for pre-HELLO read responses")
-            setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
-            requestDisconnect("pre_hello_read_timeout", forceClose = true)
+            logger.logError(TAG, "Timeout waiting for pre-HELLO read responses; proceeding to HELLO")
+            pendingPreHelloReads = 0
+            onPreHelloReadsComplete(gatt)
         }
     }
 
