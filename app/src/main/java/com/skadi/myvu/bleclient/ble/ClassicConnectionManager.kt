@@ -3,17 +3,19 @@ package com.skadi.myvu.bleclient.ble
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
+import android.os.SystemClock
 import com.skadi.myvu.bleclient.util.BluetoothUtils
 import java.util.UUID
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
 class ClassicConnectionManager(private val context: Context, private val logger: BleLogger) {
-    private val mainHandler = Handler(Looper.getMainLooper())
-    private var connectThread: Thread? = null
-    private var timeoutRunnable: Runnable? = null
+    private val executor = Executors.newSingleThreadExecutor { r ->
+        Thread(r, "classic-connector").apply { isDaemon = true }
+    }
     private var socket: BluetoothSocket? = null
+    private var cancelled = false
 
     fun startConnection(
         mac: String,
@@ -21,6 +23,7 @@ class ClassicConnectionManager(private val context: Context, private val logger:
         onFailed: (Throwable?) -> Unit
     ) {
         cancel()
+        cancelled = false
         val adapter = BluetoothUtils.getAdapter(context)
         if (adapter == null) {
             logger.logError(TAG, "Bluetooth adapter unavailable for classic handover")
@@ -33,54 +36,68 @@ class ClassicConnectionManager(private val context: Context, private val logger:
                 onFailed(it)
                 return
             }
-        logger.logInfo(TAG, "Starting Classic RFCOMM connection to $mac")
-        val socket = runCatching { createSocket(device) }
-            .getOrElse {
-                logger.logError(TAG, "Failed to create RFCOMM socket for $mac", it)
-                onFailed(it)
-                return
+        logger.logInfo(TAG, "Starting Classic RFCOMM connection attempts to $mac")
+        executor.execute {
+            val startMs = SystemClock.elapsedRealtime()
+            var lastError: Throwable? = null
+            for (attempt in 1..MAX_ATTEMPTS) {
+                if (cancelled) {
+                    logger.logInfo(TAG, "Classic connection cancelled before attempt $attempt")
+                    return@execute
+                }
+                BluetoothUtils.getAdapter(context)?.cancelDiscovery()
+                val createStart = SystemClock.elapsedRealtime()
+                val candidateSocket = runCatching { createSocket(device, attempt) }
+                    .getOrElse {
+                        lastError = it
+                        logger.logError(TAG, "Attempt $attempt failed to create socket", it)
+                        continue
+                    }
+                socket = candidateSocket
+                val connectStart = SystemClock.elapsedRealtime()
+                logger.logInfo(
+                    TAG,
+                    "Attempt $attempt connecting to $mac using ${candidateSocket.remoteDevice.address} createdAt=${connectStart - createStart}ms since create"
+                )
+                try {
+                    candidateSocket.connect()
+                    val delta = SystemClock.elapsedRealtime() - startMs
+                    logger.logInfo(TAG, "Classic RFCOMM connected to $mac on attempt $attempt deltaMs=$delta")
+                    onConnected()
+                    return@execute
+                } catch (t: Throwable) {
+                    lastError = t
+                    logger.logError(TAG, "Classic RFCOMM attempt $attempt failed for $mac", t)
+                    runCatching { candidateSocket.close() }
+                }
+                if (attempt < MAX_ATTEMPTS) {
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(RETRY_BACKOFF_MS * attempt)
+                    } catch (_: InterruptedException) {
+                        cancelled = true
+                        return@execute
+                    }
+                }
             }
-        this.socket = socket
-        val thread = Thread {
-            try {
-                socket.connect()
-                logger.logInfo(TAG, "Classic RFCOMM connected to $mac")
-                mainHandler.post { cancelTimeout(); onConnected() }
-            } catch (t: Throwable) {
-                logger.logError(TAG, "Classic RFCOMM connection failed for $mac", t)
-                mainHandler.post { cancelTimeout(); onFailed(t) }
+            if (!cancelled) {
+                val elapsed = SystemClock.elapsedRealtime() - startMs
+                logger.logError(TAG, "Classic RFCOMM connection exhausted attempts after ${elapsed}ms", lastError)
+                onFailed(lastError ?: TimeoutException("classic handover timeout"))
             }
-        }
-        connectThread = thread
-        thread.start()
-        startTimeout {
-            logger.logError(TAG, "Classic RFCOMM connection timed out for $mac")
-            closeSocket()
-            onFailed(TimeoutException("classic handover timeout"))
         }
     }
 
     fun cancel() {
-        cancelTimeout()
-        connectThread?.interrupt()
-        connectThread = null
-        closeSocket()
+        cancelled = true
+        executor.execute { closeSocket() }
     }
 
-    private fun createSocket(device: BluetoothDevice): BluetoothSocket {
-        return device.createRfcommSocketToServiceRecord(SPP_UUID)
-    }
-
-    private fun startTimeout(onTimeout: () -> Unit) {
-        cancelTimeout()
-        val runnable = Runnable { onTimeout() }
-        timeoutRunnable = runnable
-        mainHandler.postDelayed(runnable, TIMEOUT_MS)
-    }
-
-    private fun cancelTimeout() {
-        timeoutRunnable?.let { mainHandler.removeCallbacks(it) }
-        timeoutRunnable = null
+    private fun createSocket(device: BluetoothDevice, attempt: Int): BluetoothSocket {
+        return if (attempt == 1) {
+            device.createRfcommSocketToServiceRecord(SPP_UUID)
+        } else {
+            device.createInsecureRfcommSocketToServiceRecord(SPP_UUID)
+        }
     }
 
     private fun closeSocket() {
@@ -91,6 +108,7 @@ class ClassicConnectionManager(private val context: Context, private val logger:
     companion object {
         private const val TAG = "ClassicConnectionManager"
         private val SPP_UUID: UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb")
-        private const val TIMEOUT_MS = 8_000L
+        private const val MAX_ATTEMPTS = 3
+        private const val RETRY_BACKOFF_MS = 150L
     }
 }
