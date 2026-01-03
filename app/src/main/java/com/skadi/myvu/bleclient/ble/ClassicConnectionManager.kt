@@ -109,10 +109,11 @@ class ClassicConnectionManager(private val context: Context, private val logger:
 
     private fun createSocket(device: BluetoothDevice, attempt: Int): SocketChoice {
         return when (attempt) {
-            1 -> SocketChoice(device.createRfcommSocketToServiceRecord(SPP_UUID), "secure SPP uuid=${SPP_UUID}")
-            2 -> SocketChoice(device.createInsecureRfcommSocketToServiceRecord(SPP_UUID), "insecure SPP uuid=${SPP_UUID}")
-            3 -> SocketChoice(createChannelSocket(device, 1, insecure = false), "secure channel 1 reflection")
-            4 -> SocketChoice(createChannelSocket(device, 1, insecure = true), "insecure channel 1 reflection")
+            // Channel 1 reflection has been the most reliable in field captures, so try it first.
+            1 -> SocketChoice(createChannelSocket(device, 1, insecure = false), "secure channel 1 reflection")
+            2 -> SocketChoice(createChannelSocket(device, 1, insecure = true), "insecure channel 1 reflection")
+            3 -> SocketChoice(device.createRfcommSocketToServiceRecord(SPP_UUID), "secure SPP uuid=${SPP_UUID}")
+            4 -> SocketChoice(device.createInsecureRfcommSocketToServiceRecord(SPP_UUID), "insecure SPP uuid=${SPP_UUID}")
             else -> SocketChoice(device.createInsecureRfcommSocketToServiceRecord(SPP_UUID), "insecure SPP uuid=${SPP_UUID}")
         }
     }
