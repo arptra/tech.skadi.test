@@ -286,6 +286,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                         if (firstNotifyReceived) {
                             onHandshakeCompleteAndReady()
                         }
+                        if (state is BleState.ReadyForCommands) {
+                            startHeartbeatLoop()
+                        }
                     }
                     BluetoothDevice.BOND_NONE -> logger.logInfo(TAG, "Bond removed or failed")
                 }
@@ -594,6 +597,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                             if (firstNotifyReceived) {
                                 onHandshakeCompleteAndReady()
                             }
+                            if (state is BleState.ReadyForCommands) {
+                                startHeartbeatLoop()
+                            }
                         }
                         else -> logger.logInfo(TAG, "Unhandled bond state=$bondState after start command")
                     }
@@ -681,7 +687,12 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         quietHoldActive = false
         logger.logInfo(TAG, "Protocol session init complete ($reason); channel ready for commands")
         setState(BleState.ReadyForCommands)
-        startHeartbeatLoop()
+        val bondState = gatt?.device?.bondState
+        if (bondState == BluetoothDevice.BOND_BONDED) {
+            startHeartbeatLoop()
+        } else {
+            logger.logInfo(TAG, "Bond not completed (state=$bondState); deferring heartbeat until bonded")
+        }
         if (AUTO_ENABLE_STAGE2_CCCD) {
             scheduleStageTwoCccd(gatt)
         } else {
