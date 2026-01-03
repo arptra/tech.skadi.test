@@ -82,6 +82,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var clientReadyRunnable: Runnable? = null
     private var heartbeatRunnable: Runnable? = null
     private var heartbeatActive = false
+    private var autoReconnectAttempts = 0
     private var lastTx: PacketLog? = null
     private var lastRx: PacketLog? = null
     private var lastDisconnectRequestedReason: String? = null
@@ -320,6 +321,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         }
         if (newState == BluetoothProfile.STATE_CONNECTED && status == BluetoothGatt.GATT_SUCCESS) {
             connectRetries = 0
+            autoReconnectAttempts = 0
             setState(BleState.ServicesDiscovering)
             startTimeout(TIMEOUT_DISCOVERY, DISCOVERY_TIMEOUT_MS) {
                 setState(BleState.Error(BleErrorReason.SERVICE_DISCOVERY_FAILED))
@@ -337,6 +339,12 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             val readyPhase = state is BleState.ConnectedReady ||
                 state is BleState.ProtocolSessionInit ||
                 state is BleState.ReadyForCommands
+            val unexpectedLocalClose =
+                lastDisconnectRequestedReason == null && status == STATUS_TERMINATE_LOCAL_HOST && readyPhase
+            if (unexpectedLocalClose && autoReconnectAttempts < MAX_AUTO_RECONNECT_ATTEMPTS) {
+                scheduleAutoReconnect("terminate_local_host_ready")
+                return
+            }
             val tolerateLocalClose = (firstNotifyReceived || readyPhase) && status == STATUS_TERMINATE_LOCAL_HOST
             if (state !is BleState.Disconnected && state !is BleState.Idle && !tolerateLocalClose) {
                 setState(BleState.Error(BleErrorReason.GATT_CONNECT_FAILED))
@@ -352,6 +360,22 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         requestDisconnect("retry_connection", forceClose = true)
         BluetoothUtils.refreshGattCache(this.gatt)
         mainHandler.postDelayed({ connectToTarget() }, RETRY_DELAY_MS)
+    }
+
+    private fun scheduleAutoReconnect(trigger: String) {
+        val device = targetDevice ?: gatt?.device
+        if (device == null) {
+            logger.logError(TAG, "Auto-reconnect skipped (no device) trigger=$trigger")
+            return
+        }
+        val deviceAddress = device.address
+        autoReconnectAttempts++
+        logger.logInfo(
+            TAG,
+            "Auto-reconnect scheduled trigger=$trigger device=$deviceAddress attempt=$autoReconnectAttempts/${MAX_AUTO_RECONNECT_ATTEMPTS}"
+        )
+        cleanupAfterDisconnect()
+        mainHandler.postDelayed({ connectToTarget() }, AUTO_RECONNECT_DELAY_MS)
     }
 
     private fun handleServicesDiscovered(gatt: BluetoothGatt, status: Int) {
@@ -1047,6 +1071,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val STAGE2_CCCD_DELAY_MS = 500L
         private const val CLIENT_READY_DELAY_MS = 100L
         private const val HEARTBEAT_INTERVAL_MS = 500L
+        private const val AUTO_RECONNECT_DELAY_MS = 750L
+        private const val MAX_AUTO_RECONNECT_ATTEMPTS = 3
         private const val KEY_LAST_TARGET = "last_target_mac"
         private const val STATUS_TERMINATE_LOCAL_HOST = 22
         private const val AUTO_ENABLE_STAGE2_CCCD = false
