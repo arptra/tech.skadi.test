@@ -78,6 +78,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var pendingPreHelloReads: Int = 0
     private var helloWriteTarget: HelloWriteTarget = HelloWriteTarget.Control
     private var helloEncoding: HelloEncoding = HelloEncoding.RawJson
+    private var helloAttempts: Int = 0
 
     fun setListener(listener: Listener) {
         this.listener = listener
@@ -553,6 +554,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
     private fun startPreHelloReads(gatt: BluetoothGatt) {
         pendingPreHelloReads = readInfoCharacteristics.size
+        helloAttempts = 0
         if (pendingPreHelloReads == 0) {
             logger.logInfo(TAG, "No pre-HELLO reads configured; proceeding to CLIENT_HELLO directly")
             advanceVendorState(VENDOR_STATE_PRE_HELLO_READS_COMPLETE, "No pre-HELLO reads")
@@ -602,7 +604,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         }
         logger.logInfo(
             TAG,
-            "Sending CLIENT_HELLO via $helloWriteTarget char=${targetChar?.uuid} payloadEncoding=$helloEncoding"
+            "Sending CLIENT_HELLO via $helloWriteTarget char=${targetChar?.uuid} payloadEncoding=$helloEncoding attempt=${helloAttempts + 1}"
         )
         val withResponse = targetChar?.properties?.let { props ->
             props and BluetoothGattCharacteristic.PROPERTY_WRITE != 0
@@ -614,12 +616,12 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             requestDisconnect("client_hello_failed", forceClose = true)
             return
         }
+        helloAttempts++
         advanceVendorState(VENDOR_STATE_CLIENT_HELLO_SENT, "Client HELLO dispatched")
         setState(BleState.WaitingForServerKey, "Client HELLO sent; awaiting server response")
+        stopTimeout(TIMEOUT_SERVER_HELLO)
         startTimeout(TIMEOUT_SERVER_HELLO, SERVER_HELLO_TIMEOUT_MS) {
-            logger.logError(TAG, "Timeout waiting for server hello after CLIENT_HELLO")
-            setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
-            requestDisconnect("server_hello_timeout", forceClose = true)
+            handleServerHelloTimeout(gatt)
         }
     }
 
@@ -676,6 +678,18 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             return
         }
         logger.logInfo(TAG, "Ignoring additional BLE payloads while BR/EDR bonding is pending")
+    }
+
+    private fun handleServerHelloTimeout(gatt: BluetoothGatt) {
+        if (helloAttempts < MAX_HELLO_RETRIES) {
+            logger.logError(TAG, "Timeout waiting for server hello; retrying CLIENT_HELLO (attempt ${helloAttempts + 1}/$MAX_HELLO_RETRIES)")
+            advanceVendorState(VENDOR_STATE_PRE_HELLO_READS_COMPLETE, "Retrying HELLO after timeout")
+            sendClientHello(gatt)
+            return
+        }
+        logger.logError(TAG, "Timeout waiting for server hello after $helloAttempts attempts")
+        setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
+        requestDisconnect("server_hello_timeout", forceClose = true)
     }
 
     fun enqueueDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor): Boolean {
@@ -1038,6 +1052,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val SERVER_KEY_TIMEOUT_MS = 5_000L
         private const val BONDING_TIMEOUT_MS = 10_000L
         private const val PRE_HELLO_READ_TIMEOUT_MS = 5_000L
+        private const val MAX_HELLO_RETRIES = 2
     }
 
     private sealed class Operation {
