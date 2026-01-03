@@ -7,13 +7,17 @@ sealed class BleState(val label: String) {
     object Idle : BleState("IDLE")
     object Scanning : BleState("SCANNING")
     object Connecting : BleState("CONNECTING")
+    object MtuNegotiation : BleState("MTU_NEGOTIATION")
     object ServicesDiscovering : BleState("SERVICES_DISCOVERING")
     object EnablingNotifications : BleState("ENABLING_NOTIFICATIONS")
-    object MtuNegotiation : BleState("MTU_NEGOTIATION")
-    object HandshakeSent : BleState("HANDSHAKE_SENT")
-    object ProtocolSessionInit : BleState("PROTOCOL_SESSION_INIT")
-    object ConnectedReady : BleState("CONNECTED_READY")
-    object ReadyForCommands : BleState("READY_FOR_COMMANDS")
+    object NotificationsEnabled : BleState("NOTIFICATIONS_ENABLED")
+    object ReadingPreHello : BleState("READING_PRE_HELLO")
+    object BondedWait : BleState("BONDED_WAIT")
+    object WaitingForServerKey : BleState("WAITING_FOR_SERVER_KEY")
+    object ReadyForBond : BleState("READY_FOR_BOND")
+    object BondingBrEdr : BleState("BONDING_BR_EDR")
+    object Bonded : BleState("BONDED")
+    object ReadyForTransport : BleState("READY_FOR_TRANSPORT")
     object Disconnected : BleState("DISCONNECTED")
     data class Error(val reason: BleErrorReason) : BleState("ERROR: ${reason.name}")
 }
@@ -24,5 +28,6 @@ enum class BleErrorReason {
     GATT_CONNECT_FAILED,
     SERVICE_DISCOVERY_FAILED,
     HANDSHAKE_WRITE_FAILED,
-    CCCD_ENABLE_FAILED
+    CCCD_ENABLE_FAILED,
+    BOND_FAILED
 }
