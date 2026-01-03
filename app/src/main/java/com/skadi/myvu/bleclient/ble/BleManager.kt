@@ -349,20 +349,27 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             lastDisconnectStack?.let { logger.logError(TAG, "Last disconnect request stack", it) }
             if (
                 status == STATUS_TERMINATE_LOCAL_HOST &&
-                awaitingClassicHandover &&
-                state is BleState.WaitingForBleClose
+                (awaitingClassicHandover || state is BleState.HandshakeSent || state is BleState.WaitingForBleClose)
             ) {
                 val closeTs = SystemClock.elapsedRealtime()
                 bleCloseTimestampMs = closeTs
-                val readyTs = readyForCommandsTimestampMs
-                val deltaReadyToClose = readyTs?.let { closeTs - it }
+                val readyTs = readyForCommandsTimestampMs ?: closeTs
+                readyForCommandsTimestampMs = readyTs
+                val deltaReadyToClose = closeTs - readyTs
+                val phase = when {
+                    awaitingClassicHandover && state is BleState.WaitingForBleClose -> "ready_or_waiting"
+                    awaitingClassicHandover -> "ready"
+                    else -> "handshake_sent"
+                }
                 logger.logInfo(
                     TAG,
-                    "BLE closed by peer – expected classic handover readyTs=$readyTs closeTs=$closeTs deltaReadyToCloseMs=$deltaReadyToClose"
+                    "BLE closed by peer – expected classic handover phase=$phase readyTs=$readyTs closeTs=$closeTs deltaReadyToCloseMs=$deltaReadyToClose"
                 )
                 stopTimeouts()
                 clearQueue()
                 gatt?.let { gattInstance ->
+                    awaitingClassicHandover = true
+                    setState(BleState.WaitingForBleClose)
                     scheduleClassicAfterBleClose(gattInstance, trigger = "ble_closed_status_22")
                 }
                 return
