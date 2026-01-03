@@ -1,0 +1,20 @@
+connection:
+  chandle: 0x0040
+
+channels:
+  tx_handle: 0x0026
+  rx_handles: ['0x0026', '0x0023']
+
+message_hypothesis:
+  # Based on prefix clustering + seq heuristic. Validate with more samples.
+  tx_prefix_len: 2
+  seq_field_candidates:
+    [{'pos': 7, 'score': 0.157}, {'pos': 6, 'score': 0.131}, {'pos': 2, 'score': 0.106}]
+
+commands_draft:
+  - id_prefix_hex: "0000"
+    seen: 35
+    name: "unknown"
+  - id_prefix_hex: "0100"
+    seen: 6
+    name: "unknown"
