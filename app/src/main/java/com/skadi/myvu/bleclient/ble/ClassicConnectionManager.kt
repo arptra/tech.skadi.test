@@ -40,11 +40,8 @@ class ClassicConnectionManager(private val context: Context, private val logger:
         executor.execute {
             val startMs = SystemClock.elapsedRealtime()
             var lastError: Throwable? = null
-            attemptLoop@ for (attempt in 1..MAX_ATTEMPTS) {
-                if (cancelled) {
-                    logger.logInfo(TAG, "Classic connection cancelled before attempt $attempt")
-                    return@execute
-                }
+            var attempt = 1
+            while (attempt <= MAX_ATTEMPTS && !cancelled) {
                 BluetoothUtils.getAdapter(context)?.cancelDiscovery()
                 val createStart = SystemClock.elapsedRealtime()
                 val candidateSocket = try {
@@ -52,8 +49,17 @@ class ClassicConnectionManager(private val context: Context, private val logger:
                 } catch (t: Throwable) {
                     lastError = t
                     logger.logError(TAG, "Attempt $attempt failed to create socket", t)
-                    continue@attemptLoop
+                    null
                 }
+
+                if (candidateSocket == null) {
+                    if (attempt < MAX_ATTEMPTS) {
+                        sleepWithCancelCheck(attempt)
+                    }
+                    attempt++
+                    continue
+                }
+
                 socket = candidateSocket
                 val connectStart = SystemClock.elapsedRealtime()
                 logger.logInfo(
@@ -71,15 +77,13 @@ class ClassicConnectionManager(private val context: Context, private val logger:
                     logger.logError(TAG, "Classic RFCOMM attempt $attempt failed for $mac", t)
                     runCatching { candidateSocket.close() }
                 }
+
                 if (attempt < MAX_ATTEMPTS) {
-                    try {
-                        TimeUnit.MILLISECONDS.sleep(RETRY_BACKOFF_MS * attempt)
-                    } catch (_: InterruptedException) {
-                        cancelled = true
-                        return@execute
-                    }
+                    sleepWithCancelCheck(attempt)
                 }
+                attempt++
             }
+
             if (!cancelled) {
                 val elapsed = SystemClock.elapsedRealtime() - startMs
                 logger.logError(TAG, "Classic RFCOMM connection exhausted attempts after ${elapsed}ms", lastError)
@@ -91,6 +95,14 @@ class ClassicConnectionManager(private val context: Context, private val logger:
     fun cancel() {
         cancelled = true
         executor.execute { closeSocket() }
+    }
+
+    private fun sleepWithCancelCheck(attempt: Int) {
+        try {
+            TimeUnit.MILLISECONDS.sleep(RETRY_BACKOFF_MS * attempt)
+        } catch (_: InterruptedException) {
+            cancelled = true
+        }
     }
 
     private fun createSocket(device: BluetoothDevice, attempt: Int): BluetoothSocket {
