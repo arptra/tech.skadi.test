@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.os.SystemClock
 import com.skadi.myvu.bleclient.util.BluetoothUtils
+import java.lang.reflect.Method
 import java.util.UUID
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -44,7 +45,7 @@ class ClassicConnectionManager(private val context: Context, private val logger:
             while (attempt <= MAX_ATTEMPTS && !cancelled) {
                 BluetoothUtils.getAdapter(context)?.cancelDiscovery()
                 val createStart = SystemClock.elapsedRealtime()
-                val candidateSocket = try {
+                val socketChoice = try {
                     createSocket(device, attempt)
                 } catch (t: Throwable) {
                     lastError = t
@@ -52,7 +53,7 @@ class ClassicConnectionManager(private val context: Context, private val logger:
                     null
                 }
 
-                if (candidateSocket == null) {
+                if (socketChoice == null) {
                     if (attempt < MAX_ATTEMPTS) {
                         sleepWithCancelCheck(attempt)
                     }
@@ -60,11 +61,12 @@ class ClassicConnectionManager(private val context: Context, private val logger:
                     continue
                 }
 
+                val candidateSocket = socketChoice.socket
                 socket = candidateSocket
                 val connectStart = SystemClock.elapsedRealtime()
                 logger.logInfo(
                     TAG,
-                    "Attempt $attempt connecting to $mac using ${candidateSocket.remoteDevice.address} createdAt=${connectStart - createStart}ms since create"
+                    "Attempt $attempt connecting to $mac via ${socketChoice.label} createdAt=${connectStart - createStart}ms since create"
                 )
                 try {
                     candidateSocket.connect()
@@ -105,13 +107,26 @@ class ClassicConnectionManager(private val context: Context, private val logger:
         }
     }
 
-    private fun createSocket(device: BluetoothDevice, attempt: Int): BluetoothSocket {
-        return if (attempt == 1) {
-            device.createRfcommSocketToServiceRecord(SPP_UUID)
-        } else {
-            device.createInsecureRfcommSocketToServiceRecord(SPP_UUID)
+    private fun createSocket(device: BluetoothDevice, attempt: Int): SocketChoice {
+        return when (attempt) {
+            1 -> SocketChoice(device.createRfcommSocketToServiceRecord(SPP_UUID), "secure SPP uuid=${SPP_UUID}")
+            2 -> SocketChoice(device.createInsecureRfcommSocketToServiceRecord(SPP_UUID), "insecure SPP uuid=${SPP_UUID}")
+            3 -> SocketChoice(createChannelSocket(device, 1, insecure = false), "secure channel 1 reflection")
+            4 -> SocketChoice(createChannelSocket(device, 1, insecure = true), "insecure channel 1 reflection")
+            else -> SocketChoice(device.createInsecureRfcommSocketToServiceRecord(SPP_UUID), "insecure SPP uuid=${SPP_UUID}")
         }
     }
+
+    private fun createChannelSocket(device: BluetoothDevice, channel: Int, insecure: Boolean): BluetoothSocket {
+        val methodName = if (insecure) "createInsecureRfcommSocket" else "createRfcommSocket"
+        val method: Method = device.javaClass.getMethod(methodName, Int::class.javaPrimitiveType)
+        @Suppress("UNCHECKED_CAST")
+        val socket = method.invoke(device, channel) as BluetoothSocket
+        logger.logInfo(TAG, "Created ${if (insecure) "insecure" else "secure"} channel socket via reflection ch=$channel")
+        return socket
+    }
+
+    private data class SocketChoice(val socket: BluetoothSocket, val label: String)
 
     private fun closeSocket() {
         runCatching { socket?.close() }
@@ -121,7 +136,7 @@ class ClassicConnectionManager(private val context: Context, private val logger:
     companion object {
         private const val TAG = "ClassicConnectionManager"
         private val SPP_UUID: UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb")
-        private const val MAX_ATTEMPTS = 3
+        private const val MAX_ATTEMPTS = 4
         private const val RETRY_BACKOFF_MS = 150L
     }
 }
