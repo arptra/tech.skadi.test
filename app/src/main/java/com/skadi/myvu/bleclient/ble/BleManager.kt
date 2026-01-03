@@ -392,8 +392,13 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             service.getCharacteristic(UUID.fromString(SYS_NOTIFY_UUID))
         ).filter { it.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0 }
 
-        notifyCharacteristicsStage1 = listOfNotNull(rxChar).filter { it.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0 }
-        notifyCharacteristicsStage2 = notifyCandidates.filter { char -> notifyCharacteristicsStage1.none { it.uuid == char.uuid } }
+        // Some firmware revisions send the first vendor packet on the control characteristic
+        // (00002020...) rather than the RX characteristic. Previously we only enabled CCCDs for
+        // RX, which meant we never saw that first notify and the link would time out with a
+        // local-host disconnect (status=22). Enabling all vendor notify-capable characteristics
+        // up front keeps the session alive and mirrors the sniffed working trace.
+        notifyCharacteristicsStage1 = notifyCandidates
+        notifyCharacteristicsStage2 = emptyList()
 
         val gattService = gatt.getService(UUID.fromString(GATT_SERVICE_UUID))
         val serviceChanged = gattService?.getCharacteristic(UUID.fromString(SERVICE_CHANGED_UUID))
