@@ -37,7 +37,12 @@ class ClassicConnectionManager(private val logger: BleLogger) {
                 .onFailure { logger.logError(TAG, "Insecure RFCOMM socket create failed", it) }
                 .getOrNull()
 
-            connectSocket(fallback, "insecure", startedAt)
+            val fallbackConnected = connectSocket(fallback, "insecure", startedAt)
+            if (fallbackConnected) {
+                return@Thread
+            }
+
+            connectReflectionSocket(device, startedAt)
         }, "classic-conn")
         connectThread = thread
         thread.start()
@@ -57,6 +62,29 @@ class ClassicConnectionManager(private val logger: BleLogger) {
             runCatching { candidate.close() }.onFailure { err ->
                 logger.logError(TAG, "Failed to close RFCOMM socket after $label failure", err)
             }
+            false
+        }
+    }
+
+    private fun connectReflectionSocket(device: BluetoothDevice, startedAt: Long): Boolean {
+        logger.logInfo(TAG, ">>> RFCOMM CONNECT ATTEMPT type=reflection channel=1")
+        return try {
+            val method = device.javaClass.getMethod("createRfcommSocket", Int::class.javaPrimitiveType)
+            val reflectionSocket = method.invoke(device, 1) as BluetoothSocket
+            try {
+                reflectionSocket.connect()
+                socket = reflectionSocket
+                val elapsed = SystemClock.elapsedRealtime() - startedAt
+                logger.logInfo(TAG, ">>> RFCOMM CONNECTED type=reflection channel=1 elapsedMs=$elapsed")
+                true
+            } catch (t: Throwable) {
+                runCatching { reflectionSocket.close() }.onFailure { err ->
+                    logger.logError(TAG, "Failed to close reflection RFCOMM socket after failure", err)
+                }
+                throw t
+            }
+        } catch (t: Throwable) {
+            logger.logError(TAG, ">>> RFCOMM CONNECT FAILED type=reflection channel=1", t)
             false
         }
     }
