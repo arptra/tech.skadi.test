@@ -21,6 +21,7 @@ class BleProtocol(
     var controlWriteCharacteristic: BluetoothGattCharacteristic? = null
     var streamWriteCharacteristic: BluetoothGattCharacteristic? = null
     var streamHelloWriteCharacteristic: BluetoothGattCharacteristic? = null
+    var altHelloWriteCharacteristic: BluetoothGattCharacteristic? = null
 
     private data class FragmentBuffer(
         val data: ByteArrayOutputStream = ByteArrayOutputStream(),

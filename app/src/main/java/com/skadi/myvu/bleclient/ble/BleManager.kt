@@ -76,9 +76,14 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var pairingReceiverRegistered = false
     private var readInfoCharacteristics: List<BluetoothGattCharacteristic> = emptyList()
     private var pendingPreHelloReads: Int = 0
-    private var helloWriteTarget: HelloWriteTarget = HelloWriteTarget.Control
+    private var helloWriteTarget: HelloWriteTarget = HelloWriteTarget.Control2000
     private var helloEncoding: HelloEncoding = HelloEncoding.RawJson
     private var helloAttempts: Int = 0
+    private var debugHelloWriteType: Int? = null
+    private var debugHelloRawSend: Boolean = true
+    private var debugForceBondingBeforeProtocol: Boolean = false
+    private var debugDisablePreHelloReads: Boolean = false
+    private var helloBondAttempted: Boolean = false
 
     fun setListener(listener: Listener) {
         this.listener = listener
@@ -93,6 +98,26 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     fun setHelloEncoding(encoding: HelloEncoding) {
         helloEncoding = encoding
         logger.logInfo(TAG, "Hello encoding set to $encoding")
+    }
+
+    fun setDebugHelloWriteType(writeType: Int?) {
+        debugHelloWriteType = writeType
+        logger.logInfo(TAG, "Hello writeType override set to $writeType")
+    }
+
+    fun setDebugHelloRawSend(enabled: Boolean) {
+        debugHelloRawSend = enabled
+        logger.logInfo(TAG, "Hello raw send set to $enabled")
+    }
+
+    fun setDebugForceBondingBeforeProtocol(enabled: Boolean) {
+        debugForceBondingBeforeProtocol = enabled
+        logger.logInfo(TAG, "Force bonding before protocol set to $enabled")
+    }
+
+    fun setDebugDisablePreHelloReads(disabled: Boolean) {
+        debugDisablePreHelloReads = disabled
+        logger.logInfo(TAG, "Pre-HELLO reads disabled flag set to $disabled")
     }
 
     fun removeListener() {
@@ -140,6 +165,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         }
         scanner?.stopScan()
         isBonded = device.bondState == BluetoothDevice.BOND_BONDED
+        logger.logInfo(TAG, "[BOND] initial state=${device.bondState} bonded=$isBonded")
         vendorState = if (isBonded) VENDOR_STATE_BONDED_READY else VENDOR_STATE_IDLE
         allowBleTraffic = true
         ensurePairingReceiver()
@@ -267,10 +293,14 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 val utf8 = runCatching { String(value, Charsets.UTF_8) }.getOrNull()
                 val isIndicate = characteristic.properties and BluetoothGattCharacteristic.PROPERTY_INDICATE != 0
                 val packetType = if (isIndicate) "INDICATE" else "NOTIFY"
+                val jsonStatus = utf8?.takeIf { it.trim().startsWith("{") }?.let { text ->
+                    runCatching { JSONObject(text) }
+                        .fold(onSuccess = { "json parsed OK" }, onFailure = { "json parse failed" })
+                }
                 val timestamp = System.currentTimeMillis()
                 logger.logInfo(
                     TAG,
-                    "RX $packetType (${characteristic.uuid} len=${value.size} @${timestamp}): ${HexUtils.toHex(value)} utf8=$utf8"
+                    "RX $packetType (${characteristic.uuid} len=${value.size} @${timestamp}): ${HexUtils.toHex(value)} utf8=$utf8 json=$jsonStatus"
                 )
                 recordRx(characteristic.uuid, value)
                 protocol.onRx(value, characteristic.uuid)
@@ -376,9 +406,11 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             return
         }
         val service = gatt.getService(UUID.fromString(SERVICE_UUID))
+        val altService = gatt.getService(UUID.fromString(ALT_SERVICE_UUID))
         val controlWriteChar = service?.getCharacteristic(UUID.fromString(CONTROL_WRITE_UUID))
         val streamWriteChar = service?.getCharacteristic(UUID.fromString(STREAM_WRITE_UUID))
         val streamHelloWriteChar = service?.getCharacteristic(UUID.fromString(STREAM_HELLO_WRITE_UUID))
+        val altHelloWriteChar = altService?.getCharacteristic(UUID.fromString(ALT_HELLO_WRITE_UUID))
         val notifyChar = service?.getCharacteristic(UUID.fromString(NOTIFY_UUID))
         val readInfoChar = service?.getCharacteristic(UUID.fromString(READ_INFO_UUID))
         val readStatusChar = service?.getCharacteristic(UUID.fromString(READ_STATUS_UUID))
@@ -392,6 +424,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         protocol.controlWriteCharacteristic = controlWriteChar
         protocol.streamWriteCharacteristic = streamWriteChar
         protocol.streamHelloWriteCharacteristic = streamHelloWriteChar
+        protocol.altHelloWriteCharacteristic = altHelloWriteChar
         protocol.notifyCharacteristic = notifyChar
         readInfoCharacteristics = listOfNotNull(readInfoChar, readStatusChar)
         logGattDump(gatt.services)
@@ -402,9 +435,11 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         allowBleTraffic = true
         cccdEnabled = false
 
-        val notifyTargets = service.characteristics.filter { ch ->
-            val props = ch.properties
-            props and (BluetoothGattCharacteristic.PROPERTY_NOTIFY or BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0
+        val notifyTargets = gatt.services.flatMap { svc ->
+            svc.characteristics.filter { ch ->
+                val props = ch.properties
+                props and (BluetoothGattCharacteristic.PROPERTY_NOTIFY or BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0
+            }
         }
 
         notifyTargets.forEach { characteristic ->
@@ -464,7 +499,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private fun enqueueCccd(descriptor: BluetoothGattDescriptor) {
         logger.logInfo(
             TAG,
-            "Queueing CCCD enable for char=${descriptor.characteristic.uuid} desc=${descriptor.uuid} value=${HexUtils.toHex(descriptor.value)}"
+            "[NOTIFY] enabling uuid=${descriptor.characteristic.uuid} desc=${descriptor.uuid} value=${HexUtils.toHex(descriptor.value)}"
         )
         enableCccdQueue.add(CccdRequest(descriptor, descriptor.value, "cccd_${descriptor.characteristic.uuid}"))
     }
@@ -477,7 +512,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         }
         logger.logInfo(
             TAG,
-            "Writing CCCD for char=${request.descriptor.characteristic.uuid} desc=${request.descriptor.uuid} value=${HexUtils.toHex(request.value)}"
+            "[NOTIFY] CCCD write uuid=${request.descriptor.characteristic.uuid} desc=${request.descriptor.uuid} value=${HexUtils.toHex(request.value)}"
         )
         request.descriptor.value = request.value
         enqueueDescriptorWrite(gatt, request.descriptor)
@@ -543,6 +578,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             return
         }
         recordRx(characteristic.uuid, characteristic.value ?: byteArrayOf())
+        logger.logInfo(TAG, "[READ] done uuid=${characteristic.uuid} status=$status len=${characteristic.value?.size ?: 0}")
         if (pendingPreHelloReads > 0) {
             pendingPreHelloReads--
             if (pendingPreHelloReads == 0) {
@@ -555,6 +591,13 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private fun startPreHelloReads(gatt: BluetoothGatt) {
         pendingPreHelloReads = readInfoCharacteristics.size
         helloAttempts = 0
+        if (debugDisablePreHelloReads) {
+            logger.logInfo(TAG, "Pre-HELLO reads disabled via debug flag; proceeding to CLIENT_HELLO")
+            pendingPreHelloReads = 0
+            advanceVendorState(VENDOR_STATE_PRE_HELLO_READS_COMPLETE, "Pre-HELLO reads bypassed")
+            sendClientHello(gatt)
+            return
+        }
         if (pendingPreHelloReads == 0) {
             logger.logInfo(TAG, "No pre-HELLO reads configured; proceeding to CLIENT_HELLO directly")
             advanceVendorState(VENDOR_STATE_PRE_HELLO_READS_COMPLETE, "No pre-HELLO reads")
@@ -564,6 +607,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         setState(BleState.ReadingPreHello, "Starting pre-HELLO reads")
         logger.logInfo(TAG, "Starting $pendingPreHelloReads pre-HELLO reads")
         readInfoCharacteristics.forEach { characteristic ->
+            logger.logInfo(TAG, "[READ] start uuid=${characteristic.uuid}")
             enqueueCharacteristicRead(gatt, characteristic)
         }
         startTimeout(TIMEOUT_PRE_HELLO_READ, PRE_HELLO_READ_TIMEOUT_MS) {
@@ -588,6 +632,17 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             logger.logInfo(TAG, "Client HELLO blocked until pre-HELLO reads complete vendorState=$vendorState")
             return
         }
+        if (debugForceBondingBeforeProtocol && !isBonded) {
+            setState(BleState.BondedWait, "Waiting for BONDED before CLIENT_HELLO")
+            logger.logInfo(TAG, "[BOND] Waiting for BONDED before CLIENT_HELLO; bondState=${targetDevice?.bondState}")
+            if (!helloBondAttempted && targetDevice?.bondState == BluetoothDevice.BOND_NONE) {
+                helloBondAttempted = true
+                logger.logInfo(TAG, "[BOND] Starting createBond() because debugForceBondingBeforeProtocol=true")
+                runCatching { targetDevice?.createBond() }
+                    .onFailure { logger.logError(TAG, "[BOND] createBond() failed to start", it) }
+            }
+            return
+        }
         val helloJson = JSONObject().apply {
             put("i", System.currentTimeMillis().toString())
             put("v", 3)
@@ -598,24 +653,34 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         }.toString().toByteArray(Charsets.UTF_8)
         val payload = encodeHelloPayload(helloJson)
         val targetChar = when (helloWriteTarget) {
-            HelloWriteTarget.Control -> protocol.controlWriteCharacteristic
+            HelloWriteTarget.Control2000 -> protocol.controlWriteCharacteristic
             HelloWriteTarget.Stream02001 -> protocol.streamHelloWriteCharacteristic ?: protocol.streamWriteCharacteristic
             HelloWriteTarget.Stream02020 -> protocol.streamWriteCharacteristic
+            HelloWriteTarget.Alt7777 -> protocol.altHelloWriteCharacteristic
         }
         logger.logInfo(
             TAG,
-            "Sending CLIENT_HELLO via $helloWriteTarget char=${targetChar?.uuid} payloadEncoding=$helloEncoding attempt=${helloAttempts + 1}"
+            "Sending CLIENT_HELLO via $helloWriteTarget char=${targetChar?.uuid} payloadEncoding=$helloEncoding attempt=${helloAttempts + 1} sendMode=${if (debugHelloRawSend) "RAW" else "FRAMED"}"
         )
-        val withResponse = targetChar?.properties?.let { props ->
-            props and BluetoothGattCharacteristic.PROPERTY_WRITE != 0
-        } ?: false
-        val sent = protocol.sendRawWithCharacteristic(payload, targetChar, withResponse = withResponse)
-        if (!sent) {
+        val writeTypeOverride = debugHelloWriteType
+        val withResponse = writeTypeOverride?.let { it == BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT } ?: run {
+            targetChar?.properties?.let { props ->
+                props and BluetoothGattCharacteristic.PROPERTY_WRITE != 0
+            } ?: false
+        }
+        val sendResult = if (debugHelloRawSend) {
+            protocol.sendRawWithCharacteristic(payload, targetChar, withResponse = withResponse, forcedWriteType = writeTypeOverride)
+        } else {
+            protocol.sendWithCharacteristic(payload, targetChar, withResponse = withResponse, forcedWriteType = writeTypeOverride, framed = true)
+        }
+        if (!sendResult) {
             logger.logError(TAG, "Failed to enqueue CLIENT_HELLO")
             setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
             requestDisconnect("client_hello_failed", forceClose = true)
             return
         }
+        val writeTypeLog = writeTypeOverride ?: targetChar?.writeType
+        logger.logInfo(TAG, "[HELLO] writeType=${writeTypeLog} uuid=${targetChar?.uuid} mode=${if (debugHelloRawSend) "RAW" else "FRAMED"}")
         helloAttempts++
         advanceVendorState(VENDOR_STATE_CLIENT_HELLO_SENT, "Client HELLO dispatched")
         setState(BleState.WaitingForServerKey, "Client HELLO sent; awaiting server response")
@@ -805,6 +870,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         allowBleTraffic = true
         isBonded = false
         cccdEnabled = false
+        helloBondAttempted = false
         enableCccdQueue.clear()
         lastDisconnectRequestedReason = null
         lastDisconnectStack = null
@@ -906,7 +972,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             when (intent.action) {
                 BluetoothDevice.ACTION_PAIRING_REQUEST -> {
                     val variant = intent.getIntExtra(BluetoothDevice.EXTRA_PAIRING_VARIANT, -1)
-                    logger.logInfo(TAG, "Pairing request from glasses variant=$variant")
+                    logger.logInfo(TAG, "[BOND] ACTION_PAIRING_REQUEST variant=$variant transport=LE")
                     // The glasses drive BR/EDR pairing; we simply confirm to avoid disconnects.
                     runCatching { device.setPairingConfirmation(true) }
                         .onFailure { logger.logError(TAG, "Failed to auto-confirm pairing", it) }
@@ -923,7 +989,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 BluetoothDevice.ACTION_BOND_STATE_CHANGED -> {
                     val bondState = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.BOND_NONE)
                     val prevState = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.BOND_NONE)
-                    logger.logInfo(TAG, "Bond state changed from $prevState to $bondState")
+                    logger.logInfo(TAG, "[BOND] state change $prevState -> $bondState")
                     when (bondState) {
                         BluetoothDevice.BOND_BONDING -> {
                             advanceVendorState(VENDOR_STATE_BONDING, "Android reports BONDING")
@@ -940,6 +1006,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                             setState(BleState.Bonded, "Android reports BONDED")
                             setState(BleState.ReadyForTransport, "Vendor state ready + bond complete")
                             stopTimeout(TIMEOUT_BONDING)
+                            if (debugForceBondingBeforeProtocol && vendorState >= VENDOR_STATE_PRE_HELLO_READS_COMPLETE) {
+                                gatt?.let { sendClientHello(it, allowRetry = true) }
+                            }
                         }
                         BluetoothDevice.BOND_NONE -> {
                             isBonded = false
@@ -996,9 +1065,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     }
 
     enum class HelloWriteTarget {
-        Control,
+        Control2000,
         Stream02001,
-        Stream02020
+        Stream02020,
+        Alt7777
     }
 
     enum class HelloEncoding {
@@ -1018,10 +1088,12 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     companion object {
         private const val TAG = "BleManager"
         private const val SERVICE_UUID = "00000bd1-0000-1000-8000-00805f9b34fb"
+        private const val ALT_SERVICE_UUID = "66666666-6666-6666-6666-666666666666"
         private const val NOTIFY_UUID = "00002021-0000-1000-8000-00805f9b34fb"
         private const val CONTROL_WRITE_UUID = "00002000-0000-1000-8000-00805f9b34fb"
         private const val STREAM_WRITE_UUID = "00002020-0000-1000-8000-00805f9b34fb"
         private const val STREAM_HELLO_WRITE_UUID = "00002001-0000-1000-8000-00805f9b34fb"
+        private const val ALT_HELLO_WRITE_UUID = "77777777-7777-7777-7777-777777777777"
         private const val READ_INFO_UUID = "00001000-0000-1000-8000-00805f9b34fb"
         private const val READ_STATUS_UUID = "00001001-0000-1000-8000-00805f9b34fb"
         private const val CCCD_UUID = "00002902-0000-1000-8000-00805f9b34fb"
