@@ -613,25 +613,35 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private fun handleCharacteristicWrite(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
         if (startCommandPending && characteristic.uuid == protocol.writeCharacteristic?.uuid) {
             startCommandPending = false
-                if (status == BluetoothGatt.GATT_SUCCESS) {
-                    logger.logInfo(TAG, "Handshake write acknowledged status=$status")
-                    val device = gatt.device
-                    val bondState = device.bondState
-                    when (bondState) {
-                        BluetoothDevice.BOND_NONE -> {
-                            logger.logInfo(TAG, "Requesting system bond after start command ack")
-                            val started = device.createBond()
-                            logger.logInfo(TAG, "createBond() started=$started currentState=${device.bondState}")
-                        }
-                        BluetoothDevice.BOND_BONDING -> logger.logInfo(TAG, "Bonding already in progress; waiting for completion")
-                        BluetoothDevice.BOND_BONDED -> {
-                            logger.logInfo(TAG, "Device already bonded; waiting for first vendor notify to mark ready")
-                            if (firstNotifyReceived) {
-                                onHandshakeCompleteAndReady()
-                            }
-                        }
-                        else -> logger.logInfo(TAG, "Unhandled bond state=$bondState after start command")
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                logger.logInfo(TAG, "Handshake write acknowledged status=$status")
+                startTimeout(TIMEOUT_FIRST_VENDOR, FIRST_VENDOR_TIMEOUT_MS) {
+                    if (firstNotifyReceived || state !is BleState.HandshakeSent) return@startTimeout
+                    logger.logInfo(
+                        TAG,
+                        "First-vendor timeout elapsed; forcing client-ready per reference trace"
+                    )
+                    firstNotifyReceived = true
+                    scheduleClientReadyFrame()
+                    onHandshakeCompleteAndReady()
+                }
+                val device = gatt.device
+                val bondState = device.bondState
+                when (bondState) {
+                    BluetoothDevice.BOND_NONE -> {
+                        logger.logInfo(TAG, "Requesting system bond after start command ack")
+                        val started = device.createBond()
+                        logger.logInfo(TAG, "createBond() started=$started currentState=${device.bondState}")
                     }
+                    BluetoothDevice.BOND_BONDING -> logger.logInfo(TAG, "Bonding already in progress; waiting for completion")
+                    BluetoothDevice.BOND_BONDED -> {
+                        logger.logInfo(TAG, "Device already bonded; waiting for first vendor notify to mark ready")
+                        if (firstNotifyReceived) {
+                            onHandshakeCompleteAndReady()
+                        }
+                    }
+                    else -> logger.logInfo(TAG, "Unhandled bond state=$bondState after start command")
+                }
             } else {
                 handshakeCommandSent = false
                 setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
@@ -648,6 +658,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             firstNotifyReceived = true
             firstVendorPacket = payload.copyOf()
             vendorNotifyDuringInit = true
+            stopTimeout(TIMEOUT_FIRST_VENDOR)
             logger.logInfo(
                 TAG,
                 "First vendor packet after start command (${characteristic.uuid} len=${payload.size}): ${HexUtils.toHex(payload)}"
@@ -976,6 +987,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         clientReadyRunnable?.let { mainHandler.removeCallbacks(it) }
         clientReadyRunnable = null
         stopTimeout(TIMEOUT_PROTOCOL_INIT)
+        stopTimeout(TIMEOUT_FIRST_VENDOR)
         enableCccdQueue.clear()
         totalNotifyCharacteristics = 0
         lastDisconnectRequestedReason = null
@@ -1014,6 +1026,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         clientReadyRunnable?.let { mainHandler.removeCallbacks(it) }
         clientReadyRunnable = null
         stopTimeout(TIMEOUT_PROTOCOL_INIT)
+        stopTimeout(TIMEOUT_FIRST_VENDOR)
         enableCccdQueue.clear()
         totalNotifyCharacteristics = 0
         lastDisconnectRequestedReason = null
@@ -1131,12 +1144,14 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val TIMEOUT_DISCOVERY = "timeout_discovery"
         private const val TIMEOUT_PROTOCOL_INIT = "timeout_protocol_init"
         private const val TIMEOUT_STAGE2_CCCD = "timeout_stage2_cccd"
+        private const val TIMEOUT_FIRST_VENDOR = "timeout_first_vendor"
         private val START_COMMAND = byteArrayOf(0x00, 0x00, 0x06, 0x11, 0x01, 0x00)
         // Client-ready is a vendor/session frame (class 0x10) without security flags; sent once post-notify
         private val CLIENT_READY_FRAME = byteArrayOf(0x00, 0x00, 0x02, 0x10, 0x01, 0x00)
         // Heartbeat is a minimal vendor/session frame (class 0x10) to keep the link alive post-ready
         private val HEARTBEAT_FRAME = byteArrayOf(0x00, 0x00, 0x02, 0x10, 0x00, 0x00)
         private const val PROTOCOL_INIT_HOLD_MS = 1_000L
+        private const val FIRST_VENDOR_TIMEOUT_MS = 5_000L
         private const val STAGE2_CCCD_DELAY_MS = 500L
         private const val CLIENT_READY_DELAY_MS = 100L
         private const val HEARTBEAT_INTERVAL_MS = 500L
