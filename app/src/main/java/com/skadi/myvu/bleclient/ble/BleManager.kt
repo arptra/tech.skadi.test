@@ -17,6 +17,7 @@ import android.os.Looper
 import android.os.SystemClock
 import com.skadi.myvu.bleclient.util.BluetoothUtils
 import com.skadi.myvu.bleclient.util.HexUtils
+import com.skadi.myvu.bleclient.ble.classic.ClassicConnectionManager
 import java.util.LinkedList
 import java.util.UUID
 import org.json.JSONObject
@@ -85,10 +86,12 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var heartbeatDeferredForBond = false
     private var heartbeatBondWatchdog: Runnable? = null
     private var autoReconnectAttempts = 0
+    private var classicHandoverStarted = false
     private var lastTx: PacketLog? = null
     private var lastRx: PacketLog? = null
     private var lastDisconnectRequestedReason: String? = null
     private var lastDisconnectStack: Throwable? = null
+    private val classicConnectionManager = ClassicConnectionManager(logger)
 
     fun setListener(listener: Listener) {
         this.listener = listener
@@ -170,6 +173,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         val stack = Throwable("disconnect stack")
         lastDisconnectStack = stack
         stopHeartbeatLoop()
+        classicHandoverStarted = false
+        classicConnectionManager.close()
         val now = SystemClock.elapsedRealtime()
         val bondState = gatt?.device?.bondState
         val lastTxAge = lastTx?.let { now - it.timestamp }?.toString() ?: "n/a"
@@ -289,7 +294,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                         if (firstNotifyReceived) {
                             onHandshakeCompleteAndReady()
                         }
-                        if (state is BleState.ReadyForCommands) {
+                        if (state is BleState.ReadyForCommands && !classicHandoverStarted) {
                             startHeartbeatLoop()
                         }
                     }
@@ -338,6 +343,12 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 "Disconnected status=$status requested=$lastDisconnectRequestedReason lastTxAgeMs=${lastTxAgeMs ?: "n/a"} lastRxAgeMs=${lastRxAgeMs ?: "n/a"}"
             )
             lastDisconnectStack?.let { logger.logError(TAG, "Last disconnect request stack", it) }
+            if (status == STATUS_TERMINATE_LOCAL_HOST && classicHandoverStarted) {
+                logger.logInfo(TAG, ">>> BLE CLOSED BY DEVICE – EXPECTED (handover)")
+                cleanupAfterDisconnect()
+                setState(BleState.Disconnected)
+                return
+            }
             val readyPhase = state is BleState.ConnectedReady ||
                 state is BleState.ProtocolSessionInit ||
                 state is BleState.ReadyForCommands
@@ -713,6 +724,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         quietHoldActive = false
         logger.logInfo(TAG, "Protocol session init complete ($reason); channel ready for commands")
         setState(BleState.ReadyForCommands)
+        if (firstNotifyReceived) {
+            startClassicHandover("ready_for_commands")
+            return
+        }
         val bondState = gatt?.device?.bondState
         if (bondState != BluetoothDevice.BOND_BONDED) {
             logger.logInfo(TAG, "Bond not completed (state=$bondState); deferring heartbeat until bonded or watchdog fires")
@@ -791,6 +806,20 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         heartbeatDeferredForBond = false
         heartbeatBondWatchdog?.let { mainHandler.removeCallbacks(it) }
         heartbeatBondWatchdog = null
+    }
+
+    private fun startClassicHandover(trigger: String) {
+        if (classicHandoverStarted) return
+        classicHandoverStarted = true
+        stopHeartbeatLoop()
+        val device = targetDevice ?: gatt?.device
+        if (device == null) {
+            logger.logError(TAG, "Classic handover skipped (no device) trigger=$trigger")
+            classicHandoverStarted = false
+            return
+        }
+        logger.logInfo(TAG, ">>> CLASSIC HANDOVER START trigger=$trigger")
+        classicConnectionManager.start(device, trigger)
     }
 
     private fun startHeartbeatBondWatchdog() {
@@ -955,6 +984,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         gatt = null
         protocol.clear()
         connectRetries = 0
+        classicHandoverStarted = false
+        classicConnectionManager.close()
         pendingCccdWrites = 0
         handshakeCommandSent = false
         startCommandPending = false
