@@ -603,7 +603,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 TAG,
                 "First vendor packet after start command (${characteristic.uuid} len=${payload.size}): ${HexUtils.toHex(payload)}"
             )
-            scheduleClientReadyFrame()
             onHandshakeCompleteAndReady()
             return
         }
