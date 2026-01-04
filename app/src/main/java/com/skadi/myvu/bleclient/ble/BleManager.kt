@@ -571,25 +571,29 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private fun handleCharacteristicWrite(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
         if (startCommandPending && characteristic.uuid == protocol.writeCharacteristic?.uuid) {
             startCommandPending = false
-                if (status == BluetoothGatt.GATT_SUCCESS) {
-                    logger.logInfo(TAG, "Handshake write acknowledged status=$status")
-                    val device = gatt.device
-                    val bondState = device.bondState
-                    when (bondState) {
-                        BluetoothDevice.BOND_NONE -> {
-                            logger.logInfo(TAG, "Requesting system bond after start command ack")
-                            val started = device.createBond()
-                            logger.logInfo(TAG, "createBond() started=$started currentState=${device.bondState}")
-                        }
-                        BluetoothDevice.BOND_BONDING -> logger.logInfo(TAG, "Bonding already in progress; waiting for completion")
-                        BluetoothDevice.BOND_BONDED -> {
-                            logger.logInfo(TAG, "Device already bonded; waiting for first vendor notify to mark ready")
-                            if (firstNotifyReceived) {
-                                onHandshakeCompleteAndReady()
-                            }
-                        }
-                        else -> logger.logInfo(TAG, "Unhandled bond state=$bondState after start command")
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                logger.logInfo(TAG, "Handshake write acknowledged status=$status")
+                val device = gatt.device
+                val bondState = device.bondState
+                // Sending client-ready early mirrors the StarryNet flow where the client answers immediately
+                // after the initial control packet to unblock the server-side pair FSM.
+                scheduleClientReadyFrame()
+                when (bondState) {
+                    BluetoothDevice.BOND_NONE -> {
+                        logger.logInfo(TAG, "Requesting system bond after start command ack")
+                        val started = device.createBond()
+                        logger.logInfo(TAG, "createBond() started=$started currentState=${device.bondState}")
                     }
+                    BluetoothDevice.BOND_BONDING -> logger.logInfo(TAG, "Bonding already in progress; waiting for completion")
+                    BluetoothDevice.BOND_BONDED -> {
+                        logger.logInfo(TAG, "Device already bonded; moving into protocol init hold")
+                        beginProtocolSessionInit()
+                        if (firstNotifyReceived) {
+                            onHandshakeCompleteAndReady()
+                        }
+                    }
+                    else -> logger.logInfo(TAG, "Unhandled bond state=$bondState after start command")
+                }
             } else {
                 handshakeCommandSent = false
                 setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
@@ -1032,7 +1036,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val HEARTBEAT_INTERVAL_MS = 500L
         private const val KEY_LAST_TARGET = "last_target_mac"
         private const val STATUS_TERMINATE_LOCAL_HOST = 22
-        private const val AUTO_ENABLE_STAGE2_CCCD = false
+        private const val AUTO_ENABLE_STAGE2_CCCD = true
     }
 
     private sealed class Operation {
