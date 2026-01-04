@@ -1,0 +1,35 @@
+# StarryNetPairConstant
+
+*Пакет:* `com.upuphone.starrynet.strategy.pair`\n
+*Источник:* `starrynet/strategy/pair/StarryNetPairConstant.java`\n
+*Тип:* Class
+
+## Назначение
+Класс StarryNetPairConstant управляет логикой, связанной с StarryNetPairConstant.
+
+## Поля
+- `int STARRYNET_CHANNEL_BONDREQ_TIMEOUT`
+- `int STARRYNET_CHANNEL_BOND_UPDATE_KEY`
+- `int STARRYNET_CHANNEL_BOTH`
+- `int STARRYNET_CHANNEL_CLIENT`
+- `int STARRYNET_CHANNEL_GO_UNBONDREQ`
+- `int STARRYNET_CHANNEL_MSG_CLIENT`
+- `int STARRYNET_CHANNEL_MSG_GC`
+- `int STARRYNET_CHANNEL_MSG_GO`
+- `int STARRYNET_CHANNEL_MSG_SERVER`
+- `int STARRYNET_CHANNEL_SERVER`
+- `int STARRYNET_CHANNEL_SERVER_BONDREQ`
+- `int STARRYNET_CHANNEL_SERVER_UNBONDREQ`
+- `int STARRYNET_CHANNEL_UNBONDREQ_TIMEOUT`
+- `int STARRYNET_CHANNEL_UPDATEKEY_TIMEOUT`
+- `int STARRYNET_CREATE_BOND`
+- `int STARRYNET_DISCOVERABLE_TIMEOUT`
+- `int STARRYNET_ERRORCODE_PAIR_FAIL`
+- `int STARRYNET_ERRORCODE_PAIR_RESTART`
+- `int STARRYNET_REMOVE_BOND`
+- `int STARRYNET_REQBOND_TIME`
+- `int STARRYNET_UNBOND_TIME`
+- `int STARRYNET_UPDATEKEY_TIME`
+
+## Методы
+- Нет публичных методов.

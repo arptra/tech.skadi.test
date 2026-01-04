@@ -77,11 +77,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private var quietHoldActive = false
     private var stageTwoCccdScheduled = false
     private var enablingStageTwo = false
-    private var clientReadyScheduled = false
-    private var clientReadySent = false
-    private var clientReadyRunnable: Runnable? = null
-    private var heartbeatRunnable: Runnable? = null
-    private var heartbeatActive = false
     private var lastTx: PacketLog? = null
     private var lastRx: PacketLog? = null
     private var lastDisconnectRequestedReason: String? = null
@@ -166,7 +161,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         lastDisconnectRequestedReason = reason
         val stack = Throwable("disconnect stack")
         lastDisconnectStack = stack
-        stopHeartbeatLoop()
         val now = SystemClock.elapsedRealtime()
         val bondState = gatt?.device?.bondState
         val lastTxAge = lastTx?.let { now - it.timestamp }?.toString() ?: "n/a"
@@ -392,7 +386,13 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             service.getCharacteristic(UUID.fromString(SYS_NOTIFY_UUID))
         ).filter { it.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0 }
 
-        notifyCharacteristicsStage1 = listOfNotNull(rxChar).filter { it.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0 }
+        // Документация StarryNet (BluetoothConstants.XR_NOTIFY_UUIDS) указывает пару 0x2001/0x2002
+        // как основные notify для XR. Активируем их на первом этапе, чтобы сразу ловить стартовые
+        // ответы и сигналы bonding.
+        val stageOneTargets = setOf(NOTIFY_UUID, EXTRA_NOTIFY_UUID)
+        notifyCharacteristicsStage1 = notifyCandidates.filter { candidate ->
+            stageOneTargets.any { target -> candidate.uuid.toString().equals(target, ignoreCase = true) }
+        }
         notifyCharacteristicsStage2 = notifyCandidates.filter { char -> notifyCharacteristicsStage1.none { it.uuid == char.uuid } }
 
         val gattService = gatt.getService(UUID.fromString(GATT_SERVICE_UUID))
@@ -540,7 +540,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
     /**
      * Стартовая команда нужна при каждом подключении (даже после bonding), иначе очки молчат и не
-     * присылают JSON-уведомления. Отправляем один раз строго после MTU negotiation и включения CCCD.
+     * присылают JSON-уведомления. Отправляем её на документированный write-канал 0x2000
+     * строго после MTU negotiation и включения CCCD на XR notify UUID (0x2001/0x2002).
      */
     private fun sendStartCommand(gatt: BluetoothGatt, reason: String) {
         val controlChar = protocol.writeCharacteristic
@@ -553,8 +554,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             logger.logInfo(TAG, "Start command already scheduled/sent; skipping duplicate reason=$reason")
             return
         }
-        // Write with NO_RESPONSE matches the characteristic capabilities (WRITE_NR only) and avoids
-        // GATT_WRITE_NOT_PERMITTED failures observed when forcing a response write type.
+        // 0x2000 поддерживает обычный write, подбираем тип автоматически по свойствам.
         val writeType = selectWriteType(controlChar, withResponse = false)
         logger.logInfo(
             TAG,
@@ -571,25 +571,24 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private fun handleCharacteristicWrite(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
         if (startCommandPending && characteristic.uuid == protocol.writeCharacteristic?.uuid) {
             startCommandPending = false
-                if (status == BluetoothGatt.GATT_SUCCESS) {
-                    logger.logInfo(TAG, "Handshake write acknowledged status=$status")
-                    val device = gatt.device
-                    val bondState = device.bondState
-                    when (bondState) {
-                        BluetoothDevice.BOND_NONE -> {
-                            logger.logInfo(TAG, "Requesting system bond after start command ack")
-                            val started = device.createBond()
-                            logger.logInfo(TAG, "createBond() started=$started currentState=${device.bondState}")
-                        }
-                        BluetoothDevice.BOND_BONDING -> logger.logInfo(TAG, "Bonding already in progress; waiting for completion")
-                        BluetoothDevice.BOND_BONDED -> {
-                            logger.logInfo(TAG, "Device already bonded; waiting for first vendor notify to mark ready")
-                            if (firstNotifyReceived) {
-                                onHandshakeCompleteAndReady()
-                            }
-                        }
-                        else -> logger.logInfo(TAG, "Unhandled bond state=$bondState after start command")
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                logger.logInfo(TAG, "Handshake write acknowledged status=$status")
+                val device = gatt.device
+                val bondState = device.bondState
+                when (bondState) {
+                    BluetoothDevice.BOND_NONE -> {
+                        logger.logInfo(TAG, "Requesting system bond after start command ack")
+                        val started = device.createBond()
+                        logger.logInfo(TAG, "createBond() started=$started currentState=${device.bondState}")
                     }
+                    BluetoothDevice.BOND_BONDING -> logger.logInfo(TAG, "Bonding already in progress; waiting for completion")
+                    BluetoothDevice.BOND_BONDED -> {
+                        logger.logInfo(TAG, "Device already bonded; moving into protocol init hold")
+                        beginProtocolSessionInit()
+                        if (firstNotifyReceived) onHandshakeCompleteAndReady()
+                    }
+                    else -> logger.logInfo(TAG, "Unhandled bond state=$bondState after start command")
+                }
             } else {
                 handshakeCommandSent = false
                 setState(BleState.Error(BleErrorReason.HANDSHAKE_WRITE_FAILED))
@@ -610,7 +609,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
                 TAG,
                 "First vendor packet after start command (${characteristic.uuid} len=${payload.size}): ${HexUtils.toHex(payload)}"
             )
-            scheduleClientReadyFrame()
             onHandshakeCompleteAndReady()
             return
         }
@@ -656,15 +654,21 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private fun beginProtocolSessionInit() {
         if (state is BleState.ProtocolSessionInit || state is BleState.ReadyForCommands) return
         quietHoldActive = true
-        vendorNotifyDuringInit = false
+        // Если первый пакет уже пришёл, не теряем этот сигнал готовности при входе в стадию init.
+        vendorNotifyDuringInit = vendorNotifyDuringInit || firstNotifyReceived
         protocolInitHoldElapsed = false
         setState(BleState.ProtocolSessionInit)
         startTimeout(TIMEOUT_PROTOCOL_INIT, PROTOCOL_INIT_HOLD_MS) {
             protocolInitHoldElapsed = true
             if (state !is BleState.ProtocolSessionInit) return@startTimeout
-            val reason = if (vendorNotifyDuringInit) "hold_elapsed_with_vendor_notify" else "hold_elapsed"
-            logger.logInfo(TAG, "Protocol session hold elapsed; promoting to READY_FOR_COMMANDS reason=$reason")
-            promoteReadyForCommands(reason)
+            if (vendorNotifyDuringInit) {
+                logger.logInfo(TAG, "Protocol session hold elapsed; promoting to READY_FOR_COMMANDS reason=hold_elapsed_with_vendor_notify")
+                promoteReadyForCommands("hold_elapsed_with_vendor_notify")
+            } else {
+                logger.logError(TAG, "Protocol init hold elapsed without vendor packets; timing out")
+                setState(BleState.Error(BleErrorReason.PROTOCOL_INIT_TIMEOUT))
+                requestDisconnect("protocol_init_timeout", forceClose = true)
+            }
         }
     }
 
@@ -674,71 +678,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         quietHoldActive = false
         logger.logInfo(TAG, "Protocol session init complete ($reason); channel ready for commands")
         setState(BleState.ReadyForCommands)
-        startHeartbeatLoop()
-        if (AUTO_ENABLE_STAGE2_CCCD) {
-            scheduleStageTwoCccd(gatt)
-        } else {
-            logger.logInfo(TAG, "Stage2 CCCD auto-enable disabled; keeping link quiet")
-        }
-    }
-
-    private fun scheduleClientReadyFrame() {
-        if (clientReadySent || clientReadyScheduled) return
-        val gattInstance = gatt ?: return
-        val controlChar = protocol.writeCharacteristic ?: return
-        val writeType = selectWriteType(controlChar, withResponse = false)
-        clientReadyScheduled = true
-        val runnable = Runnable {
-            clientReadyScheduled = false
-            if (clientReadySent) return@Runnable
-            if (state !is BleState.HandshakeSent && state !is BleState.ConnectedReady && state !is BleState.ProtocolSessionInit && state !is BleState.ReadyForCommands) {
-                return@Runnable
-            }
-            logger.logInfo(
-                TAG,
-                "Sending client-ready frame to ${controlChar.uuid} writeType=$writeType payload=${HexUtils.toHex(CLIENT_READY_FRAME)}"
-            )
-            clientReadySent = true
-            enqueueCharacteristicWrite(
-                gattInstance,
-                controlChar,
-                CLIENT_READY_FRAME,
-                withResponse = false,
-                forcedWriteType = writeType
-            )
-        }
-        clientReadyRunnable = runnable
-        mainHandler.postDelayed(runnable, CLIENT_READY_DELAY_MS)
-    }
-
-    private fun startHeartbeatLoop() {
-        if (heartbeatActive) return
-        val gattInstance = gatt ?: return
-        val controlChar = protocol.writeCharacteristic ?: return
-        val writeType = selectWriteType(controlChar, withResponse = false)
-        heartbeatActive = true
-        val runnable = object : Runnable {
-            override fun run() {
-                if (!heartbeatActive) return
-                enqueueCharacteristicWrite(
-                    gattInstance,
-                    controlChar,
-                    HEARTBEAT_FRAME,
-                    withResponse = false,
-                    forcedWriteType = writeType
-                )
-                heartbeatRunnable = this
-                mainHandler.postDelayed(this, HEARTBEAT_INTERVAL_MS)
-            }
-        }
-        heartbeatRunnable = runnable
-        mainHandler.postDelayed(runnable, HEARTBEAT_INTERVAL_MS)
-    }
-
-    private fun stopHeartbeatLoop() {
-        heartbeatActive = false
-        heartbeatRunnable?.let { mainHandler.removeCallbacks(it) }
-        heartbeatRunnable = null
     }
 
     fun enqueueDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor): Boolean {
@@ -864,7 +803,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         startCommandPending = false
         mtuRequested = false
         mtuReady = false
-        stopHeartbeatLoop()
+        stopTimeout(TIMEOUT_PROTOCOL_INIT)
         firstNotifyReceived = false
         vendorNotifyDuringInit = false
         protocolInitHoldElapsed = false
@@ -872,10 +811,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         quietHoldActive = false
         stageTwoCccdScheduled = false
         enablingStageTwo = false
-        clientReadyScheduled = false
-        clientReadySent = false
-        clientReadyRunnable?.let { mainHandler.removeCallbacks(it) }
-        clientReadyRunnable = null
         stopTimeout(TIMEOUT_PROTOCOL_INIT)
         enableCccdQueue.clear()
         totalNotifyCharacteristics = 0
@@ -896,7 +831,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         startCommandPending = false
         mtuRequested = false
         mtuReady = false
-        stopHeartbeatLoop()
+        stopTimeout(TIMEOUT_PROTOCOL_INIT)
         firstNotifyReceived = false
         vendorNotifyDuringInit = false
         protocolInitHoldElapsed = false
@@ -904,10 +839,6 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         quietHoldActive = false
         stageTwoCccdScheduled = false
         enablingStageTwo = false
-        clientReadyScheduled = false
-        clientReadySent = false
-        clientReadyRunnable?.let { mainHandler.removeCallbacks(it) }
-        clientReadyRunnable = null
         stopTimeout(TIMEOUT_PROTOCOL_INIT)
         enableCccdQueue.clear()
         totalNotifyCharacteristics = 0
@@ -1004,9 +935,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val SERVICE_UUID = "00000bd1-0000-1000-8000-00805f9b34fb"
         private const val RX_UUID = "00002001-0000-1000-8000-00805f9b34fb"
         private const val RX_ALT_UUID = "00002002-0000-1000-8000-00805f9b34fb"
-        private const val NOTIFY_UUID = "00002021-0000-1000-8000-00805f9b34fb"
-        private const val CONTROL_UUID = "00002020-0000-1000-8000-00805f9b34fb"
-        private const val EXTRA_NOTIFY_UUID = "00002022-0000-1000-8000-00805f9b34fb"
+        private const val NOTIFY_UUID = "00002001-0000-1000-8000-00805f9b34fb"
+        private const val CONTROL_UUID = "00002000-0000-1000-8000-00805f9b34fb"
+        private const val EXTRA_NOTIFY_UUID = "00002002-0000-1000-8000-00805f9b34fb"
         private const val SYS_NOTIFY_UUID = "00001001-0000-1000-8000-00805f9b34fb"
         private const val GATT_SERVICE_UUID = "00001801-0000-1000-8000-00805f9b34fb"
         private const val SERVICE_CHANGED_UUID = "00002a05-0000-1000-8000-00805f9b34fb"
@@ -1022,14 +953,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val TIMEOUT_PROTOCOL_INIT = "timeout_protocol_init"
         private const val TIMEOUT_STAGE2_CCCD = "timeout_stage2_cccd"
         private val START_COMMAND = byteArrayOf(0x00, 0x00, 0x06, 0x11, 0x01, 0x00)
-        // Client-ready is a vendor/session frame (class 0x10) without security flags; sent once post-notify
-        private val CLIENT_READY_FRAME = byteArrayOf(0x00, 0x00, 0x02, 0x10, 0x01, 0x00)
-        // Heartbeat is a minimal vendor/session frame (class 0x10) to keep the link alive post-ready
-        private val HEARTBEAT_FRAME = byteArrayOf(0x00, 0x00, 0x02, 0x10, 0x00, 0x00)
         private const val PROTOCOL_INIT_HOLD_MS = 1_000L
         private const val STAGE2_CCCD_DELAY_MS = 500L
-        private const val CLIENT_READY_DELAY_MS = 100L
-        private const val HEARTBEAT_INTERVAL_MS = 500L
         private const val KEY_LAST_TARGET = "last_target_mac"
         private const val STATUS_TERMINATE_LOCAL_HOST = 22
         private const val AUTO_ENABLE_STAGE2_CCCD = false
