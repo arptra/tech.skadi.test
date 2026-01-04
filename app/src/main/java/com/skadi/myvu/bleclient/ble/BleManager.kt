@@ -386,9 +386,10 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             service.getCharacteristic(UUID.fromString(SYS_NOTIFY_UUID))
         ).filter { it.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0 }
 
-        // Документация StarryNet описывает основную пару UUID XR-канала: notify 0x2021 и write+notify 0x2020.
-        // Включаем их в первом этапе, чтобы получить ответы на стартовый кадр и запросы на bonding.
-        val stageOneTargets = setOf(CONTROL_UUID, NOTIFY_UUID)
+        // Документация StarryNet (BluetoothConstants.XR_NOTIFY_UUIDS) указывает пару 0x2001/0x2002
+        // как основные notify для XR. Активируем их на первом этапе, чтобы сразу ловить стартовые
+        // ответы и сигналы bonding.
+        val stageOneTargets = setOf(NOTIFY_UUID, EXTRA_NOTIFY_UUID)
         notifyCharacteristicsStage1 = notifyCandidates.filter { candidate ->
             stageOneTargets.any { target -> candidate.uuid.toString().equals(target, ignoreCase = true) }
         }
@@ -539,8 +540,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
     /**
      * Стартовая команда нужна при каждом подключении (даже после bonding), иначе очки молчат и не
-     * присылают JSON-уведомления. Отправляем её на документированный канал write+notify 0x2020
-     * строго после MTU negotiation и включения CCCD на XR notify UUID (0x2021/0x2020).
+     * присылают JSON-уведомления. Отправляем её на документированный write-канал 0x2000
+     * строго после MTU negotiation и включения CCCD на XR notify UUID (0x2001/0x2002).
      */
     private fun sendStartCommand(gatt: BluetoothGatt, reason: String) {
         val controlChar = protocol.writeCharacteristic
@@ -553,7 +554,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             logger.logInfo(TAG, "Start command already scheduled/sent; skipping duplicate reason=$reason")
             return
         }
-        // 0x2020 поддерживает write-without-response, подбираем тип автоматически по свойствам.
+        // 0x2000 поддерживает обычный write, подбираем тип автоматически по свойствам.
         val writeType = selectWriteType(controlChar, withResponse = false)
         logger.logInfo(
             TAG,
@@ -934,9 +935,9 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val SERVICE_UUID = "00000bd1-0000-1000-8000-00805f9b34fb"
         private const val RX_UUID = "00002001-0000-1000-8000-00805f9b34fb"
         private const val RX_ALT_UUID = "00002002-0000-1000-8000-00805f9b34fb"
-        private const val NOTIFY_UUID = "00002021-0000-1000-8000-00805f9b34fb"
-        private const val CONTROL_UUID = "00002020-0000-1000-8000-00805f9b34fb"
-        private const val EXTRA_NOTIFY_UUID = "00002022-0000-1000-8000-00805f9b34fb"
+        private const val NOTIFY_UUID = "00002001-0000-1000-8000-00805f9b34fb"
+        private const val CONTROL_UUID = "00002000-0000-1000-8000-00805f9b34fb"
+        private const val EXTRA_NOTIFY_UUID = "00002002-0000-1000-8000-00805f9b34fb"
         private const val SYS_NOTIFY_UUID = "00001001-0000-1000-8000-00805f9b34fb"
         private const val GATT_SERVICE_UUID = "00001801-0000-1000-8000-00805f9b34fb"
         private const val SERVICE_CHANGED_UUID = "00002a05-0000-1000-8000-00805f9b34fb"
