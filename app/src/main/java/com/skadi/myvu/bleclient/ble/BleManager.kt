@@ -386,7 +386,12 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             service.getCharacteristic(UUID.fromString(SYS_NOTIFY_UUID))
         ).filter { it.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0 }
 
-        notifyCharacteristicsStage1 = listOfNotNull(rxChar).filter { it.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0 }
+        // Документация StarryNet сообщает, что XR клиенты слушают оба уведомления multi-write и write-message
+        // (UUID 0x2001 и 0x2002). Сразу включаем их, чтобы видеть все ответы устройства.
+        notifyCharacteristicsStage1 = notifyCandidates.filter { candidate ->
+            candidate.uuid.toString().equals(RX_UUID, ignoreCase = true) ||
+                candidate.uuid.toString().equals(RX_ALT_UUID, ignoreCase = true)
+        }
         notifyCharacteristicsStage2 = notifyCandidates.filter { char -> notifyCharacteristicsStage1.none { it.uuid == char.uuid } }
 
         val gattService = gatt.getService(UUID.fromString(GATT_SERVICE_UUID))
@@ -648,15 +653,21 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
     private fun beginProtocolSessionInit() {
         if (state is BleState.ProtocolSessionInit || state is BleState.ReadyForCommands) return
         quietHoldActive = true
-        vendorNotifyDuringInit = false
+        // Если первый пакет уже пришёл, не теряем этот сигнал готовности при входе в стадию init.
+        vendorNotifyDuringInit = vendorNotifyDuringInit || firstNotifyReceived
         protocolInitHoldElapsed = false
         setState(BleState.ProtocolSessionInit)
         startTimeout(TIMEOUT_PROTOCOL_INIT, PROTOCOL_INIT_HOLD_MS) {
             protocolInitHoldElapsed = true
             if (state !is BleState.ProtocolSessionInit) return@startTimeout
-            val reason = if (vendorNotifyDuringInit) "hold_elapsed_with_vendor_notify" else "hold_elapsed"
-            logger.logInfo(TAG, "Protocol session hold elapsed; promoting to READY_FOR_COMMANDS reason=$reason")
-            promoteReadyForCommands(reason)
+            if (vendorNotifyDuringInit) {
+                logger.logInfo(TAG, "Protocol session hold elapsed; promoting to READY_FOR_COMMANDS reason=hold_elapsed_with_vendor_notify")
+                promoteReadyForCommands("hold_elapsed_with_vendor_notify")
+            } else {
+                logger.logError(TAG, "Protocol init hold elapsed without vendor packets; timing out")
+                setState(BleState.Error(BleErrorReason.PROTOCOL_INIT_TIMEOUT))
+                requestDisconnect("protocol_init_timeout", forceClose = true)
+            }
         }
     }
 
