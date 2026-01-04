@@ -539,7 +539,8 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
 
     /**
      * Стартовая команда нужна при каждом подключении (даже после bonding), иначе очки молчат и не
-     * присылают JSON-уведомления. Отправляем один раз строго после MTU negotiation и включения CCCD.
+     * присылают JSON-уведомления. Отправляем её в соответствии с сервисом STARRY_NET_WRITE_UUID
+     * (0x2000) строго после MTU negotiation и включения CCCD на XR notify UUID (0x2001/0x2002).
      */
     private fun sendStartCommand(gatt: BluetoothGatt, reason: String) {
         val controlChar = protocol.writeCharacteristic
@@ -552,8 +553,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
             logger.logInfo(TAG, "Start command already scheduled/sent; skipping duplicate reason=$reason")
             return
         }
-        // Write with NO_RESPONSE matches the characteristic capabilities (WRITE_NR only) and avoids
-        // GATT_WRITE_NOT_PERMITTED failures observed when forcing a response write type.
+        // WRITE (0x2000) accepts default write type; we still pick via helper to honor future caps.
         val writeType = selectWriteType(controlChar, withResponse = false)
         logger.logInfo(
             TAG,
@@ -935,7 +935,7 @@ class BleManager(private val context: Context, private val logger: BleLogger) {
         private const val RX_UUID = "00002001-0000-1000-8000-00805f9b34fb"
         private const val RX_ALT_UUID = "00002002-0000-1000-8000-00805f9b34fb"
         private const val NOTIFY_UUID = "00002021-0000-1000-8000-00805f9b34fb"
-        private const val CONTROL_UUID = "00002020-0000-1000-8000-00805f9b34fb"
+        private const val CONTROL_UUID = "00002000-0000-1000-8000-00805f9b34fb"
         private const val EXTRA_NOTIFY_UUID = "00002022-0000-1000-8000-00805f9b34fb"
         private const val SYS_NOTIFY_UUID = "00001001-0000-1000-8000-00805f9b34fb"
         private const val GATT_SERVICE_UUID = "00001801-0000-1000-8000-00805f9b34fb"
